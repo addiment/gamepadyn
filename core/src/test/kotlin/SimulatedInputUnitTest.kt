@@ -1,24 +1,32 @@
-package computer.living.gamepadyn
-
-import computer.living.gamepadyn.SimulatedInputUnitTest.TestAction.DEBUG_ACTION
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import computer.living.gamepadyn.InputType.ANALOG
+import computer.living.gamepadyn.InputType.DIGITAL
+import SimulatedInputUnitTest.TestAction.DEBUG_ACTION
+import SimulatedInputUnitTest.TestAction.ANALOG_2D_ACTION
+import computer.living.gamepadyn.ActionBind
+import computer.living.gamepadyn.Configuration
+import computer.living.gamepadyn.GDesc
+import computer.living.gamepadyn.Gamepadyn
+import computer.living.gamepadyn.RawInput
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class SimulatedInputUnitTest {
 
     enum class TestAction {
-        DEBUG_ACTION
+        DEBUG_ACTION,
+        ANALOG_2D_ACTION
     }
 
     private val actions: Map<TestAction, GDesc> = mapOf(
-        DEBUG_ACTION to GDesc(InputType.DIGITAL)
+        DEBUG_ACTION to GDesc(DIGITAL),
+        ANALOG_2D_ACTION to GDesc(ANALOG, 2)
     )
 
     @Test
     fun main() {
 
-        val sysTest = InputSystemTesting()
-        InputSystemTesting.manipulableState = false
+        val sysTest = InputBackendTesting()
+        InputBackendTesting.manipulableStateDigital = false
 
         val gamepadyn = Gamepadyn(sysTest, strict = true, actions)
 
@@ -46,7 +54,7 @@ class SimulatedInputUnitTest {
         assertEquals(false, p0.getStateDigital(DEBUG_ACTION)?.digitalData)
 
         // one state change
-        InputSystemTesting.manipulableState = true
+        InputBackendTesting.manipulableStateDigital = true
 
         gamepadyn.update()
         assertEquals(true, p0.getStateDigital(DEBUG_ACTION)?.digitalData)
@@ -54,7 +62,7 @@ class SimulatedInputUnitTest {
         assertEquals(true, p0.getStateDigital(DEBUG_ACTION)?.digitalData)
 
         // two state changes
-        InputSystemTesting.manipulableState = false
+        InputBackendTesting.manipulableStateDigital = false
 
         gamepadyn.update()
         assertEquals(false, p0.getStateDigital(DEBUG_ACTION)?.digitalData)
@@ -62,7 +70,7 @@ class SimulatedInputUnitTest {
         assertEquals(false, p0.getStateDigital(DEBUG_ACTION)?.digitalData)
 
         // three state changes
-        InputSystemTesting.manipulableState = true
+        InputBackendTesting.manipulableStateDigital = true
 
         gamepadyn.update()
         assertEquals(true, p0.getStateDigital(DEBUG_ACTION)?.digitalData)

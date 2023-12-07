@@ -7,7 +7,7 @@ import computer.living.gamepadyn.InputType.DIGITAL
 
 class Player<T : Enum<T>> internal constructor(
     internal val parent: Gamepadyn<T>,
-    internal var rawGamepad: InputSystem.RawGamepad
+    internal var rawGamepad: InputBackend.RawGamepad
 ) {
 
     /**
@@ -15,13 +15,16 @@ class Player<T : Enum<T>> internal constructor(
      */
     internal var state: MutableMap<T, InputData> = parent.actions.entries.associate {
         // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk
-        return@associate when (it.value!!.type) {
-            ANALOG -> (it.key to (if (it.value!!.axes == 1) InputDataAnalog(0f) else InputDataAnalog(
-                0f,
-                *FloatArray(it.value!!.axes - 1).toTypedArray()
-            )))
+        when (it.value!!.type) {
+            ANALOG -> {
+                if (it.value!!.axes <= 0) throw Exception("Provided an analog action with 0 or less axes!")
+                return@associate (it.key to (if (it.value!!.axes == 1) InputDataAnalog(0f) else InputDataAnalog(
+                    0f,
+                    *FloatArray(it.value!!.axes - 1).toTypedArray()
+                )))
+            }
 
-            DIGITAL -> (it.key to InputDataDigital())
+            DIGITAL -> return@associate (it.key to InputDataDigital())
         }
     }.toMutableMap()
 

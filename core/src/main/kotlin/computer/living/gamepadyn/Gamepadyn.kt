@@ -7,22 +7,41 @@ import kotlin.collections.toMap
 /**
  * Description of an input. This typename is long; it is recommended to use the alias if you are using Kotlin, `gamepadyn.GDesc`.
  */
-data class InputDescriptor @JvmOverloads constructor(
-    val type: InputType = DIGITAL,
-    val axes: Int = 0
-)
+class InputDescriptor {
+    val type: InputType
+    val axes: Int
+
+    /**
+     * An Analog descriptor with the amount of axes specified
+     * @throws
+     */
+    constructor(axes: Int) {
+        assert(axes > 0)
+        this.type = ANALOG
+        this.axes = axes
+    }
+
+    constructor(type: InputType = DIGITAL, axes: Int = 0) {
+        when (type) {
+            DIGITAL -> assert(axes == 0)
+            ANALOG -> assert(axes > 0)
+        }
+        this.type = type
+        this.axes = axes
+    }
+}
 
 typealias GDesc = InputDescriptor
 
 /**
  * A Gamepadyn instance.
  *
- * @param inputSystem The backend input source.
+ * @param inputBackend The backend input source.
  * @param actions A map of actions that this Gamepadyn instance should be aware of
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
-    internal val inputSystem: InputSystem,
+    internal val inputBackend: InputBackend,
     /**
      * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
      */
@@ -34,17 +53,17 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
 
     /**
      * Creates a Gamepadyn instance.
-     * @param inputSystem The backend input source.
+     * @param inputBackend The backend input source.
      * @param strict If enabled, failures will be loud and catastrophic. Whether that's better than "silent but deadly" is up to you.
      * @param actions A map of actions that this Gamepadyn instance should be aware of
      */
     @JvmOverloads
     constructor(
-        inputSystem: InputSystem,
+        inputBackend: InputBackend,
         strict: Boolean = true,
 //        useInputThread: Boolean = false,
         vararg actions: Pair<T, InputDescriptor?>
-    ) : this(inputSystem, strict, /* useInputThread,*/ actions.toMap()) {
+    ) : this(inputBackend, strict, /* useInputThread,*/ actions.toMap()) {
         this.strict = strict
     }
 
@@ -58,7 +77,7 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
      * TODO: This can never update, needs to be fixed.
      */
     val players: ArrayList<Player<T>> =
-        ArrayList(inputSystem.getGamepads().map { Player(this, it) })
+        ArrayList(inputBackend.getGamepads().map { Player(this, it) })
 //        get() = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
 
     /**
@@ -81,7 +100,7 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
                 // loud / silent null check
                 if (strict) descriptor!!; else if (descriptor == null) break
 
-                val rawState: InputData = inputSystem.getGamepads()[i].getState(bind.input)
+                val rawState: InputData = inputBackend.getGamepads()[i].getState(bind.input)
 
                 val newData: InputData = bind.transform(rawState, descriptor)
 
