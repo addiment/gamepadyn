@@ -1,5 +1,8 @@
 package computer.living.gamepadyn
 
+/**
+ * A transformation from inputs to actions.
+ */
 open class ActionBind<T: Enum<T>>(val input: RawInput, internal val targetAction: T) {
 
     /**

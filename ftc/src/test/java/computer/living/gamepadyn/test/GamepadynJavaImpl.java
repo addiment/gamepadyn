@@ -3,11 +3,6 @@ package computer.living.gamepadyn.test;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestAction.CLAW;
-import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestAction.DEBUG_ACTION;
-import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestAction.MOVEMENT;
-import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestAction.ROTATION;
-
 import computer.living.gamepadyn.Gamepadyn;
 import computer.living.gamepadyn.Player;
 import computer.living.gamepadyn.Tak;
@@ -33,10 +28,10 @@ public class GamepadynJavaImpl extends OpMode {
         // in Java 9, you can do this more easily.
         gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
             Tak.makeActionMap(Arrays.asList(
-                Tak.a(MOVEMENT, 2),
-                Tak.a(ROTATION, 1),
-                Tak.d(CLAW),
-                Tak.d(DEBUG_ACTION)
+                Tak.a(TestAction.MOVEMENT, 2),
+                Tak.a(TestAction.ROTATION, 1),
+                Tak.d(TestAction.CLAW),
+                Tak.d(TestAction.DEBUG_ACTION)
             ))
         );
     }
@@ -53,10 +48,9 @@ public class GamepadynJavaImpl extends OpMode {
         assert p0 != null;
 
         // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-        Objects.requireNonNull(p0.getEventDigital(DEBUG_ACTION)).addListener(it -> {
-            telemetry.addLine("Button " + ((it.digitalData) ? "pressed" : "released") + "!");
+        Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addJListener(it -> {
+                telemetry.addLine("Button " + ((it.digitalData) ? "pressed" : "released") + "!");
         });
-
     }
 
     @Override

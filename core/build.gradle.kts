@@ -11,14 +11,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks {
-    // Use the native JUnit support of Gradle.
-    "test"(Test::class) {
-        useJUnit()
-        useJUnitPlatform()
-    }
-}
-
 kotlin {
     jvmToolchain(8)
 }

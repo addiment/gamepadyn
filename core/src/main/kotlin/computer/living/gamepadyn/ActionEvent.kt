@@ -3,7 +3,7 @@ package computer.living.gamepadyn
 import java.util.function.Consumer
 
 /**
- * An instance of an Event represents *one event* to which listeners are added and called when the event is triggered.
+ * Represents an event to which listeners are added and called when the event is triggered.
  */
 class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
     /**
@@ -11,7 +11,11 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      */
     private val listeners = mutableSetOf<((T) -> Unit)>()
     /**
-     * A set of all listeners (lambdas) to this event.
+     * A set of all Java listeners (lambdas) to this event.
+     * Java lambdas are implementations of functional interfaces,
+     * but Kotlin does stuff differently.
+     * We don't really need to know the bytecode differences
+     * because we can just have an array of Java's SAM interfaces.
      */
     private val javaListeners = mutableSetOf<Consumer<T>>()
 
@@ -21,9 +25,10 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      */
     fun addListener(listener: ((T) -> Unit)): Boolean = listeners.add(listener)
     /**
-     * Java-specific overload for addListener()
+     * Java-specific overload.
+     * @see addListener
      */
-    fun addListener(listener: Consumer<T>): Boolean = javaListeners.add(listener)
+    fun addJListener(listener: Consumer<T>): Boolean = javaListeners.add(listener)
 
     /**
      * Removes an already-present callback for the event.
@@ -31,9 +36,10 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      */
     fun removeListener(listener: ((T) -> Unit)): Boolean = listeners.remove(listener)
     /**
-     * Java-specific overload for removeListener()
+     * Java-specific overload.
+     * @see removeListener
      */
-    fun removeListener(listener: Consumer<T>): Boolean = javaListeners.remove(listener)
+    fun removeJListener(listener: Consumer<T>): Boolean = javaListeners.remove(listener)
 
     /**
      * Removes all listeners from the event.

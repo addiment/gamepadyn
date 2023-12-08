@@ -1,8 +1,3 @@
-import GamepadynKotlinImpl.TestAction.CLAW
-import GamepadynKotlinImpl.TestAction.DEBUG_ACTION
-import GamepadynKotlinImpl.TestAction.MOVEMENT
-import GamepadynKotlinImpl.TestAction.ROTATION
-
 import computer.living.gamepadyn.InputType.*
 import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.Configuration
@@ -18,7 +13,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 class GamepadynKotlinImpl : OpMode() {
 
     enum class TestAction {
-        MOVEMENT, ROTATION, CLAW, DEBUG_ACTION
+        MOVEMENT,
+        ROTATION,
+        CLAW,
+        DEBUG_ACTION
     }
 
     private lateinit var gamepadyn: Gamepadyn<TestAction>
@@ -28,14 +26,14 @@ class GamepadynKotlinImpl : OpMode() {
         gamepadyn = Gamepadyn(
             InputBackendFtc(this),
             true,
-            MOVEMENT            to GDesc(ANALOG, 2),
-            ROTATION            to GDesc(ANALOG, 1),
-            CLAW                to GDesc(DIGITAL),
-            DEBUG_ACTION        to GDesc(DIGITAL)
+            TestAction.MOVEMENT            to GDesc(ANALOG, 2),
+            TestAction.ROTATION            to GDesc(ANALOG, 1),
+            TestAction.CLAW                to GDesc(DIGITAL),
+            TestAction.DEBUG_ACTION        to GDesc(DIGITAL)
         )
 
         gamepadyn.players[0].configuration = Configuration(
-            ActionBind(RawInput.FACE_A, DEBUG_ACTION)
+            ActionBind(RawInput.FACE_A, TestAction.DEBUG_ACTION)
         )
     }
 
@@ -44,7 +42,7 @@ class GamepadynKotlinImpl : OpMode() {
         // Get a reference to the player (FTC Player 1)
         val p0 = gamepadyn.players[0]
         // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-        p0.getEventDigital(DEBUG_ACTION)!!.addListener {
+        p0.getEventDigital(TestAction.DEBUG_ACTION)!!.addListener {
             telemetry.addLine("Button ${if (it.digitalData) "pressed"; else "released"}!")
         }
 

@@ -2,6 +2,9 @@ package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
 
+/**
+ * Represents the inputs of a controller, like buttons and joysticks.
+ */
 enum class RawInput(val descriptor: InputDescriptor) {
     FACE_DOWN           (DIGITAL), // Generic face button (= A)
     FACE_RIGHT          (DIGITAL), // Generic face button (= B)
