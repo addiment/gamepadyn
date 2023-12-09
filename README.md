@@ -2,6 +2,10 @@
 
 # About
 
+NOTE: Gamepadyn is currently in **BETA.**
+The API is *not quite stable.*
+If you have any bug fixes or suggestions, feel free to open an issue or a PR. Thanks!
+
 Gamepadyn has been heavily Inspired by input frameworks like Steam Input,
 the Unreal Engine Enhanced Input System,
 and other systems for video game input.
