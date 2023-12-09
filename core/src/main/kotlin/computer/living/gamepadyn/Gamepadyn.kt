@@ -95,6 +95,9 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
             // make the configuration local and constant
             val config = player.configuration
 
+            // update state
+            player.statePrevious = player.state.toMap()
+
             if (config != null) for (bind in config.binds) {
                 val descriptor = actions[bind.targetAction]
                 // loud / silent null check
@@ -102,25 +105,43 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
 
                 val rawState: InputData = inputBackend.getGamepads()[i].getState(bind.input)
 
+                val previousData = player.statePrevious[bind.targetAction]
                 val newData: InputData = bind.transform(rawState, descriptor)
 
                 if (newData.type != descriptor.type)
                     if (strict) throw Exception("Mismatched transformation result (expected ${descriptor.type.name.lowercase()}, got ${newData.type.name.lowercase()})")
                     else break
 
+//                TODO: this block of code doesn't work and I'm too tired rn to figure out why.
+//                      the intent is so that you can replace *only specific axes* of an action,
+//                      allowing for more granular control.
+//                if (newData is InputDataAnalog && descriptor.type == ANALOG) {
+//                    if (newData.axes != descriptor.axes) {
+//                        if (strict) throw Exception("Mismatched transformation result (expected ${descriptor.axes} axes, got ${newData.axes})")
+//                        else break
+//                    } else {
+//                        for ((j, e) in newData.analogData.withIndex()) {
+//                            if (e != null) {
+//                                (player.state[bind.targetAction] as InputDataAnalog).analogData[j] = e
+//                            }
+//                        }
+//                    }
+//                }
                 player.state[bind.targetAction] = newData
 
-                val previous = player.statePrevious[bind.targetAction]
+
+                if (newData is InputDataAnalog) {
+                    println("previous = ${(previousData as InputDataAnalog).analogData.contentToString()}, current = ${newData.analogData.contentToString()}")
+                } else {
+//                    println("previous = ${(previousData as InputDataDigital).digitalData}, current = ${(newData as InputDataDigital).digitalData}")
+                }
 
                 // changes in state trigger events
-                if (previous != newData /* && previous != null */) when (descriptor.type) {
-                    DIGITAL -> player.eventsDigital[bind.targetAction]?.trigger(newData as InputDataDigital)
-                    ANALOG -> player.eventsAnalog[bind.targetAction]?.trigger(newData as InputDataAnalog)
+                if (previousData != player.state[bind.targetAction] /* && previous != null */) when (descriptor.type) {
+                    DIGITAL -> player.eventsDigital[bind.targetAction]?.trigger(player.state[bind.targetAction] as InputDataDigital)
+                    ANALOG -> player.eventsAnalog[bind.targetAction]?.trigger(player.state[bind.targetAction] as InputDataAnalog)
                 }
             }
-
-            // update state
-            player.statePrevious = player.state.toMap()
         }
     }
 
