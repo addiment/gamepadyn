@@ -28,11 +28,6 @@ class Player<T : Enum<T>> internal constructor(
         }
     }.toMutableMap()
 
-    /**
-     * The state of the Player at the end of the last update.
-     */
-    internal var statePrevious: Map<T, InputData> = state
-
         /**
      * These two maps have to be separate due to Kotlin's rules on generics.
      * This doesn't really affect the user, but here it means that you need to put a bit more work into type checking.

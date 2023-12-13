@@ -51,7 +51,7 @@ class SimulatedInputUnitTest {
         }
 
         p0.getEventAnalog(ANALOG_2D_ACTION)!!.addListener {
-            println("Analog 2D action ran! (new value: ${it.analogData})")
+            println("Analog 2D action ran! (new value: ${it.analogData.contentToString()})")
             stateChangeCount++
         }
 

@@ -17,7 +17,7 @@ sealed class InputData {
  * Represents the value of a digital action.
  * This is effectively a Boolean that implements ActionData.
  */
-class InputDataDigital(
+data class InputDataDigital(
     /**
      * The boolean state of the input.
      */
@@ -42,13 +42,14 @@ class InputDataDigital(
  * Represents the value of an analog action.
  * @property analogData The action data. The size of the array is equal to the amount of axes the action has.
  */
-class InputDataAnalog(dataFirst: Float?, vararg dataMore: Float?) : InputData() {
-    override val type = InputType.ANALOG
-
+data class InputDataAnalog(
     /**
      * The state of the input as an array of floats.
      */
     @JvmField val analogData: Array<Float?>
+) : InputData() {
+    override val type = InputType.ANALOG
+
 
     /**
      * The amount of axes of the input. Corresponds to the array size of [analogData].
@@ -56,8 +57,10 @@ class InputDataAnalog(dataFirst: Float?, vararg dataMore: Float?) : InputData() 
     val axes: Int
         get() { return analogData.size; }
 
+    constructor(dataFirst: Float?, vararg dataMore: Float?) : this(arrayOf(dataFirst, *dataMore))
+
     init {
-        this.analogData = arrayOf(dataFirst, *dataMore)
+        assert(analogData.isNotEmpty())
     }
 
     override fun equals(other: Any?): Boolean {
@@ -70,4 +73,13 @@ class InputDataAnalog(dataFirst: Float?, vararg dataMore: Float?) : InputData() 
         result = 31 * result + analogData.contentHashCode()
         return result
     }
+
+    /**
+     * Returns a deep copy of the data. This is different from the data class copy method, which is shallow..
+     */
+    fun copy(): InputDataAnalog {
+        return InputDataAnalog(this.analogData.copyOf())
+    }
+
+    fun deepCopy() = this.copy()
 }
