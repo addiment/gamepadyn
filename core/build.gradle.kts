@@ -1,5 +1,9 @@
+import org.gradle.kotlin.dsl.extra
+
 plugins {
     kotlin("jvm")
+    `maven-publish`
+    `java-library`
 }
 
 dependencies {
@@ -18,3 +22,24 @@ kotlin {
 //test {
 //    useJUnitPlatform()
 //}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "computer.living.gamepadyn"
+            artifactId = "core"
+            version = version
+
+            from(components["java"])
+
+//            pom {
+//                description = "An input handling library."
+//                scm {
+//                    connection = "scm:git:git://github.com/addiment/gamepadyn.git"
+//                    developerConnection = "scm:git:ssh://github.com/addiment/gamepadyn.git"
+//                    url = "http://github.com/addiment/gamepadyn"
+//                }
+//            }
+        }
+    }
+}

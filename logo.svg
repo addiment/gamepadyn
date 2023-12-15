@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 256 256.00001"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="logo.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="2.1239055"
+     inkscape:cx="89.693255"
+     inkscape:cy="104.52442"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g4241">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         d="M 196,172 128,128 196,84"
+         id="path2575"
+         sodipodi:nodetypes="ccc"
+         inkscape:label="right" />
+      <path
+         style="fill:#ff0042;fill-opacity:1;stroke:#000000;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         d="M 128,128 H 60"
+         id="path7333"
+         inkscape:label="left" />
+      <circle
+         style="fill:#ff0055;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="circle4261"
+         cx="60"
+         cy="-128"
+         r="32"
+         transform="scale(1,-1)"
+         inkscape:label="left" />
+      <rect
+         style="fill:#aaff00;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="rect288"
+         width="64"
+         height="64"
+         x="164"
+         y="140"
+         rx="8"
+         inkscape:label="bottom right" />
+      <rect
+         style="fill:#aa00ff;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="rect4263"
+         width="64"
+         height="64"
+         x="164"
+         y="-116"
+         rx="8"
+         transform="scale(1,-1)"
+         inkscape:label="top right" />
+    </g>
+    <g
+       id="g7340"
+       transform="translate(-13.998938,-19.442969)"
+       style="display:none">
+      <circle
+         style="fill:#ff0055;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="path286-1"
+         cx="0"
+         cy="299.41452"
+         r="32"
+         transform="matrix(1,0,0,-1,0,248)" />
+      <rect
+         style="fill:#00ffac;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="rect288-4"
+         width="64"
+         height="64"
+         x="96"
+         y="395.41452"
+         rx="8"
+         transform="matrix(1,0,0,-1,0,248)" />
+      <circle
+         style="fill:#aa00ff;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="circle4261-3"
+         cx="0"
+         cy="-427.41452"
+         r="32"
+         transform="translate(0,248)" />
+      <rect
+         style="fill:#aaff00;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="rect4263-6"
+         width="64"
+         height="64"
+         x="96"
+         y="-331.41452"
+         rx="8"
+         transform="translate(0,248)" />
+    </g>
+    <g
+       id="g7276"
+       transform="translate(-375.23274,-243.44297)"
+       style="display:none">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         d="M 60,60 188,188"
+         id="path7264"
+         sodipodi:nodetypes="cc"
+         inkscape:label="br-tl" />
+      <path
+         style="display:inline;fill:none;stroke:#000000;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         d="M 60,60 188,188"
+         id="path7266"
+         sodipodi:nodetypes="cc"
+         transform="matrix(1,0,0,-1,0,248)"
+         inkscape:label="bl-tr" />
+      <circle
+         style="fill:#ff0055;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="circle7268"
+         cx="60"
+         cy="60"
+         r="32"
+         transform="matrix(1,0,0,-1,0,248)"
+         inkscape:label="bottom left" />
+      <rect
+         style="fill:#aaff00;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="rect7270"
+         width="64"
+         height="64"
+         x="156"
+         y="156"
+         rx="8"
+         inkscape:label="bottom right" />
+      <circle
+         style="fill:#ff0055;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="circle7272"
+         cx="60"
+         cy="60"
+         r="32"
+         inkscape:label="top left" />
+      <rect
+         style="fill:#aa00ff;fill-opacity:1;stroke:#000000;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="rect7274"
+         width="64"
+         height="64"
+         x="156"
+         y="156"
+         rx="8"
+         transform="matrix(1,0,0,-1,0,248)"
+         inkscape:label="top right" />
+    </g>
+  </g>
+</svg>

@@ -1,6 +1,9 @@
+import org.gradle.kotlin.dsl.extra
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    `maven-publish`
 }
 
 android {
@@ -8,12 +11,20 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        minSdk = 28
+        minSdk = 24
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+        }
+    }
+
+    publishLibraryVariants("release", "debug")
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
         }
     }
 
@@ -24,6 +35,14 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+}
+
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 }
 
@@ -40,4 +59,31 @@ dependencies {
 
 kotlin {
     jvmToolchain(8)
+}
+
+println("PRINTING COMPONENTS:")
+for (component in components) {
+    println(component.name)
+}
+println("DONE PRINTING COMPONENTS")
+
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            groupId = "computer.living.gamepadyn"
+            artifactId = "ftc"
+            version = version
+
+            from(components["release"])
+
+//            pom {
+//                description = "An input handling library."
+//                scm {
+//                    connection = "scm:git:git://github.com/addiment/gamepadyn.git"
+//                    developerConnection = "scm:git:ssh://github.com/addiment/gamepadyn.git"
+//                    url = "http://github.com/addiment/gamepadyn"
+//                }
+//            }
+        }
+    }
 }

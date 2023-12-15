@@ -4,12 +4,22 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
 }
 
+val libVersion by extra { "0.1.0-BETA" }
+
 allprojects {
-    group = "computer.living"
-    version = "0.1.0-BETA"
+    group = "computer.living.gamepadyn"
+    version = libVersion
 
     repositories {
         mavenCentral()
         google()
     }
 }
+
+//android {
+//    publishing {
+//        singleVariant("release") {
+//            withSourcesJar()
+//        }
+//    }
+//}
