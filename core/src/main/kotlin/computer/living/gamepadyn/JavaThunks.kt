@@ -8,9 +8,11 @@ class Tak<T : Enum<T>> private constructor(val action: T, val type: InputType, v
         /**
          * Creates an analog Tak
          */
-        @JvmStatic fun <T : Enum<T>> a(action: T, axis: Int): Tak<T> {
-            return Tak(action, InputType.ANALOG, axis)
+        @JvmStatic fun <T : Enum<T>> a(action: T, axes: Int): Tak<T> {
+            assert(axes > 0)
+            return Tak(action, InputType.ANALOG, axes)
         }
+
         /**
          * Creates a digital Tak
          */
