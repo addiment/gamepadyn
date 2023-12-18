@@ -6,10 +6,8 @@ import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.RawInput
 import computer.living.gamepadyn.ftc.InputBackendFtc
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 
-@Disabled
 class GamepadynKotlinImpl : OpMode() {
 
     enum class TestAction {
@@ -26,10 +24,10 @@ class GamepadynKotlinImpl : OpMode() {
         gamepadyn = Gamepadyn(
             InputBackendFtc(this),
             true,
-            TestAction.MOVEMENT            to GDesc(ANALOG, 2),
-            TestAction.ROTATION            to GDesc(ANALOG, 1),
-            TestAction.CLAW                to GDesc(DIGITAL),
-            TestAction.DEBUG_ACTION        to GDesc(DIGITAL)
+            TestAction.MOVEMENT            to GDesc.analog(2),
+            TestAction.ROTATION            to GDesc.analog(1),
+            TestAction.CLAW                to GDesc.digital(),
+            TestAction.DEBUG_ACTION        to GDesc.digital()
         )
 
         gamepadyn.players[0].configuration = Configuration(

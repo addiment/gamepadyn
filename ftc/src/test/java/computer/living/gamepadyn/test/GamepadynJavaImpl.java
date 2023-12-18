@@ -1,17 +1,16 @@
 package computer.living.gamepadyn.test;
 
-import java.util.Arrays;
+import computer.living.gamepadyn.JavaThunks.Tak;
+import static computer.living.gamepadyn.JavaThunks.Tak.createActionMap;
+
 import java.util.Objects;
 
 import computer.living.gamepadyn.Gamepadyn;
 import computer.living.gamepadyn.Player;
-import computer.living.gamepadyn.Tak;
 import computer.living.gamepadyn.ftc.InputBackendFtc;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Disabled
 public class GamepadynJavaImpl extends OpMode {
 
     enum TestAction {
@@ -25,14 +24,11 @@ public class GamepadynJavaImpl extends OpMode {
 
     @Override
     public void init() {
-        // in Java 9, you can do this more easily.
         gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
-            Tak.makeActionMap(Arrays.asList(
-                Tak.a(TestAction.MOVEMENT, 2),
-                Tak.a(TestAction.ROTATION, 1),
-                Tak.d(TestAction.CLAW),
-                Tak.d(TestAction.DEBUG_ACTION)
-            ))
+            Tak.analog(TestAction.MOVEMENT, 2),
+            Tak.analog(TestAction.ROTATION, 1),
+            Tak.digital(TestAction.CLAW),
+            Tak.digital(TestAction.DEBUG_ACTION)
         );
     }
 

@@ -3,8 +3,6 @@ package computer.living.gamepadyn
 import computer.living.gamepadyn.InputType.ANALOG
 import computer.living.gamepadyn.InputType.DIGITAL
 
-typealias GDesc = InputDescriptor
-
 /**
  * A Gamepadyn instance.
  *
@@ -29,6 +27,7 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
      * @param strict If enabled, failures will be loud and catastrophic. Whether that's better than "silent but deadly" is up to you.
      * @param actions A map of actions that this Gamepadyn instance should be aware of
      */
+    @SafeVarargs
     @JvmOverloads
     constructor(
         inputBackend: InputBackend,
@@ -136,8 +135,8 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
 //         multithread input (remove this line)
 //        if (useInputThread) throw Exception("Gamepadyn has no multithreading implementation yet!")
         for ((_, descriptor) in actions.entries) when (descriptor!!.type) {
-            ANALOG -> assert(descriptor.axes > 0)
-            DIGITAL -> assert(descriptor.axes == 0)
+            ANALOG -> assert(descriptor.axes > 0) { "A digital input descriptor must have 0 axes!" }
+            DIGITAL -> assert(descriptor.axes == 0) { "An analog input descriptor must have 1 or more axes!" }
         }
     }
 

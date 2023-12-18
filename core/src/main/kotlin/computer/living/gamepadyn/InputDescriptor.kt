@@ -1,28 +1,32 @@
 package computer.living.gamepadyn
 
+typealias GDesc = InputDescriptor
+
 /**
  * Description of an input. This typename is long; it is recommended to use the alias if you are using Kotlin, `gamepadyn.GDesc`.
  */
-class InputDescriptor {
-    val type: InputType
-    val axes: Int
+class InputDescriptor(val type: InputType = InputType.DIGITAL, val axes: Int = 0) {
 
-    /**
-     * An Analog descriptor with the amount of axes specified
-     * @throws
-     */
-    constructor(axes: Int) {
-        assert(axes > 0)
-        this.type = InputType.ANALOG
-        this.axes = axes
+    companion object {
+        /**
+         * Syntactic sugar for the digital constructor.
+         */
+        @JvmStatic fun analog(axes: Int): InputDescriptor {
+            return InputDescriptor(InputType.ANALOG, axes)
+        }
+
+        /**
+         * Syntactic sugar for the digital constructor.
+         */
+        @JvmStatic fun digital(): InputDescriptor {
+            return InputDescriptor(InputType.DIGITAL, 0)
+        }
     }
 
-    constructor(type: InputType = InputType.DIGITAL, axes: Int = 0) {
+    init {
         when (type) {
-            InputType.DIGITAL -> assert(axes == 0)
-            InputType.ANALOG -> assert(axes > 0)
+            InputType.DIGITAL -> assert(axes == 0) { "A digital input descriptor must have 0 axes!" }
+            InputType.ANALOG -> assert(axes > 0) { "An analog input descriptor must have 1 or more axes!" }
         }
-        this.type = type
-        this.axes = axes
     }
 }

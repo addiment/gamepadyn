@@ -1,27 +1,34 @@
 package computer.living.gamepadyn
 
 /**
- * Thunk Action
+ * Many things are easy in Kotlin and painful in Java.
+ * This code is meant to ease that pain.
  */
-class Tak<T : Enum<T>> private constructor(val action: T, val type: InputType, val axis: Int) {
-    companion object {
+object JavaThunks {
+    object Tak {
         /**
-         * Creates an analog Tak
+         * Creates an analog action/descriptor pair.
          */
-        @JvmStatic fun <T : Enum<T>> a(action: T, axes: Int): Tak<T> {
-            assert(axes > 0)
-            return Tak(action, InputType.ANALOG, axes)
+        @JvmStatic fun <T : Enum<T>> analog(action: T, axes: Int): Pair<T, InputDescriptor> {
+            return Pair(action, InputDescriptor(InputType.ANALOG, axes))
         }
 
         /**
-         * Creates a digital Tak
+         * Creates a digital action/descriptor pair.
          */
-        @JvmStatic fun <T : Enum<T>> d(action: T): Tak<T> {
-            return Tak(action, InputType.DIGITAL, 0)
+        @JvmStatic fun <T : Enum<T>> digital(action: T): Pair<T, InputDescriptor> {
+            return Pair(action, InputDescriptor(InputType.DIGITAL, 0))
         }
-        
-        @JvmStatic fun <T : Enum<T>> makeActionMap(items: List<Tak<T>>): Map<T, InputDescriptor> {
-            return items.associate { it.action to InputDescriptor(it.type, it.axis) }
+
+        /**
+         * Because map literals didn't exist before Java 9, this exists.
+         * And don't say "double brace initialization."
+         */
+        @SafeVarargs
+        @JvmStatic
+        fun <T : Enum<T>> createActionMap(vararg items: Pair<T, InputDescriptor>): Map<T, InputDescriptor> {
+//            return items.associate { it.first to it.second }
+            return mapOf(*items)
         }
     }
 }

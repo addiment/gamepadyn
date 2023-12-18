@@ -60,7 +60,7 @@ data class InputDataAnalog(
     constructor(dataFirst: Float?, vararg dataMore: Float?) : this(arrayOf(dataFirst, *dataMore))
 
     init {
-        assert(analogData.isNotEmpty())
+        assert(analogData.isNotEmpty()) { "Analog data must not be empty, this implies (axes < 0)!" }
     }
 
     override fun equals(other: Any?): Boolean {

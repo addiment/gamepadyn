@@ -70,10 +70,10 @@ class GamepadynKotlinImpl : OpMode() {
     gamepadyn = Gamepadyn(
       InputBackendFtc(this),
       true,
-      TestAction.MOVEMENT            to GDesc(ANALOG, 2),
-      TestAction.ROTATION            to GDesc(ANALOG, 1),
-      TestAction.CLAW                to GDesc(DIGITAL),
-      TestAction.DEBUG_ACTION        to GDesc(DIGITAL)
+      TestAction.MOVEMENT            to GDesc.analog(2),
+      TestAction.ROTATION            to GDesc.analog(1),
+      TestAction.CLAW                to GDesc.digital(),
+      TestAction.DEBUG_ACTION        to GDesc.digital()
     )
 
     gamepadyn.players[0].configuration = Configuration(
@@ -97,6 +97,7 @@ class GamepadynKotlinImpl : OpMode() {
     telemetry.update()
   }
 }
+
 ```
 
 ## Java
@@ -104,12 +105,13 @@ class GamepadynKotlinImpl : OpMode() {
 ```Java
 package computer.living.gamepadyn.test;
 
-import java.util.Arrays;
+import computer.living.gamepadyn.JavaThunks.Tak;
+import static computer.living.gamepadyn.JavaThunks.Tak.createActionMap;
+
 import java.util.Objects;
 
 import computer.living.gamepadyn.Gamepadyn;
 import computer.living.gamepadyn.Player;
-import computer.living.gamepadyn.Tak;
 import computer.living.gamepadyn.ftc.InputBackendFtc;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -127,14 +129,11 @@ public class GamepadynJavaImpl extends OpMode {
 
   @Override
   public void init() {
-    // in Java 9, you can do this more easily.
     gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
-            Tak.makeActionMap(Arrays.asList(
-                    Tak.a(TestAction.MOVEMENT, 2),
-                    Tak.a(TestAction.ROTATION, 1),
-                    Tak.d(TestAction.CLAW),
-                    Tak.d(TestAction.DEBUG_ACTION)
-            ))
+        Tak.analog(TestAction.MOVEMENT, 2),
+        Tak.analog(TestAction.ROTATION, 1),
+        Tak.digital(TestAction.CLAW),
+        Tak.digital(TestAction.DEBUG_ACTION)
     );
   }
 
@@ -153,7 +152,6 @@ public class GamepadynJavaImpl extends OpMode {
     Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addJListener(it -> {
       telemetry.addLine("Button " + ((it.digitalData) ? "pressed" : "released") + "!");
     });
-
   }
 
   @Override
@@ -162,6 +160,7 @@ public class GamepadynJavaImpl extends OpMode {
     telemetry.update();
   }
 }
+
 ```
 
 # Architecture
