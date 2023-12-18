@@ -19,6 +19,10 @@ kotlin {
     jvmToolchain(8)
 }
 
+java {
+    withSourcesJar()
+}
+
 //test {
 //    useJUnitPlatform()
 //}
@@ -30,6 +34,8 @@ publishing {
             artifactId = "core"
             version = version
 
+
+
             from(components["java"])
 
 //            pom {
@@ -40,6 +46,13 @@ publishing {
 //                    url = "http://github.com/addiment/gamepadyn"
 //                }
 //            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "mavenLocalRepo"
+            url = uri("${rootDir}/repo")
         }
     }
 }

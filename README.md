@@ -1,16 +1,45 @@
 # Gamepadyn: A Multipurpose Control library
 
+[//]: # (![Gamepadyn Logo]&#40;logo_128.png&#41;)
+
 # About
 
-NOTE: Gamepadyn is currently in **BETA.**
-The API is *not quite stable.*
+NGamepadyn is currently in **BETA.**
+The API is *not quite* stable.
 If you have any bug fixes or suggestions, feel free to open an issue or a PR. Thanks!
 
 Gamepadyn has been heavily Inspired by input frameworks like Steam Input,
 the Unreal Engine Enhanced Input System,
 and other systems for video game input.
+Its primary purpose is to separate physical input methods from abstract high-level "actions."
+
+Separation of physical and abstract provides freedom to both users and developers:
+- users could easily have a control scheme modified to their preferences
+- developers can implement changes to input maps much more easily
+- features are more easily encapsulated, which makes modularity easier
+
+Gamepadyn also provides state monitoring,
+which allows for easy implementation of event-driven programming patterns.
+Basically, it takes a programmer 10 seconds to implement a toggleable action
+without adding extra class-wide variables that would otherwise make code harder to read.
 
 # Getting Started for FTC Developers
+
+## Installing
+
+Currently, distribution of this library is done via redistributed .jar and .aar files.
+Download them from the releases page (or build them yourself) and copy them into your `/TeamCode/lib` folder.
+**Make sure to replace `0.1.0-BETA` with whatever version of the library you have.**
+Add the following to the dependencies block of your `/TeamCode/build.gradle`:
+
+```groovy
+implementation files("lib/core-0.1.0-BETA.jar")
+implementation files("lib/core-0.1.0-BETA-sources.jar")
+implementation files("lib/ftc-0.1.0-BETA.aar")
+implementation files("lib/ftc-0.1.0-BETA-sources.jar")
+```
+
+The following are sample OpModes that showcase basic usage of Gamepadyn.
 
 ## Kotlin (preferred)
 
@@ -23,7 +52,6 @@ import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.RawInput
 import computer.living.gamepadyn.ftc.InputBackendFtc
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 
 class GamepadynKotlinImpl : OpMode() {
@@ -85,7 +113,6 @@ import computer.living.gamepadyn.Tak;
 import computer.living.gamepadyn.ftc.InputBackendFtc;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 public class GamepadynJavaImpl extends OpMode {
 

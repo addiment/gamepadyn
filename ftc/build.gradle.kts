@@ -12,6 +12,9 @@ android {
 
     defaultConfig {
         minSdk = 24
+        aarMetadata {
+            minCompileSdk = 24
+        }
     }
 
     buildTypes {
@@ -20,7 +23,13 @@ android {
         }
     }
 
-    publishLibraryVariants("release", "debug")
+//    productFlavors {
+//        register("lemonade") {
+//            aarMetadata {
+//                minCompileSdk = 24
+//            }
+//        }
+//    }
 
     publishing {
         singleVariant("release") {
@@ -38,10 +47,36 @@ android {
     }
 }
 
-android {
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
+kotlin {
+    jvmToolchain(8)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            groupId = "computer.living.gamepadyn"
+            artifactId = "ftc"
+            version = version
+
+            afterEvaluate {
+                from(components["release"])
+            }
+
+//            pom {
+//                description = "An input handling library."
+//                scm {
+//                    connection = "scm:git:git://github.com/addiment/gamepadyn.git"
+//                    developerConnection = "scm:git:ssh://github.com/addiment/gamepadyn.git"
+//                    url = "http://github.com/addiment/gamepadyn"
+//                }
+//            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "mavenLocalRepo"
+            url = uri("${rootDir}/repo")
         }
     }
 }
@@ -55,35 +90,4 @@ dependencies {
     implementation("org.firstinspires.ftc:FtcCommon:9.0.1")
     implementation(project(":core"))
     testImplementation(kotlin("test"))
-}
-
-kotlin {
-    jvmToolchain(8)
-}
-
-println("PRINTING COMPONENTS:")
-for (component in components) {
-    println(component.name)
-}
-println("DONE PRINTING COMPONENTS")
-
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            groupId = "computer.living.gamepadyn"
-            artifactId = "ftc"
-            version = version
-
-            from(components["release"])
-
-//            pom {
-//                description = "An input handling library."
-//                scm {
-//                    connection = "scm:git:git://github.com/addiment/gamepadyn.git"
-//                    developerConnection = "scm:git:ssh://github.com/addiment/gamepadyn.git"
-//                    url = "http://github.com/addiment/gamepadyn"
-//                }
-//            }
-        }
-    }
 }
