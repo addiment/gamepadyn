@@ -6,8 +6,11 @@ import computer.living.gamepadyn.InputType.DIGITAL
 import kotlin.math.abs
 import kotlin.math.sqrt
 
+/**
+ * Binds a digital input to one singular axis of an action.
+ */
 @Suppress("unused")
-class DigitalToAnalogAxis<T: Enum<T>>(private var activeAmount: Float = 1f, private var inactiveAmount: Float = 0f, private var axis: Int, input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
+class BindDigitalToAnalogAxis<T: Enum<T>>(private var activeAmount: Float = 1f, private var inactiveAmount: Float = 0f, private var axis: Int, input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
     override fun transform(data: InputData, targetAction: InputDescriptor): InputData? {
         if (data !is InputDataDigital || targetAction.type != ANALOG || axis >= targetAction.axes) return null
 
@@ -18,8 +21,23 @@ class DigitalToAnalogAxis<T: Enum<T>>(private var activeAmount: Float = 1f, priv
     }
 }
 
+/**
+ * Binds one analog axis of an input to one analog axis of an action action.
+ */
 @Suppress("unused")
-class SingleAxisThresholdToDigital<T: Enum<T>>(private var threshold: Float = 0.75f, private var axis: Int, input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
+class BindSingleAxis<T: Enum<T>>(private var sourceAxis: Int, private var targetAxis: Int, input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
+    override fun transform(data: InputData, targetAction: InputDescriptor): InputData? {
+        if (data !is InputDataDigital || targetAction.type != ANALOG || sourceAxis >= input.axes || targetAxis >= targetAction.axes) return null
+
+        val f = arrayOfNulls<Float?>(targetAction.axes)
+
+        f[targetAxis] = data[sourceAxis]
+        return InputDataAnalog(f)
+    }
+}
+
+@Suppress("unused")
+class BindSingleAxisThresholdToDigital<T: Enum<T>>(private var threshold: Float = 0.75f, private var axis: Int, input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
     override fun transform(data: InputData, targetAction: InputDescriptor): InputData? {
         if (data !is InputDataAnalog || targetAction.type != DIGITAL || axis >= targetAction.axes) return null
 
@@ -29,7 +47,7 @@ class SingleAxisThresholdToDigital<T: Enum<T>>(private var threshold: Float = 0.
 
 
 @Suppress("unused")
-class SnapInputToOutput<T: Enum<T>>(input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
+class BindSnapInputToOutput<T: Enum<T>>(input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
     override fun transform(data: InputData, targetAction: InputDescriptor): InputData {
         when (data) {
             is InputDataDigital -> {
