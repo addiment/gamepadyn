@@ -1,7 +1,6 @@
 package computer.living.gamepadyn.test;
 
 import computer.living.gamepadyn.JavaThunks.Tak;
-import static computer.living.gamepadyn.JavaThunks.Tak.createActionMap;
 
 import java.util.Objects;
 
@@ -44,7 +43,7 @@ public class GamepadynJavaImpl extends OpMode {
         assert p0 != null;
 
         // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-        Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addJListener(it -> {
+        Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addListener(it -> {
                 telemetry.addLine("Button " + ((it.digitalData) ? "pressed" : "released") + "!");
         });
     }

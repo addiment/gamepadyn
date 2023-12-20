@@ -28,7 +28,16 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      * Java-specific overload.
      * @see addListener
      */
-    fun addJListener(listener: Consumer<T>): Boolean = javaListeners.add(listener)
+    fun addListener(listener: Consumer<T>): Boolean = javaListeners.add(listener)
+    /**
+     * Alias for [addListener]
+     */
+    operator fun invoke(listener: ((T) -> Unit)): Boolean = listeners.add(listener)
+    /**
+     * Alias for [addListener]
+     */
+    operator fun invoke(listener: Consumer<T>): Boolean = javaListeners.add(listener)
+
 
     /**
      * Removes an already-present callback for the event.
@@ -39,7 +48,7 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      * Java-specific overload.
      * @see removeListener
      */
-    fun removeJListener(listener: Consumer<T>): Boolean = javaListeners.remove(listener)
+    fun removeListener(listener: Consumer<T>): Boolean = javaListeners.remove(listener)
 
     /**
      * Removes all listeners from the event.

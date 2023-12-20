@@ -5,6 +5,12 @@ package computer.living.gamepadyn
  *
  * I am not happy with this API as it is, and will be working on developing it further in the future.
  */
+/*
+ * TODO: Rework the binding API to require less type casting/assumption in implementations.
+ *      The constructor isn't great either, almost all work should be done in the transform function.
+ *      Why isn't it a lambda? Because users may want to store persistent state *in the bind.*
+ *      That might change though. It's not at the top of my priority list right now.
+ */
 open class ActionBind<T: Enum<T>>(val input: RawInput, internal val targetAction: T) {
 
     /**

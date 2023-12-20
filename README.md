@@ -85,8 +85,9 @@ class GamepadynKotlinImpl : OpMode() {
 
     // Get a reference to the player (FTC Player 1)
     val p0 = gamepadyn.players[0]
+
     // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-    p0.getEventDigital(TestAction.DEBUG_ACTION)!!.addListener {
+    p0.getEventDigital(TestAction.DEBUG_ACTION)!! {
       telemetry.addLine("Button ${if (it.digitalData) "pressed"; else "released"}!")
     }
 
@@ -97,7 +98,6 @@ class GamepadynKotlinImpl : OpMode() {
     telemetry.update()
   }
 }
-
 ```
 
 ## Java
@@ -106,7 +106,6 @@ class GamepadynKotlinImpl : OpMode() {
 package computer.living.gamepadyn.test;
 
 import computer.living.gamepadyn.JavaThunks.Tak;
-import static computer.living.gamepadyn.JavaThunks.Tak.createActionMap;
 
 import java.util.Objects;
 
@@ -130,10 +129,10 @@ public class GamepadynJavaImpl extends OpMode {
   @Override
   public void init() {
     gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
-        Tak.analog(TestAction.MOVEMENT, 2),
-        Tak.analog(TestAction.ROTATION, 1),
-        Tak.digital(TestAction.CLAW),
-        Tak.digital(TestAction.DEBUG_ACTION)
+            Tak.analog(TestAction.MOVEMENT, 2),
+            Tak.analog(TestAction.ROTATION, 1),
+            Tak.digital(TestAction.CLAW),
+            Tak.digital(TestAction.DEBUG_ACTION)
     );
   }
 
@@ -149,7 +148,7 @@ public class GamepadynJavaImpl extends OpMode {
     assert p0 != null;
 
     // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-    Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addJListener(it -> {
+    Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addListener(it -> {
       telemetry.addLine("Button " + ((it.digitalData) ? "pressed" : "released") + "!");
     });
   }
@@ -160,7 +159,6 @@ public class GamepadynJavaImpl extends OpMode {
     telemetry.update();
   }
 }
-
 ```
 
 # Architecture

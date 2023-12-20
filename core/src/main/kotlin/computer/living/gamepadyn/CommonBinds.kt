@@ -27,7 +27,7 @@ class BindDigitalToAnalogAxis<T: Enum<T>>(private var activeAmount: Float = 1f, 
 @Suppress("unused")
 class BindSingleAxis<T: Enum<T>>(private var sourceAxis: Int, private var targetAxis: Int, input: RawInput, targetAction: T) : ActionBind<T>(input, targetAction) {
     override fun transform(data: InputData, targetAction: InputDescriptor): InputData? {
-        if (data !is InputDataDigital || targetAction.type != ANALOG || sourceAxis >= input.axes || targetAxis >= targetAction.axes) return null
+        if (data !is InputDataAnalog || targetAction.type != ANALOG || sourceAxis >= input.descriptor.axes || targetAxis >= targetAction.axes) return null
 
         val f = arrayOfNulls<Float?>(targetAction.axes)
 

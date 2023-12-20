@@ -1,8 +1,11 @@
 package computer.living.gamepadyn
 
 /**
- * Many things are easy in Kotlin and painful in Java.
+ * Many things that are easy in Kotlin and painful in Java.
  * This code is meant to ease that pain.
+ */
+/*
+ * TODO:
  */
 object JavaThunks {
     object Tak {
@@ -10,14 +13,14 @@ object JavaThunks {
          * Creates an analog action/descriptor pair.
          */
         @JvmStatic fun <T : Enum<T>> analog(action: T, axes: Int): Pair<T, InputDescriptor> {
-            return Pair(action, InputDescriptor(InputType.ANALOG, axes))
+            return Pair(action, InputDescriptor.analog(axes))
         }
 
         /**
          * Creates a digital action/descriptor pair.
          */
         @JvmStatic fun <T : Enum<T>> digital(action: T): Pair<T, InputDescriptor> {
-            return Pair(action, InputDescriptor(InputType.DIGITAL, 0))
+            return Pair(action, InputDescriptor.digital())
         }
 
         /**

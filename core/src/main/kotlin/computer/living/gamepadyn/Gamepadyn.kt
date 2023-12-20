@@ -6,41 +6,34 @@ import computer.living.gamepadyn.InputType.DIGITAL
 /**
  * A Gamepadyn instance.
  *
- * @param inputBackend The backend input source.
+ * @param backend The backend input source.
  * @param actions A map of actions that this Gamepadyn instance should be aware of
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
-    internal val inputBackend: InputBackend,
+    internal val backend: InputBackend,
     /**
      * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
      */
     var strict: Boolean = true,
-//    @JvmField val useInputThread: Boolean = false,
-    internal val actions: Map<T, InputDescriptor?>
+    internal var actions: Map<T, InputDescriptor?>
 ) {
-
 
     /**
      * Creates a Gamepadyn instance.
-     * @param inputBackend The backend input source.
+     * @param backend The backend input source.
      * @param strict If enabled, failures will be loud and catastrophic. Whether that's better than "silent but deadly" is up to you.
      * @param actions A map of actions that this Gamepadyn instance should be aware of
      */
     @SafeVarargs
     @JvmOverloads
     constructor(
-        inputBackend: InputBackend,
+        backend: InputBackend,
         strict: Boolean = true,
-//        useInputThread: Boolean = false,
         vararg actions: Pair<T, InputDescriptor?>
-    ) : this(inputBackend, strict, /* useInputThread,*/ actions.toMap()) {
+    ) : this(backend, strict, mapOf(*actions)) {
         this.strict = strict
     }
-
-    // for calculating delta time
-    // TODO: implement timing
-    internal var lastUpdateTime: Double = 0.0
 
     /**
      * A list of active Players.
@@ -48,8 +41,7 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
      * TODO: This can never update, needs to be fixed.
      */
     val players: ArrayList<Player<T>> =
-        ArrayList(inputBackend.getGamepads().map { Player(this, it) })
-//        get() = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
+        ArrayList(backend.getGamepads().map { Player(this, it) })
 
     /**
      * Convenience function for Java
@@ -86,10 +78,10 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
                 // loud / silent null check
                 if (strict) descriptor!!; else if (descriptor == null) break
 
-                val rawState: InputData = inputBackend.getGamepads()[i].getState(bind.input)
+                val rawState: InputData = backend.getGamepads()[i].getState(bind.input)
 
                 val previousData = statePrevious[bind.targetAction]
-                val newData: InputData = bind.transform(rawState, descriptor)
+                val newData: InputData = bind.transform(rawState, descriptor) ?: continue
 
                 if (newData.type != descriptor.type)
                     if (strict) throw Exception("Mismatched transformation result (expected ${descriptor.type.name.lowercase()}, got ${newData.type.name.lowercase()})")
@@ -131,12 +123,16 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
         }
     }
 
+    //        get() = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
+
+    // for calculating delta time
+    // TODO: implement timing
+    internal var lastUpdateTime: Double = 0.0
+
     init {
-//         multithread input (remove this line)
-//        if (useInputThread) throw Exception("Gamepadyn has no multithreading implementation yet!")
         for ((_, descriptor) in actions.entries) when (descriptor!!.type) {
-            ANALOG -> assert(descriptor.axes > 0) { "A digital input descriptor must have 0 axes!" }
-            DIGITAL -> assert(descriptor.axes == 0) { "An analog input descriptor must have 1 or more axes!" }
+            ANALOG -> require(descriptor.axes > 0) { "A digital input descriptor must have 0 axes!" }
+            DIGITAL -> require(descriptor.axes == 0) { "An analog input descriptor must have 1 or more axes!" }
         }
     }
 

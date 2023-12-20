@@ -18,8 +18,8 @@ class SimulatedInputUnitTest {
     }
 
     private val actions: Map<TestAction, GDesc> = mapOf(
-        DEBUG_ACTION to GDesc(DIGITAL),
-        ANALOG_2D_ACTION to GDesc(ANALOG, 2)
+        DEBUG_ACTION        to GDesc.digital(),
+        ANALOG_2D_ACTION    to GDesc.analog(2)
     )
 
     @Test

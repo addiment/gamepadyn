@@ -44,7 +44,12 @@ enum class RawInput(val descriptor: InputDescriptor) {
 //    SPECIAL_OPTIONS(DIGITAL),
     ;
 
-    constructor(type: InputType = DIGITAL, axes: Int = 0) : this(InputDescriptor(type, axes))
+    constructor(type: InputType = DIGITAL, axes: Int = 0) : this(
+        when (type) {
+            DIGITAL -> InputDescriptor.digital()
+            ANALOG -> InputDescriptor.analog(axes)
+        }
+    )
 
 //    constructor() : this(ActionType.DIGITAL, 0);
 }

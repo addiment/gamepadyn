@@ -25,6 +25,8 @@ data class InputDataDigital(
 ): InputData() {
     override val type = InputType.DIGITAL
 
+    operator fun invoke(): Boolean = digitalData
+
     override fun equals(other: Any?): Boolean {
         if (other !is InputDataDigital) return false
         return this.digitalData == other.digitalData
@@ -60,8 +62,10 @@ data class InputDataAnalog(
     constructor(dataFirst: Float?, vararg dataMore: Float?) : this(arrayOf(dataFirst, *dataMore))
 
     init {
-        assert(analogData.isNotEmpty()) { "Analog data must not be empty, this implies (axes < 0)!" }
+        require(analogData.isNotEmpty()) { "Analog data must not be empty, this implies (axes < 0)!" }
     }
+
+    operator fun get(axis: Int): Float? = analogData[axis]
 
     override fun equals(other: Any?): Boolean {
         if (other !is InputDataAnalog) return false

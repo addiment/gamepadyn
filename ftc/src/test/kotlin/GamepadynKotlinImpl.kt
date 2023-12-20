@@ -41,7 +41,7 @@ class GamepadynKotlinImpl : OpMode() {
         val p0 = gamepadyn.players[0]
 
         // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-        p0.getEventDigital(TestAction.DEBUG_ACTION)!!.addListener {
+        p0.getEventDigital(TestAction.DEBUG_ACTION)!! {
             telemetry.addLine("Button ${if (it.digitalData) "pressed"; else "released"}!")
         }
 
