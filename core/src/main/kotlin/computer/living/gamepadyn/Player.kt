@@ -2,18 +2,25 @@
 
 package computer.living.gamepadyn
 
-import computer.living.gamepadyn.InputType.ANALOG
-import computer.living.gamepadyn.InputType.DIGITAL
+import computer.living.gamepadyn.InputType.*
 
-class Player<T : Enum<T>> internal constructor(
-    internal val parent: Gamepadyn<T>,
+class Player<TD, TA, TAA, TAAA> internal constructor(
+    internal val parent: Gamepadyn<TD, TA, TAA, TAAA>,
     internal var rawGamepad: InputBackend.RawGamepad
-) {
-
+)
+        where TD : ActionEnumDigital,
+              TA : ActionEnumAnalog1,
+              TAA : ActionEnumAnalog2,
+              TAAA : ActionEnumAnalog3,
+              TD : Enum<TD>,
+              TA : Enum<TA>,
+              TAA : Enum<TAA>,
+              TAAA : Enum<TAAA>
+{
     /**
      * The current state of every action tracked by the Player.
      */
-    internal var state: MutableMap<T, InputData> = parent.actions.entries.associate {
+    internal var state: Map<InputType, Map<ActionEnum>> = parent.actions.entries.associate {
         // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk
         when (it.value!!.type) {
             ANALOG -> {
@@ -39,11 +46,11 @@ class Player<T : Enum<T>> internal constructor(
      * As much as I'd like for us to have everything work perfectly at runtime and compile-time, we have to make compromises.
      */
 
-    internal val eventsDigital: Map<T, ActionEvent<InputDataDigital>> =
+    internal val eventsDigital: Map<TD, ActionEvent<InputDataDigital>> =
         parent.actions.entries.filter { it.value!!.type == DIGITAL }
             .associate { it.key to ActionEvent() }
 
-    internal val eventsAnalog: Map<T, ActionEvent<InputDataAnalog>> =
+    internal val eventsAnalog: Map<TA, ActionEvent<InputDataAnalog1>> =
         parent.actions.entries.filter { it.value!!.type == ANALOG }
             .associate { it.key to ActionEvent() }
 
@@ -52,17 +59,8 @@ class Player<T : Enum<T>> internal constructor(
      */
     var configuration: Configuration<T>? = null
 
-
-    fun getEvent(action: T): ActionEvent<*>? {
-        val descriptor = parent.actions[action]
-        return if (descriptor == null) null; else when (descriptor.type) {
-            ANALOG ->   eventsAnalog[action]
-            DIGITAL ->  eventsDigital[action]
-        }
-    }
-
-    fun getEventAnalog(action: T): ActionEvent<InputDataAnalog>? = eventsAnalog[action]
-    fun getEventDigital(action: T): ActionEvent<InputDataDigital>? = eventsDigital[action]
+    fun getEvent(action: TD): ActionEvent<InputDataDigital>? = eventsDigital[action]
+    fun getEvent(action: TA): ActionEvent<InputDataAnalog1>? = eventsAnalog[action]
 
     /**
      * Returns the current state of the provided action (if valid) and `null` if the state doesn't exist or hasn't been updated.

@@ -1,38 +1,94 @@
 package computer.living.gamepadyn
 
-import computer.living.gamepadyn.InputType.ANALOG
-import computer.living.gamepadyn.InputType.DIGITAL
+import computer.living.gamepadyn.InputType.*
+import kotlin.reflect.KClass
+
+sealed interface ActionEnum
+interface ActionEnumDigital : ActionEnum
+interface ActionEnumAnalog1 : ActionEnum
+interface ActionEnumAnalog2 : ActionEnum
+interface ActionEnumAnalog3 : ActionEnum
+
+data class ActionMap<Td, Ta, Taa, Taaa>(
+    var digitalActions: Set<Td> = setOf(),
+    var analog1Actions: Set<Ta> = setOf(),
+    var analog2Actions: Set<Taa> = setOf(),
+    var analog3Actions: Set<Taaa> = setOf()
+) where Td : ActionEnumDigital, Ta : ActionEnumAnalog1, Taa : ActionEnumAnalog2, Taaa : ActionEnumAnalog3, Td : Enum<Td>, Ta : Enum<Ta>, Taa : Enum<Taa>, Taaa : Enum<Taaa> {
+
+    init {
+        require(digitalActions.isNotEmpty() || analog1Actions.isNotEmpty() || analog2Actions.isNotEmpty() || analog3Actions.isNotEmpty()) { "Must provide at least 1 action!" }
+    }
+}
 
 /**
  * A Gamepadyn instance.
  *
- * @param backend The backend input source.
  * @param actions A map of actions that this Gamepadyn instance should be aware of
  */
-@Suppress("MemberVisibilityCanBePrivate")
-class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
+@Suppress("MemberVisibilityCanBePrivate", "BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
+class Gamepadyn<TD, TA, TAA, TAAA> @JvmOverloads constructor(
+    /**
+     * The backend input source.
+     */
     internal val backend: InputBackend,
     /**
      * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
      */
     var strict: Boolean = true,
-    internal var actions: Map<T, InputDescriptor?>
-) {
+    var actions: ActionMap<TD, TA, TAA, TAAA>
+    )
+        where TD : ActionEnumDigital,
+              TA : ActionEnumAnalog1,
+              TAA : ActionEnumAnalog2,
+              TAAA : ActionEnumAnalog3,
+//              TD : Ti,
+//              TA : Ti,
+//              TAA : Ti,
+//              TAAA : Ti,
+              TD : Enum<TD>,
+              TA : Enum<TA>,
+              TAA : Enum<TAA>,
+              TAAA : Enum<TAAA> {
 
     /**
-     * Creates a Gamepadyn instance.
-     * @param backend The backend input source.
-     * @param strict If enabled, failures will be loud and catastrophic. Whether that's better than "silent but deadly" is up to you.
-     * @param actions A map of actions that this Gamepadyn instance should be aware of
+     * A transformation from inputs to actions.
+     *
+     * I am not happy with this API as it is, and will be working on developing it further in the future.
      */
-    @SafeVarargs
-    @JvmOverloads
-    constructor(
-        backend: InputBackend,
-        strict: Boolean = true,
-        vararg actions: Pair<T, InputDescriptor?>
-    ) : this(backend, strict, mapOf(*actions)) {
-        this.strict = strict
+    /*
+     * TODO: Rework the binding API to require less type casting/assumption in implementations.
+     *      The constructor isn't great either, almost all work should be done in the transform function.
+     *      Why isn't it a lambda? Because users may want to store persistent state *in the bind.*
+     *      That might change though. It's not at the top of my priority list right now.
+     */
+    open class ActionBind<I, O>
+            where I : InputData,
+                  O : InputData,
+//        where Td : computer.living.gamepadyn.ActionEnumDigital,
+//              Ta : computer.living.gamepadyn.ActionEnumAnalog1,
+//              Taa : computer.living.gamepadyn.ActionEnumAnalog2,
+//              Taaa : computer.living.gamepadyn.ActionEnumAnalog3,
+//              Td : kotlin.Enum<Td>,
+//              Ta : kotlin.Enum<Ta>,
+//              Taa : kotlin.Enum<Taa>,
+//              Taaa : kotlin.Enum<Taaa>,
+    {
+
+        constructor(reifier: O) {
+
+        }
+
+        fun reify(i: I): KClass<*> = i.type.kClass
+        fun reify(o: O): KClass<*> = o.type.kClass
+
+        /**
+         * Performs a transformation on the input data.
+         */
+        open fun transform(data: I): O? = when (data) {
+            reify(data).
+        }
+
     }
 
     /**
@@ -40,13 +96,13 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
      *
      * TODO: This can never update, needs to be fixed.
      */
-    val players: ArrayList<Player<T>> =
+    val players: ArrayList<Player<TD, TA, TAA, TAAA>> =
         ArrayList(backend.getGamepads().map { Player(this, it) })
 
     /**
      * Convenience function for Java
      */
-    fun getPlayer(index: Int): Player<T>? = players.getOrNull(index)
+    fun getPlayer(index: Int): Player<TD, TA, TAA, TAAA>? = players.getOrNull(index)
 
     /**
      * Updates state. Should be run every "frame," "tick," "update," or whatever iteration function your program uses.
@@ -130,10 +186,13 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
     internal var lastUpdateTime: Double = 0.0
 
     init {
-        for ((_, descriptor) in actions.entries) when (descriptor!!.type) {
-            ANALOG -> require(descriptor.axes > 0) { "A digital input descriptor must have 0 axes!" }
-            DIGITAL -> require(descriptor.axes == 0) { "An analog input descriptor must have 1 or more axes!" }
-        }
+        actions = ActionMap(
+            actions.digitalActions.toSet(),
+            actions.analog1Actions.toSet(),
+            actions.analog2Actions.toSet(),
+            actions.analog3Actions.toSet()
+        )
+        require(actions.digitalActions.isNotEmpty() || actions.analog1Actions.isNotEmpty() || actions.analog2Actions.isNotEmpty() || actions.analog3Actions.isNotEmpty()) { "Must provide at least 1 action!" }
     }
 
 }

@@ -1,11 +1,16 @@
 package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
+import computer.living.gamepadyn.InputTypeEnum.*
+
+sealed interface RawInput {
+    val type: InputType
+}
 
 /**
  * Represents the inputs of a controller, like buttons and joysticks.
  */
-enum class RawInput(val descriptor: InputDescriptor) {
+enum class RawInputDigital(override val type: InputType) : RawInput {
     FACE_DOWN           (DIGITAL), // Generic face button (= A)
     FACE_RIGHT          (DIGITAL), // Generic face button (= B)
     FACE_LEFT           (DIGITAL), // Generic face button (= X)
@@ -30,26 +35,15 @@ enum class RawInput(val descriptor: InputDescriptor) {
     DPAD_RIGHT          (DIGITAL),
 
     STICK_LEFT_BUTTON   (DIGITAL),
-    STICK_RIGHT_BUTTON  (DIGITAL),
-    STICK_LEFT          (ANALOG, 2),
-    STICK_RIGHT         (ANALOG, 2),
+    STICK_RIGHT_BUTTON  (DIGITAL)
+}
 
-    TRIGGER_LEFT        (ANALOG, 1),
-    TRIGGER_RIGHT       (ANALOG, 1),
+enum class RawInputAnalog1(override val type: InputType) : RawInput {
+    TRIGGER_LEFT        (ANALOG1),
+    TRIGGER_RIGHT       (ANALOG1)
+}
 
-//    SPECIAL_GUIDE(DIGITAL),
-//    SPECIAL_START(DIGITAL),
-//    SPECIAL_BACK(DIGITAL),
-//    SPECIAL_SHARE(DIGITAL),
-//    SPECIAL_OPTIONS(DIGITAL),
-    ;
-
-    constructor(type: InputType = DIGITAL, axes: Int = 0) : this(
-        when (type) {
-            DIGITAL -> InputDescriptor.digital()
-            ANALOG -> InputDescriptor.analog(axes)
-        }
-    )
-
-//    constructor() : this(ActionType.DIGITAL, 0);
+enum class RawInputAnalog2(override val type: InputType) : RawInput {
+    STICK_LEFT          (ANALOG2),
+    STICK_RIGHT         (ANALOG2),
 }
