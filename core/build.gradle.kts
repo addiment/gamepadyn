@@ -34,8 +34,6 @@ publishing {
             artifactId = "core"
             version = version
 
-
-
             from(components["java"])
 
 //            pom {

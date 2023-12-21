@@ -11,6 +11,14 @@ sealed class InputData {
      * The type of the InputData, corresponding to the [InputDataDigital] and [InputDataAnalog] classes respectively.
      */
     abstract val type: InputType
+
+//    operator fun invoke() {
+//        return when (this) {
+//            is InputDataDigital -> this.invoke()
+//            is InputDataAnalog -> this.invoke()
+//        }
+//    }
+
 }
 
 /**
@@ -66,6 +74,7 @@ data class InputDataAnalog(
     }
 
     operator fun get(axis: Int): Float? = analogData[axis]
+    operator fun invoke(): Array<Float?> = analogData
 
     override fun equals(other: Any?): Boolean {
         if (other !is InputDataAnalog) return false
@@ -79,7 +88,7 @@ data class InputDataAnalog(
     }
 
     /**
-     * Returns a deep copy of the data. This is different from the data class copy method, which is shallow..
+     * Returns a deep copy of the data. This is different from the data class copy method, which is shallow.
      */
     fun copy(): InputDataAnalog {
         return InputDataAnalog(this.analogData.copyOf())
