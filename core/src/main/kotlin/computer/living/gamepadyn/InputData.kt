@@ -77,6 +77,7 @@ data class InputDataAnalog(
     operator fun invoke(): Array<Float?> = analogData
 
     override fun equals(other: Any?): Boolean {
+//        if (other == null) return false
         if (other !is InputDataAnalog) return false
         return this.analogData.contentEquals(other.analogData)
     }

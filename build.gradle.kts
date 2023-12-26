@@ -4,6 +4,12 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
 }
 
+buildscript {
+    dependencies {
+        classpath(kotlin("gradle-plugin", version = "1.9.21"))
+    }
+}
+
 val libVersion by extra { "0.1.1-BETA" }
 
 allprojects {

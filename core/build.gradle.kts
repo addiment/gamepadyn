@@ -2,8 +2,8 @@ import org.gradle.kotlin.dsl.extra
 
 plugins {
     kotlin("jvm")
-    `maven-publish`
-    `java-library`
+    id("maven-publish")
+    id("java-library")
 }
 
 dependencies {

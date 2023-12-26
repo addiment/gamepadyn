@@ -1,7 +1,7 @@
 # Version History
 
 
-## v0.1.0-BETA
+## v0.2.0-BETA
 - Added shorthand for `ActionEvent.addListener` using the `invoke` operator.
   - In Kotlin, `ActionEvent.addListener { /* ... */ }` can now be called with `ActionEvent { /* ... */ }`.
   - See the README for an updated example.
