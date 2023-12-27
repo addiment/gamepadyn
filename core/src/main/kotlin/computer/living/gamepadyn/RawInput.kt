@@ -1,7 +1,6 @@
 package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
-import computer.living.gamepadyn.InputTypeEnum.*
 
 sealed interface RawInput {
     val type: InputType

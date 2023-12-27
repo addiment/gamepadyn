@@ -4,75 +4,75 @@ package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
 
-class Player<TD, TA, TAA, TAAA> internal constructor(
-    internal val parent: Gamepadyn<TD, TA, TAA, TAAA>,
+class Player<TD, TA, TAA> internal constructor(
+    internal val parent: Gamepadyn<TD, TA, TAA>,
     internal var rawGamepad: InputBackend.RawGamepad
 )
         where TD : ActionEnumDigital,
               TA : ActionEnumAnalog1,
               TAA : ActionEnumAnalog2,
-              TAAA : ActionEnumAnalog3,
               TD : Enum<TD>,
               TA : Enum<TA>,
-              TAA : Enum<TAA>,
-              TAAA : Enum<TAAA>
+              TAA : Enum<TAA>
 {
-    /**
-     * The current state of every action tracked by the Player.
-     */
-    internal var state: Map<InputType, Map<ActionEnum>> = parent.actions.entries.associate {
-        // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk
-        when (it.value!!.type) {
-            ANALOG -> {
-                if (it.value!!.axes <= 0) throw Exception("Provided an analog action with 0 or less axes!")
-                return@associate (it.key to (if (it.value!!.axes == 1) InputDataAnalog(0f) else InputDataAnalog(
-                    0f,
-                    *FloatArray(it.value!!.axes - 1).toTypedArray()
-                )))
-            }
+    internal var stateDigital: MutableMap<TD,   InputDataDigital?> = parent.actions.digitalActions.associateWith { InputDataDigital() }.toMutableMap()
+    internal var stateAnalog1: MutableMap<TA,   InputDataAnalog1?> = parent.actions.analog1Actions.associateWith { InputDataAnalog1() }.toMutableMap()
+    internal var stateAnalog2: MutableMap<TAA,  InputDataAnalog2?> = parent.actions.analog2Actions.associateWith { InputDataAnalog2() }.toMutableMap()
 
-            DIGITAL -> return@associate (it.key to InputDataDigital())
-        }
-    }.toMutableMap()
+    internal var eventsDigital: MutableMap<TD,   Event<InputDataDigital>?> = parent.actions.digitalActions.associateWith { Event<InputDataDigital>() }.toMutableMap()
+    internal var eventsAnalog1: MutableMap<TA,   Event<InputDataAnalog1>?> = parent.actions.analog1Actions.associateWith { Event<InputDataAnalog1>() }.toMutableMap()
+    internal var eventsAnalog2: MutableMap<TAA,  Event<InputDataAnalog2>?> = parent.actions.analog2Actions.associateWith { Event<InputDataAnalog2>() }.toMutableMap()
 
-        /**
-     * These two maps have to be separate due to Kotlin's rules on generics.
-     * This doesn't really affect the user, but here it means that you need to put a bit more work into type checking.
-     * In short, generics cannot be checked at runtime unless reified, but you can't reify class generic parameters.
-     * If we had 1 map with both analog and digital events, we would need to create a mechanism for type-checking at runtime.
-     * Previously, this came in the form of a "dataType" parameter on the ActionEvent. It no longer exists.
-     *
-     *
-     * As much as I'd like for us to have everything work perfectly at runtime and compile-time, we have to make compromises.
-     */
-
-    internal val eventsDigital: Map<TD, ActionEvent<InputDataDigital>> =
-        parent.actions.entries.filter { it.value!!.type == DIGITAL }
-            .associate { it.key to ActionEvent() }
-
-    internal val eventsAnalog: Map<TA, ActionEvent<InputDataAnalog1>> =
-        parent.actions.entries.filter { it.value!!.type == ANALOG }
-            .associate { it.key to ActionEvent() }
 
     /**
      * The player's configuration.
      */
-    var configuration: Configuration<T>? = null
+    var configuration: Configuration<TD, TA, TAA>? = null
 
-    fun getEvent(action: TD): ActionEvent<InputDataDigital>? = eventsDigital[action]
-    fun getEvent(action: TA): ActionEvent<InputDataAnalog1>? = eventsAnalog[action]
-
+    @JvmName("getEventDigital")
+    fun getEvent(action: TD): Event<InputDataDigital>?    = eventsDigital[action]
+    @JvmName("getEventAnalog1")
+    fun getEvent(action: TA): Event<InputDataAnalog1>?    = eventsAnalog1[action]
+    @JvmName("getEventAnalog2")
+    fun getEvent(action: TAA): Event<InputDataAnalog2>?   = eventsAnalog2[action]
     /**
-     * Returns the current state of the provided action (if valid) and `null` if the state doesn't exist or hasn't been updated.
+     * Returns the state of the digital action provided.
      */
-    fun getState(action: T): InputData? = state[action]
-    fun getStateAnalog(action: T): InputDataAnalog? {
-        val s = state[action]
-        return if (s != null && s is InputDataAnalog) s; else null
-    }
-    fun getStateDigital(action: T): InputDataDigital? {
-        val s = state[action]
-        return if (s != null && s is InputDataDigital) s; else null
-    }
+    @JvmName("getStateDigital")
+    fun getState(action: TD): InputDataDigital?     = stateDigital[action]
+    /**
+     * Returns the state of the 1D analog action provided.
+     */
+    @JvmName("getStateAnalog1")
+    fun getState(action: TA): InputDataAnalog1?     = stateAnalog1[action]
+    /**
+     * Returns the state of the 2D analog action provided.
+     */
+    @JvmName("getStateAnalog2")
+    fun getState(action: TAA): InputDataAnalog2?    = stateAnalog2[action]
+
+    /*
+     * NOTE: This API is... *unpleasant* in Java.
+     * This is because Java's type erasure causes the getState and
+     * getEvent functions to have the same signature.
+     * Kotlin does magic to ensure that the functions have different signatures at compile-time.
+     * In order to make it work for Java, we have to rename the functions (hence @JvmName).
+     * As an example, the following Java sample does not compile:
+     */
+
+/*
+
+public class GenericTest<
+        TD extends Enum<TD> & ActionEnumDigital,
+        TA extends Enum<TA> & ActionEnumAnalog1,
+        TAA extends Enum<TAA> & ActionEnumAnalog2>
+{
+    Event<InputDataDigital> getEvent(TD action) { return new Event<>(); }
+    Event<InputDataAnalog1> getEvent(TA action) { return new Event<>(); }
+    Event<InputDataAnalog2> getEvent(TAA action) { return new Event<>(); }
+}
+
+*/
+
 
 }

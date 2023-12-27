@@ -5,7 +5,7 @@ import java.util.function.Consumer
 /**
  * Represents an event to which listeners are added and called when the event is triggered.
  */
-class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
+class Event<T: InputData> internal constructor(/*val type: InputType*/) {
     /**
      * A set of all listeners (lambdas) to this event.
      */
@@ -23,6 +23,7 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      * Adds a callback for the event.
      * @return true if it was added and false if it was already there before
      */
+//    @JvmSynthetic
     fun addListener(listener: ((T) -> Unit)): Boolean = listeners.add(listener)
     /**
      * Java-specific overload.
@@ -32,6 +33,7 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
     /**
      * Alias for [addListener]
      */
+//    @JvmSynthetic
     operator fun invoke(listener: ((T) -> Unit)): Boolean = listeners.add(listener)
     /**
      * Alias for [addListener]
@@ -43,6 +45,7 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      * Removes an already-present callback for the event.
      * @return true if it was removed and false if it wasn't a listener before
      */
+//    @JvmSynthetic
     fun removeListener(listener: ((T) -> Unit)): Boolean = listeners.remove(listener)
     /**
      * Java-specific overload.

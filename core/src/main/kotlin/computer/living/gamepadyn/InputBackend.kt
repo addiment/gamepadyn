@@ -21,10 +21,14 @@ interface InputBackend {
      * Instead, use [computer.living.gamepadyn.ftc.InputBackendFtc.RawGamepadFtc].
      */
     interface RawGamepad {
+        fun getState(input: RawInputDigital): InputDataDigital
+        fun getState(input: RawInputAnalog1): InputDataAnalog1
+        fun getState(input: RawInputAnalog2): InputDataAnalog2
+
         /**
-         * Returns the state of a specific input. The return type MUST match the expected [InputDescriptor] corresponding to the [RawInput] provided to the function.
+         * Returns the state of all inputs as a map of RawInput to InputData.
          */
-        fun getState(input: RawInput): InputData
+        fun getState(): Map<RawInput, InputData>
 
         /**
          * Returns an ID that MUST be unique to a specific gamepad. It MAY correspond to a physical device.

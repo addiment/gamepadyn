@@ -1,48 +1,47 @@
-import computer.living.gamepadyn.InputType.*
-import computer.living.gamepadyn.ActionBind
-import computer.living.gamepadyn.Configuration
-import computer.living.gamepadyn.GDesc
+import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import computer.living.gamepadyn.ActionEnumAnalog1
+import computer.living.gamepadyn.ActionEnumAnalog2
+import computer.living.gamepadyn.ActionEnumDigital
+import computer.living.gamepadyn.ActionMap
 import computer.living.gamepadyn.Gamepadyn
-import computer.living.gamepadyn.RawInput
 import computer.living.gamepadyn.ftc.InputBackendFtc
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import GamepadynKotlinImpl.TestActionDigital.LAUNCH_DRONE
 
 class GamepadynKotlinImpl : OpMode() {
+    enum class TestActionDigital : ActionEnumDigital {
+        LAUNCH_DRONE
+    }
 
-    enum class TestAction {
+    enum class TestActionAnalog1 : ActionEnumAnalog1 {
+        CLAW
+    }
+
+    enum class TestActionAnalog2 : ActionEnumAnalog2 {
         MOVEMENT,
-        ROTATION,
-        CLAW,
-        DEBUG_ACTION
+        ROTATION
     }
 
-    private lateinit var gamepadyn: Gamepadyn<TestAction>
-
-
-    override fun init() {
-        gamepadyn = Gamepadyn(
-            InputBackendFtc(this),
-            true,
-            TestAction.MOVEMENT            to GDesc.analog(2),
-            TestAction.ROTATION            to GDesc.analog(1),
-            TestAction.CLAW                to GDesc.digital(),
-            TestAction.DEBUG_ACTION        to GDesc.digital()
+    private val gamepadyn = Gamepadyn(
+        InputBackendFtc(this),
+        strict = true,
+        ActionMap(
+            TestActionDigital.entries,
+            TestActionAnalog1.entries,
+            TestActionAnalog2.entries
         )
+    )
 
-        gamepadyn.players[0].configuration = Configuration(
-            ActionBind(RawInput.FACE_A, TestAction.DEBUG_ACTION)
-        )
-    }
+    override fun init() { }
 
     override fun start() {
 
         // Get a reference to the player (FTC Player 1)
-        val p0 = gamepadyn.players[0]
+        val p0 = gamepadyn.getPlayer(0)!!
 
-        // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-        p0.getEventDigital(TestAction.DEBUG_ACTION)!! {
-            telemetry.addLine("Button ${if (it.digitalData) "pressed"; else "released"}!")
+        // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
+        p0.getEvent(LAUNCH_DRONE)!! {
+            telemetry.addLine("Button ${if (it.active) "pressed" else "released"}!")
         }
 
     }
