@@ -36,17 +36,17 @@ class Player<TD, TA, TAA> internal constructor(
     @JvmName("getEventAnalog2")
     fun getEvent(action: TAA): Event<InputDataAnalog2>?   = eventsAnalog2[action]
     /**
-     * Returns the state of the digital action provided.
+     * Returns the state of the digital action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateDigital")
     fun getState(action: TD): InputDataDigital?     = stateDigital[action]
     /**
-     * Returns the state of the 1D analog action provided.
+     * Returns the state of the 1D analog action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateAnalog1")
     fun getState(action: TA): InputDataAnalog1?     = stateAnalog1[action]
     /**
-     * Returns the state of the 2D analog action provided.
+     * Returns the state of the 2D analog action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateAnalog2")
     fun getState(action: TAA): InputDataAnalog2?    = stateAnalog2[action]
