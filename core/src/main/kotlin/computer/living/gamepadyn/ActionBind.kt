@@ -1,7 +1,6 @@
 package computer.living.gamepadyn
 
 open class ActionBind<O> (
-    val name: String = "",
     val input: RawInput,
     val targetAction: O,
 )
