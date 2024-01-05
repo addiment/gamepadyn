@@ -124,7 +124,7 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
                     is ActionEnumDigital -> statePreviousDigital[bind.targetAction]
                     is ActionEnumAnalog1 -> statePreviousAnalog1[bind.targetAction]
                     is ActionEnumAnalog2 -> statePreviousAnalog2[bind.targetAction]
-                    else -> if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} was invalid") else null
+                    else -> if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid") else null
                 } ?: continue
 
                 val newData: InputData = bind.transform(
@@ -142,28 +142,28 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
                     is ActionEnumDigital -> {
                         @Suppress("UNCHECKED_CAST")
                         val cast: TD = (bind.targetAction as? TD)
-                            ?: if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} was invalid (guessed type Digital?)") else continue@bindLoop
+                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid (guessed type Digital?)") else continue@bindLoop
                         val inCast = newData as? InputDataDigital
-                            ?: if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} is digital but was provided type ${newData.type}") else continue@bindLoop
+                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} is digital but was provided type ${newData.type}") else continue@bindLoop
                         player.stateDigital[cast] = inCast
                     }
                     is ActionEnumAnalog1 -> {
                         @Suppress("UNCHECKED_CAST")
                         val cast: TA = (bind.targetAction as? TA)
-                            ?: if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} was invalid (guessed type Analog1?)") else continue@bindLoop
+                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid (guessed type Analog1?)") else continue@bindLoop
                         val inCast = newData as? InputDataAnalog1
-                            ?: if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} is analog1 but was provided type ${newData.type}") else continue@bindLoop
+                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} is analog1 but was provided type ${newData.type}") else continue@bindLoop
                         player.stateAnalog1[cast] = inCast
                     }
                     is ActionEnumAnalog2 -> {
                         @Suppress("UNCHECKED_CAST")
                         val cast: TAA = (bind.targetAction as? TAA)
-                            ?: if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} was invalid (guessed type Analog2?)") else continue@bindLoop
+                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid (guessed type Analog2?)") else continue@bindLoop
                         val inCast = newData as? InputDataAnalog2
-                            ?: if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} is analog2 but was provided type ${newData.type}") else continue@bindLoop
+                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} is analog2 but was provided type ${newData.type}") else continue@bindLoop
                         player.stateAnalog2[cast] = inCast
                     }
-                    else -> if (strict) throw Exception("Gamepadyn (strict): target action \"${bind.targetAction.name}\" of bind ${bind.name} was invalid") else continue@bindLoop
+                    else -> if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid") else continue@bindLoop
                 }
             }
 
