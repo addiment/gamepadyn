@@ -16,12 +16,20 @@ import java.util.UUID
 /**
  * Pre-made FTC implementation of a Gamepadyn [InputBackend]
  */
-class InputBackendFtc(opMode: OpMode) : InputBackend {
+class InputBackendFtc(private val opMode: OpMode) : InputBackend {
 
     private val gamepads: Array<RawGamepadFtc> = arrayOf(RawGamepadFtc(opMode.gamepad1), RawGamepadFtc(opMode.gamepad2))
 
+    private var lastUpdateTime = opMode.time
+
     override fun getGamepads(): Array<out InputBackend.RawGamepad> {
         return gamepads.copyOf()
+    }
+
+    override fun hasUpdated(): Boolean = (lastUpdateTime == opMode.time)
+
+    override fun update() {
+        lastUpdateTime = opMode.time
     }
 
     class RawGamepadFtc(private val gamepad: Gamepad) : InputBackend.RawGamepad {

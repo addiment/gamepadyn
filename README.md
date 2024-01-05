@@ -29,14 +29,14 @@ without adding extra class-wide variables that would otherwise make code harder 
 
 Currently, distribution of this library is done via redistributed .jar and .aar files.
 Download them from the releases page (or build them yourself) and copy them into your `/TeamCode/lib` folder.
-**Make sure to replace `0.1.0-BETA` with whatever version of the library you have.**
+**Make sure to replace `0.2.0-BETA` with whatever version of the library you have.**
 Add the following to the dependencies block of your `/TeamCode/build.gradle`:
 
 ```groovy
-implementation files("lib/core-0.1.0-BETA.jar")
-implementation files("lib/core-0.1.0-BETA-sources.jar")
-implementation files("lib/ftc-0.1.0-BETA.aar")
-implementation files("lib/ftc-0.1.0-BETA-sources.jar")
+implementation files("lib/core-0.2.0-BETA.jar")
+implementation files("lib/core-0.2.0-BETA-sources.jar")
+implementation files("lib/ftc-0.2.0-BETA.aar")
+implementation files("lib/ftc-0.2.0-BETA-sources.jar")
 ```
 
 The following are sample OpModes that showcase basic usage of Gamepadyn.

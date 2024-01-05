@@ -1,8 +1,8 @@
 package computer.living.gamepadyn
 
 open class ActionBind<O> (
-    val input: RawInput,
     val targetAction: O,
+    val input: RawInput,
 )
     where O : Enum<O>,
           O : ActionEnum

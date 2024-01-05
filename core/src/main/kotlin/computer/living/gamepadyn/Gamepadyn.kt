@@ -89,7 +89,8 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
         ArrayList(backend.getGamepads().map { Player(this, it) })
 
     /**
-     * Convenience function for Java
+     * Convenience function (equivalent to [players]`.getOrNull(index)`).
+     * This is mainly for Java, which can't use Kotlin getters with property access syntax.
      */
     fun getPlayer(index: Int): Player<TD, TA, TAA>? = players.getOrNull(index)
 

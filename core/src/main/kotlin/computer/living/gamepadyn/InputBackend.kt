@@ -33,7 +33,7 @@ interface InputBackend {
         /**
          * Returns an ID that MUST be unique to a specific gamepad. It MAY correspond to a physical device.
          *
-         * IDs MAY be persistent between instances, but our implementation generates them randomly per-instance.
+         * IDs MAY be persistent between instances, but our primary implementation generates them randomly per-instance.
          */
         fun getId(): UUID
     }
@@ -45,4 +45,17 @@ interface InputBackend {
      * (but if they aren't, you can use [RawGamepad.getId] for verification)
      */
     fun getGamepads(): Array<out RawGamepad>
+
+    /**
+     * Called as soon as the Gamepadyn instance runs [Gamepadyn.update].
+     * This function is public, so it is possible for it to be called when it isn't supposed to.
+     * Use this as a soft check for [hasUpdated].
+     */
+    fun update(): Unit = Unit
+
+    /**
+     * Returns whether or not any changes in state have occurred since the last call to [Gamepadyn.update].
+     * This function exists to "rate limit" event callbacks if the instance is updated multiple times per "frame."
+     */
+    fun hasUpdated(): Boolean = true
 }

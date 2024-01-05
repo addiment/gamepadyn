@@ -2,12 +2,25 @@ package computer.living.gamepadyn.test;
 
 import java.util.Objects;
 
+import computer.living.gamepadyn.ActionBind;
+import computer.living.gamepadyn.Configuration;
 import computer.living.gamepadyn.Gamepadyn;
 import computer.living.gamepadyn.ActionMap;
 import computer.living.gamepadyn.Player;
 import computer.living.gamepadyn.ActionEnumDigital;
 import computer.living.gamepadyn.ActionEnumAnalog1;
 import computer.living.gamepadyn.ActionEnumAnalog2;
+
+import computer.living.gamepadyn.RawInputDigital;
+import computer.living.gamepadyn.RawInputAnalog1;
+import computer.living.gamepadyn.RawInputAnalog2;
+
+import static computer.living.gamepadyn.RawInputDigital.*;
+import static computer.living.gamepadyn.RawInputAnalog1.*;
+import static computer.living.gamepadyn.RawInputAnalog2.*;
+import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionDigital.*;
+import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog1.*;
+import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog2.*;
 
 import computer.living.gamepadyn.ftc.InputBackendFtc;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -26,7 +39,7 @@ public class GamepadynJavaImpl extends OpMode {
         MOVEMENT,
         ROTATION
     }
-    Gamepadyn<TestActionDigital, TestActionAnalog1, TestActionAnalog2> gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
+    final Gamepadyn<TestActionDigital, TestActionAnalog1, TestActionAnalog2> gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
         true,
         new ActionMap<>(
             TestActionDigital.values(),
@@ -35,8 +48,16 @@ public class GamepadynJavaImpl extends OpMode {
         )
     );
 
+
     @Override
-    public void init() { }
+    public void init() {
+        //noinspection DataFlowIssue
+        gamepadyn.getPlayer(0).setConfiguration(new Configuration<>(
+            new ActionBind<>(LAUNCH_DRONE,  FACE_X),
+            new ActionBind<>(MOVEMENT,      STICK_LEFT),
+            new ActionBind<>(CLAW,          TRIGGER_RIGHT)
+        ));
+    }
 
     @Override
     public void start() {
@@ -50,7 +71,8 @@ public class GamepadynJavaImpl extends OpMode {
         assert p0 != null;
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        Objects.requireNonNull(p0.getEventDigital(TestActionDigital.LAUNCH_DRONE)).addListener(it -> {
+        //noinspection DataFlowIssue
+        p0.getEventDigital(LAUNCH_DRONE).addListener(it -> {
             telemetry.addLine("Button " + ((it.active) ? "pressed" : "released") + "!");
         });
 

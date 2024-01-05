@@ -1,12 +1,23 @@
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+
+import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
 import computer.living.gamepadyn.ActionMap
+import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
+import computer.living.gamepadyn.RawInputDigital.*
+import computer.living.gamepadyn.RawInputAnalog1.*
+import computer.living.gamepadyn.RawInputAnalog2.*
 import computer.living.gamepadyn.ftc.InputBackendFtc
 
-import GamepadynKotlinImpl.TestActionDigital.LAUNCH_DRONE
+import GamepadynKotlinImpl.TestActionDigital
+import GamepadynKotlinImpl.TestActionDigital.*
+import GamepadynKotlinImpl.TestActionAnalog1
+import GamepadynKotlinImpl.TestActionAnalog1.*
+import GamepadynKotlinImpl.TestActionAnalog2
+import GamepadynKotlinImpl.TestActionAnalog2.*
 
 class GamepadynKotlinImpl : OpMode() {
     enum class TestActionDigital : ActionEnumDigital {
@@ -32,7 +43,13 @@ class GamepadynKotlinImpl : OpMode() {
         )
     )
 
-    override fun init() { }
+    override fun init() {
+        gamepadyn.players[0].configuration = Configuration(
+            ActionBind(LAUNCH_DRONE,    FACE_X),
+            ActionBind(MOVEMENT,        STICK_LEFT),
+            ActionBind(CLAW,            TRIGGER_RIGHT)
+        )
+    }
 
     override fun start() {
 

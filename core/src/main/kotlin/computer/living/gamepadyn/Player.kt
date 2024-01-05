@@ -35,6 +35,7 @@ class Player<TD, TA, TAA> internal constructor(
     fun getEvent(action: TA): Event<InputDataAnalog1>?    = eventsAnalog1[action]
     @JvmName("getEventAnalog2")
     fun getEvent(action: TAA): Event<InputDataAnalog2>?   = eventsAnalog2[action]
+
     /**
      * Returns the state of the digital action provided, or `null` for an invalid action (you can safely use `!!`)
      */
