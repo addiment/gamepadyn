@@ -8,9 +8,7 @@ import computer.living.gamepadyn.InputType.*
  * @see InputDataAnalog
  */
 sealed class InputData {
-
     abstract val type: InputType
-
 }
 
 /**

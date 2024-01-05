@@ -8,6 +8,9 @@ interface ActionEnumDigital : ActionEnum
 interface ActionEnumAnalog1 : ActionEnum
 interface ActionEnumAnalog2 : ActionEnum
 
+/**
+ * @constructor The entries of the enum that you use for actions (i.e. ActionDigital.entries, ActionAnalog1.entries, ActionAnalog2.entries).
+ */
 data class ActionMap<TD, TA, TAA>(
     var digitalActions: Set<TD>,
     var analog1Actions: Set<TA>,
@@ -20,12 +23,18 @@ data class ActionMap<TD, TA, TAA>(
               TA : Enum<TA>,
               TAA : Enum<TAA>
 {
+    /**
+     * Creates the ActionMap with the entries of the enum that you use for actions (i.e. ActionDigital.entries, ActionAnalog1.entries, ActionAnalog2.entries).
+     */
     constructor(
         digitalActions: Array<TD>,
         analog1Actions: Array<TA>,
         analog2Actions: Array<TAA>
     ) : this (digitalActions.toSet(), analog1Actions.toSet(), analog2Actions.toSet())
 
+    /**
+     * Creates the ActionMap with the entries of the enum that you use for actions (i.e. ActionDigital.entries, ActionAnalog1.entries, ActionAnalog2.entries).
+     */
     constructor(
         digitalActions: EnumEntries<TD>,
         analog1Actions: EnumEntries<TA>,
@@ -106,7 +115,7 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
 //            }
             val rawState: Map<RawInput, InputData> = backend.getGamepads()[i].getState()
 
-            var potentialMutations: MutableSet<Enum<*>> = mutableSetOf()
+            val potentialMutations: MutableSet<Enum<*>> = mutableSetOf()
 
             if (config != null) bindLoop@ for (bind in config.binds) {
 //                println("bind (${bind.input.name} to ${bind.targetAction.name}) {")
