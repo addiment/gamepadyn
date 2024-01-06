@@ -34,7 +34,11 @@ enum class RawInputDigital(override val type: InputType) : RawInput {
     DPAD_RIGHT          (DIGITAL),
 
     STICK_LEFT_BUTTON   (DIGITAL),
-    STICK_RIGHT_BUTTON  (DIGITAL)
+    STICK_RIGHT_BUTTON  (DIGITAL),
+
+    SPECIAL_LEFT        (DIGITAL), // Generic special button (= BACK)
+    SPECIAL_BACK        (DIGITAL), // XB special button (= SPECIAL_LEFT)
+    SPECIAL_OPTIONS     (DIGITAL), // PS special button (= BACK)
 }
 
 enum class RawInputAnalog1(override val type: InputType) : RawInput {

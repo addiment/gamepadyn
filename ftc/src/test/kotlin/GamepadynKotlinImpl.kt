@@ -44,6 +44,7 @@ class GamepadynKotlinImpl : OpMode() {
     )
 
     override fun init() {
+
         gamepadyn.players[0].configuration = Configuration(
             ActionBind(LAUNCH_DRONE,    FACE_X),
             ActionBind(MOVEMENT,        STICK_LEFT),
