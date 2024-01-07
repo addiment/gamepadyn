@@ -18,6 +18,8 @@ import GamepadynKotlinImpl.TestActionAnalog1
 import GamepadynKotlinImpl.TestActionAnalog1.*
 import GamepadynKotlinImpl.TestActionAnalog2
 import GamepadynKotlinImpl.TestActionAnalog2.*
+import computer.living.gamepadyn.ActionBindAnalog2to1
+import computer.living.gamepadyn.Axis
 
 class GamepadynKotlinImpl : OpMode() {
     enum class TestActionDigital : ActionEnumDigital {
@@ -25,12 +27,12 @@ class GamepadynKotlinImpl : OpMode() {
     }
 
     enum class TestActionAnalog1 : ActionEnumAnalog1 {
-        CLAW
+        CLAW,
+        ROTATION
     }
 
     enum class TestActionAnalog2 : ActionEnumAnalog2 {
-        MOVEMENT,
-        ROTATION
+        MOVEMENT
     }
 
     private val gamepadyn = Gamepadyn(
@@ -46,10 +48,12 @@ class GamepadynKotlinImpl : OpMode() {
     override fun init() {
 
         gamepadyn.players[0].configuration = Configuration(
-            ActionBind(LAUNCH_DRONE,    FACE_X),
-            ActionBind(MOVEMENT,        STICK_LEFT),
-            ActionBind(CLAW,            TRIGGER_RIGHT)
+            ActionBind          (LAUNCH_DRONE,    FACE_LEFT             ),
+            ActionBind          (MOVEMENT,        STICK_LEFT            ),
+            ActionBindAnalog2to1(ROTATION,        STICK_RIGHT,  Axis.X  ),
+            ActionBind          (CLAW,            TRIGGER_RIGHT         )
         )
+
     }
 
     override fun start() {
@@ -57,15 +61,34 @@ class GamepadynKotlinImpl : OpMode() {
         // Get a reference to the player (FTC Player 1)
         val p0 = gamepadyn.getPlayer(0)!!
 
+        p0.getState(LAUNCH_DRONE)!!.active
+        p0.getState(LAUNCH_DRONE)!!.x
+        p0.getState(LAUNCH_DRONE)!!.y
+
+        p0.getState(ROTATION)!!.active
+        p0.getState(ROTATION)!!.x
+        p0.getState(ROTATION)!!.y
+
+        p0.getState(MOVEMENT)!!.active
+        p0.getState(MOVEMENT)!!.x
+        p0.getState(MOVEMENT)!!.y
+
+
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
         p0.getEvent(LAUNCH_DRONE)!! {
-            telemetry.addLine("Button ${if (it.active) "pressed" else "released"}!")
+            telemetry.addLine("Button ${if (it()) "pressed" else "released"}!")
+            telemetry.update()
+        }
+
+        // Usually, analog events should be replaced with state checks, but both work.
+        p0.getEvent(MOVEMENT)!! {
+            telemetry.addLine("Movement input: (${it.x}, ${it.y})")
+            telemetry.update()
         }
 
     }
 
     override fun loop() {
         gamepadyn.update()
-        telemetry.update()
     }
 }

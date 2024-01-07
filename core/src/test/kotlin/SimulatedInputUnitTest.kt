@@ -56,7 +56,7 @@ class SimulatedInputUnitTest {
         gamepadyn.update()
 
         gamepadyn.players[0].configuration = Configuration(
-            ActionBind(DIGITAL_ACTION,      FACE_A),
+            ActionBind(DIGITAL_ACTION,      FACE_DOWN),
             ActionBind(ANALOG_1D_ACTION,    TRIGGER_RIGHT),
             ActionBind(ANALOG_2D_ACTION,    STICK_RIGHT)
         )

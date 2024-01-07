@@ -7,6 +7,7 @@ open class ActionBind<O> (
     where O : Enum<O>,
           O : ActionEnum
 {
+
     /**
      * Transforms input data.
      *

@@ -15,42 +15,42 @@ class Player<TD, TA, TAA> internal constructor(
               TA : Enum<TA>,
               TAA : Enum<TAA>
 {
-    internal var stateDigital: MutableMap<TD,   InputDataDigital?> = parent.actions.digitalActions.associateWith { InputDataDigital() }.toMutableMap()
-    internal var stateAnalog1: MutableMap<TA,   InputDataAnalog1?> = parent.actions.analog1Actions.associateWith { InputDataAnalog1() }.toMutableMap()
-    internal var stateAnalog2: MutableMap<TAA,  InputDataAnalog2?> = parent.actions.analog2Actions.associateWith { InputDataAnalog2() }.toMutableMap()
+    internal var stateDigital: MutableMap<TD,   InputDataDigital> = parent.actions.digitalActions.associateWith { InputDataDigital() }.toMutableMap()
+    internal var stateAnalog1: MutableMap<TA,   InputDataAnalog1> = parent.actions.analog1Actions.associateWith { InputDataAnalog1() }.toMutableMap()
+    internal var stateAnalog2: MutableMap<TAA,  InputDataAnalog2> = parent.actions.analog2Actions.associateWith { InputDataAnalog2() }.toMutableMap()
 
-    internal var eventsDigital: MutableMap<TD,   Event<InputDataDigital>?> = parent.actions.digitalActions.associateWith { Event<InputDataDigital>() }.toMutableMap()
-    internal var eventsAnalog1: MutableMap<TA,   Event<InputDataAnalog1>?> = parent.actions.analog1Actions.associateWith { Event<InputDataAnalog1>() }.toMutableMap()
-    internal var eventsAnalog2: MutableMap<TAA,  Event<InputDataAnalog2>?> = parent.actions.analog2Actions.associateWith { Event<InputDataAnalog2>() }.toMutableMap()
+    internal var eventsDigital: Map<TD,   Event<InputDataDigital>> = parent.actions.digitalActions.associateWith { Event() }
+    internal var eventsAnalog1: Map<TA,   Event<InputDataAnalog1>> = parent.actions.analog1Actions.associateWith { Event() }
+    internal var eventsAnalog2: Map<TAA,  Event<InputDataAnalog2>> = parent.actions.analog2Actions.associateWith { Event() }
 
 
     /**
      * The player's configuration.
      */
-    var configuration: Configuration<TD, TA, TAA>? = null
+    var configuration: Configuration<TD, TA, TAA> = Configuration()
 
     @JvmName("getEventDigital")
-    fun getEvent(action: TD): Event<InputDataDigital>?    = eventsDigital[action]
+    fun getEvent(action: TD): Event<InputDataDigital>    = eventsDigital[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
     @JvmName("getEventAnalog1")
-    fun getEvent(action: TA): Event<InputDataAnalog1>?    = eventsAnalog1[action]
+    fun getEvent(action: TA): Event<InputDataAnalog1>    = eventsAnalog1[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
     @JvmName("getEventAnalog2")
-    fun getEvent(action: TAA): Event<InputDataAnalog2>?   = eventsAnalog2[action]
+    fun getEvent(action: TAA): Event<InputDataAnalog2>   = eventsAnalog2[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
 
     /**
      * Returns the state of the digital action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateDigital")
-    fun getState(action: TD): InputDataDigital?     = stateDigital[action]
+    fun getState(action: TD): InputDataDigital     = stateDigital[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
     /**
      * Returns the state of the 1D analog action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateAnalog1")
-    fun getState(action: TA): InputDataAnalog1?     = stateAnalog1[action]
+    fun getState(action: TA): InputDataAnalog1     = stateAnalog1[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
     /**
      * Returns the state of the 2D analog action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateAnalog2")
-    fun getState(action: TAA): InputDataAnalog2?    = stateAnalog2[action]
+    fun getState(action: TAA): InputDataAnalog2    = stateAnalog2[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
 
     /*
      * NOTE: This API is... *unpleasant* in Java.

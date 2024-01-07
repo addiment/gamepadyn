@@ -70,14 +70,14 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
               TD : ActionEnumDigital,
               TA : ActionEnumAnalog1,
               TAA : ActionEnumAnalog2,
+              TD : Enum<TD>,
+              TA : Enum<TA>,
+              TAA : Enum<TAA>
 //              TAAA : ActionEnumAnalog3,
 //              TD : Ti,
 //              TA : Ti,
 //              TAA : Ti,
 //              TAAA : Ti,
-              TD : Enum<TD>,
-              TA : Enum<TA>,
-              TAA : Enum<TAA>
 {
 
     /**
@@ -106,9 +106,9 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
             val config = player.configuration
 
             // freeze state
-            val statePreviousDigital = player.stateDigital.entries.associate { it.key to it.value!!.copy() }
-            val statePreviousAnalog1 = player.stateAnalog1.entries.associate { it.key to it.value!!.copy() }
-            val statePreviousAnalog2 = player.stateAnalog2.entries.associate { it.key to it.value!!.copy() }
+            val statePreviousDigital = player.stateDigital.entries.associate { it.key to it.value.copy() }
+            val statePreviousAnalog1 = player.stateAnalog1.entries.associate { it.key to it.value.copy() }
+            val statePreviousAnalog2 = player.stateAnalog2.entries.associate { it.key to it.value.copy() }
 
 //            println("PREVIOUS STATE:")
 //            for (e in statePrevious) {
@@ -118,7 +118,7 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
 
             val potentialMutations: MutableSet<Enum<*>> = mutableSetOf()
 
-            if (config != null) bindLoop@ for (bind in config.binds) {
+            bindLoop@ for (bind in config.binds) {
 //                println("bind (${bind.input.name} to ${bind.targetAction.name}) {")
 
                 val previousState = when (bind.targetAction) {
@@ -175,24 +175,24 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
                         @Suppress("UNCHECKED_CAST")
                         val cast = (update as? TD) ?: continue
                         val currentState = player.getState(cast)
-                        if (statePreviousDigital[update] != currentState && currentState != null) {
-                            player.getEvent(cast)?.trigger(currentState)
+                        if (statePreviousDigital[update] != currentState) {
+                            player.getEvent(cast).trigger(currentState)
                         }
                     }
                     is ActionEnumAnalog1 -> {
                         @Suppress("UNCHECKED_CAST")
                         val cast = (update as? TA) ?: continue
                         val currentState = player.getState(cast)
-                        if (statePreviousAnalog1[update] != currentState && currentState != null) {
-                            player.getEvent(cast)?.trigger(currentState)
+                        if (statePreviousAnalog1[update] != currentState) {
+                            player.getEvent(cast).trigger(currentState)
                         }
                     }
                     is ActionEnumAnalog2 -> {
                         @Suppress("UNCHECKED_CAST")
                         val cast = (update as? TAA) ?: continue
                         val currentState = player.getState(cast)
-                        if (statePreviousAnalog2[update] != currentState && currentState != null) {
-                            player.getEvent(cast)?.trigger(currentState)
+                        if (statePreviousAnalog2[update] != currentState) {
+                            player.getEvent(cast).trigger(currentState)
                         }
                     }
                 }
