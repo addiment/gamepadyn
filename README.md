@@ -4,7 +4,7 @@
 
 # About
 
-NGamepadyn is currently in **BETA.**
+Gamepadyn is currently in **BETA.**
 The API is *not quite* stable.
 If you have any bug fixes or suggestions, feel free to open an issue or a PR. Thanks!
 
