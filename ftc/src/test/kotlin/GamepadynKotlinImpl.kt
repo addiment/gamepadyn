@@ -61,27 +61,19 @@ class GamepadynKotlinImpl : OpMode() {
         // Get a reference to the player (FTC Player 1)
         val p0 = gamepadyn.getPlayer(0)!!
 
-        p0.getState(LAUNCH_DRONE)!!.active
-        p0.getState(LAUNCH_DRONE)!!.x
-        p0.getState(LAUNCH_DRONE)!!.y
-
-        p0.getState(ROTATION)!!.active
-        p0.getState(ROTATION)!!.x
-        p0.getState(ROTATION)!!.y
-
-        p0.getState(MOVEMENT)!!.active
-        p0.getState(MOVEMENT)!!.x
-        p0.getState(MOVEMENT)!!.y
-
+//        p0.getState(LAUNCH_DRONE).active
+//        p0.getState(MOVEMENT).x
+//        p0.getState(MOVEMENT).y
+//        p0.getState(ROTATION).x
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        p0.getEvent(LAUNCH_DRONE)!! {
+        p0.getEvent(LAUNCH_DRONE) {
             telemetry.addLine("Button ${if (it()) "pressed" else "released"}!")
             telemetry.update()
         }
 
         // Usually, analog events should be replaced with state checks, but both work.
-        p0.getEvent(MOVEMENT)!! {
+        p0.getEvent(MOVEMENT) {
             telemetry.addLine("Movement input: (${it.x}, ${it.y})")
             telemetry.update()
         }
