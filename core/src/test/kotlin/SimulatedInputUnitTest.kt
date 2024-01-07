@@ -48,8 +48,12 @@ class SimulatedInputUnitTest {
 
         val gamepadyn = Gamepadyn(sysTest, strict = true, actionMap)
 
+        println("Player count: ${gamepadyn.players.size}")
+
         var stateChangeCount = 0
         var expectedStateChangeCount = 0
+
+        println("Player count: ${gamepadyn.players.size}")
 
         val p0 = gamepadyn.players[0]
 

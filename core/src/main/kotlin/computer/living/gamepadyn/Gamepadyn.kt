@@ -1,6 +1,7 @@
 package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
+import java.util.UUID
 import kotlin.enums.EnumEntries
 
 sealed interface ActionEnum
@@ -82,11 +83,16 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
 
     /**
      * A list of active Players.
-     *
-     * TODO: This can never update, needs to be fixed.
      */
-    val players: ArrayList<Player<TD, TA, TAA>> =
-        ArrayList(backend.getGamepads().map { Player(this, it) })
+    // Note for me/other developers:
+    // I might make this private, because it would allow for more control over access.
+    // It would also make getPlayer() the correct method across different languages (consistency = good)
+    // and it would also mean less array OOB exceptions (yay!)
+
+    var players: ArrayList<Player<TD, TA, TAA>> = ArrayList(
+        backend.getGamepads().map { Player(this, it) }
+    )
+        private set
 
     /**
      * Convenience function (equivalent to [players]`.getOrNull(index)`).
@@ -94,14 +100,46 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
      */
     fun getPlayer(index: Int): Player<TD, TA, TAA>? = players.getOrNull(index)
 
+    private fun updateGamepads() {
+        val rawGamepads = backend.getGamepads()
+        // TODO: check that this can't cause any issues
+        if (rawGamepads.size != players.size) {
+            if (rawGamepads.size < players.size) {
+                // update old player gamepads
+                for ((i, e) in rawGamepads.withIndex()) players[i].rawGamepad = e
+
+                val range = (rawGamepads.size - 1)..<players.size
+                // TODO: decide if we should disable or delete old players
+                for (i in range) players[i].isEnabled = false
+
+            } else if (rawGamepads.size > players.size) {
+                // update their raw gamepads, also make sure they're enabled (just in case)
+                for ((i, e) in players.withIndex()) {
+                    e.isEnabled = true
+                    e.rawGamepad = rawGamepads[i]
+                }
+                val range = (players.size - 1)..<rawGamepads.size
+                // create new players
+                for (i in range) players.add(i, Player(this, rawGamepads[i]))
+            }
+        } else {
+            // just update them
+            for ((i, e) in rawGamepads.withIndex()) players[i].rawGamepad = e
+        }
+    }
+
     /**
      * Updates state. Should be run every "frame," "tick," "update," or whatever iteration function your program uses.
      */
     fun update() {
+        if (backend.hasUpdated()) return
+        backend.update()
+
+        updateGamepads()
+
 //        println("----------UPDATE----------")
-        val playersIt = players.withIndex()
         // update each player
-        for ((i, player) in playersIt) {
+        for (player in players) {
             // make the configuration local and constant
             val config = player.configuration
 
@@ -114,11 +152,11 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
 //            for (e in statePrevious) {
 //                println("${e.key} = ${e.value}")
 //            }
-            val rawState: Map<RawInput, InputData> = backend.getGamepads()[i].getState()
+            val rawState: Map<RawInput, InputData> = player.rawGamepad.getState()
 
             val potentialMutations: MutableSet<Enum<*>> = mutableSetOf()
 
-            if (config != null) bindLoop@ for (bind in config.binds) {
+            bindLoop@ for (bind in config.binds) {
 //                println("bind (${bind.input.name} to ${bind.targetAction.name}) {")
 
                 val previousState = when (bind.targetAction) {

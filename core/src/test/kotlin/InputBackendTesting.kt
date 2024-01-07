@@ -19,8 +19,8 @@ class InputBackendTesting : InputBackend {
 
     class RawGamepadTesting: InputBackend.RawGamepad {
 
-        @Suppress("MemberVisibilityCanBePrivate")
-        internal val id: UUID = UUID.randomUUID()
+//        @Suppress("MemberVisibilityCanBePrivate")
+//        internal val id: UUID = UUID.randomUUID()
 
         override fun getState(input: RawInputDigital): InputDataDigital = InputDataDigital(manipulableStateDigital)
 
@@ -54,7 +54,7 @@ class InputBackendTesting : InputBackend {
             RawInputAnalog1.TRIGGER_RIGHT       to InputDataAnalog1(manipulableStateAnalog1d)
         )
 
-        override fun getId(): UUID = this.id
+//        override fun getId(): UUID = this.id
     }
 
     private val gamepads: Array<RawGamepadTesting> = arrayOf(RawGamepadTesting())
