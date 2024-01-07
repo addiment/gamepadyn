@@ -2,8 +2,6 @@
 
 package computer.living.gamepadyn
 
-import computer.living.gamepadyn.InputType.*
-
 class Player<TD, TA, TAA> internal constructor(
     internal val parent: Gamepadyn<TD, TA, TAA>,
     internal var rawGamepad: InputBackend.RawGamepad
@@ -23,6 +21,7 @@ class Player<TD, TA, TAA> internal constructor(
     internal var eventsAnalog1: Map<TA,   Event<InputDataAnalog1>> = parent.actions.analog1Actions.associateWith { Event() }
     internal var eventsAnalog2: Map<TAA,  Event<InputDataAnalog2>> = parent.actions.analog2Actions.associateWith { Event() }
 
+    internal var isEnabled: Boolean = true
 
     /**
      * The player's configuration.
