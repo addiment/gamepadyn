@@ -67,30 +67,30 @@ class SimulatedInputUnitTest {
 
         gamepadyn.update()
 
-        p0.getEvent(DIGITAL_ACTION)!!.addListener {
+        p0.getEvent(DIGITAL_ACTION).addListener {
             println("Debug action ran! (new value: ${it.active})")
             stateChangeCount++
         }
 
-        p0.getEvent(ANALOG_1D_ACTION)!!.addListener {
+        p0.getEvent(ANALOG_1D_ACTION).addListener {
             println("Analog 1D action ran! (new value: (${it.x}))")
             stateChangeCount++
         }
 
-        p0.getEvent(ANALOG_2D_ACTION)!!.addListener {
+        p0.getEvent(ANALOG_2D_ACTION).addListener {
             println("Analog 2D action ran! (new value: (${it.x}, ${it.y}))")
             stateChangeCount++
         }
 
-        assertEquals(false, p0.getState(DIGITAL_ACTION)?.active)
-        val s1 = p0.getState(ANALOG_2D_ACTION)!!
+        assertEquals(false, p0.getState(DIGITAL_ACTION).active)
+        val s1 = p0.getState(ANALOG_2D_ACTION)
         assertEquals(0f, s1.x)
         assertEquals(0f, s1.y)
 
         gamepadyn.update()
 
-        assertEquals(false, p0.getState(DIGITAL_ACTION)?.active)
-        val s2 = p0.getState(ANALOG_2D_ACTION)!!
+        assertEquals(false, p0.getState(DIGITAL_ACTION).active)
+        val s2 = p0.getState(ANALOG_2D_ACTION)
         assertEquals(0f, s2.x)
         assertEquals(0f, s2.y)
 
@@ -98,8 +98,8 @@ class SimulatedInputUnitTest {
         expectedStateChangeCount++
 
         gamepadyn.update()
-        assertEquals(true, p0.getState(DIGITAL_ACTION)?.active)
-        val s3 = p0.getState(ANALOG_2D_ACTION)!!
+        assertEquals(true, p0.getState(DIGITAL_ACTION).active)
+        val s3 = p0.getState(ANALOG_2D_ACTION)
         assertEquals(0f, s3.x)
         assertEquals(0f, s3.y)
 
@@ -108,22 +108,22 @@ class SimulatedInputUnitTest {
         InputBackendTesting.manipulableStateAnalog2d = Pair(0f, 1f)
         expectedStateChangeCount++
 
-        assertEquals(true, p0.getState(DIGITAL_ACTION)?.active)
+        assertEquals(true, p0.getState(DIGITAL_ACTION).active)
         gamepadyn.update()
 
-        val s4 = p0.getState(ANALOG_2D_ACTION)!!
+        val s4 = p0.getState(ANALOG_2D_ACTION)
         assertEquals(0f, s4.x)
         assertEquals(1f, s4.y)
 
         InputBackendTesting.manipulableStateDigital = true
-        val s5 = p0.getState(ANALOG_2D_ACTION)!!
+        val s5 = p0.getState(ANALOG_2D_ACTION)
         assertEquals(0f, s5.x)
         assertEquals(1f, s5.y)
 
         gamepadyn.update()
-        assertEquals(true, p0.getState(DIGITAL_ACTION)?.active)
+        assertEquals(true, p0.getState(DIGITAL_ACTION).active)
         gamepadyn.update()
-        assertEquals(true, p0.getState(DIGITAL_ACTION)?.active)
+        assertEquals(true, p0.getState(DIGITAL_ACTION).active)
 
         InputBackendTesting.manipulableStateDigital = false
         InputBackendTesting.manipulableStateAnalog2d = Pair(1f, 0f)
@@ -131,15 +131,15 @@ class SimulatedInputUnitTest {
         expectedStateChangeCount++
 
         gamepadyn.update()
-        assertEquals(false, p0.getState(DIGITAL_ACTION)?.active)
-        val s6 = p0.getState(ANALOG_2D_ACTION)!!
+        assertEquals(false, p0.getState(DIGITAL_ACTION).active)
+        val s6 = p0.getState(ANALOG_2D_ACTION)
         assertEquals(1f, s6.x)
         assertEquals(0f, s6.y)
 
         InputBackendTesting.manipulableStateDigital = true
         gamepadyn.update()
         expectedStateChangeCount++
-        assertEquals(true, p0.getState(DIGITAL_ACTION)?.active)
+        assertEquals(true, p0.getState(DIGITAL_ACTION).active)
 
 
         assertEquals(expectedStateChangeCount, stateChangeCount)

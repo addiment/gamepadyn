@@ -175,6 +175,10 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
                     previousState
                 )
 
+//                println(rawState[bind.input])
+//                println("old data: $previousState")
+//                println("new data: $newData")
+
                 potentialMutations.add(bind.targetAction)
 
                 when (bind.targetAction) {

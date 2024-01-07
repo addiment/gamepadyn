@@ -30,12 +30,13 @@ class InputBackendTesting : InputBackend {
 
         override fun getState(): Map<RawInput, InputData> = mapOf(
 //            RawInputDigital.FACE_A              to InputDataDigital(manipulableStateDigital),
+            RawInputDigital.FACE_DOWN           to InputDataDigital(manipulableStateDigital),
 //            RawInputDigital.FACE_B              to InputDataDigital(manipulableStateDigital),
             RawInputDigital.FACE_RIGHT          to InputDataDigital(manipulableStateDigital),
-            RawInputDigital.FACE_LEFT           to InputDataDigital(manipulableStateDigital),
 //            RawInputDigital.FACE_X              to InputDataDigital(manipulableStateDigital),
-            RawInputDigital.FACE_UP             to InputDataDigital(manipulableStateDigital),
+            RawInputDigital.FACE_LEFT           to InputDataDigital(manipulableStateDigital),
 //            RawInputDigital.FACE_Y              to InputDataDigital(manipulableStateDigital),
+            RawInputDigital.FACE_UP             to InputDataDigital(manipulableStateDigital),
 //            RawInputDigital.FACE_CROSS          to InputDataDigital(manipulableStateDigital),
 //            RawInputDigital.FACE_CIRCLE         to InputDataDigital(manipulableStateDigital),
 //            RawInputDigital.FACE_SQUARE         to InputDataDigital(manipulableStateDigital),
@@ -48,8 +49,10 @@ class InputBackendTesting : InputBackend {
             RawInputDigital.DPAD_RIGHT          to InputDataDigital(manipulableStateDigital),
             RawInputDigital.STICK_LEFT_BUTTON   to InputDataDigital(manipulableStateDigital),
             RawInputDigital.STICK_RIGHT_BUTTON  to InputDataDigital(manipulableStateDigital),
+
             RawInputAnalog2.STICK_LEFT          to InputDataAnalog2(manipulableStateAnalog2d.first, manipulableStateAnalog2d.second),
             RawInputAnalog2.STICK_RIGHT         to InputDataAnalog2(manipulableStateAnalog2d.first, manipulableStateAnalog2d.second),
+
             RawInputAnalog1.TRIGGER_LEFT        to InputDataAnalog1(manipulableStateAnalog1d),
             RawInputAnalog1.TRIGGER_RIGHT       to InputDataAnalog1(manipulableStateAnalog1d)
         )
