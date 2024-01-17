@@ -44,59 +44,88 @@ The following are sample OpModes that showcase basic usage of Gamepadyn.
 ## Kotlin (preferred)
 
 ```kotlin
-import computer.living.gamepadyn.InputType.*
-import computer.living.gamepadyn.ActionBind
-import computer.living.gamepadyn.Configuration
-import computer.living.gamepadyn.GDesc
-import computer.living.gamepadyn.Gamepadyn
-import computer.living.gamepadyn.RawInput
-import computer.living.gamepadyn.ftc.InputBackendFtc
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 
+import computer.living.gamepadyn.ActionBind
+import computer.living.gamepadyn.ActionEnumAnalog1
+import computer.living.gamepadyn.ActionEnumAnalog2
+import computer.living.gamepadyn.ActionEnumDigital
+import computer.living.gamepadyn.ActionMap
+import computer.living.gamepadyn.Configuration
+import computer.living.gamepadyn.Gamepadyn
+import computer.living.gamepadyn.RawInputDigital.*
+import computer.living.gamepadyn.RawInputAnalog1.*
+import computer.living.gamepadyn.RawInputAnalog2.*
+import computer.living.gamepadyn.ftc.InputBackendFtc
+
+import GamepadynKotlinImpl.TestActionDigital.*
+import GamepadynKotlinImpl.TestActionAnalog1.*
+import GamepadynKotlinImpl.TestActionAnalog2.*
+import computer.living.gamepadyn.ActionBindAnalog2to1
+import computer.living.gamepadyn.Axis
+
 class GamepadynKotlinImpl : OpMode() {
-
-  enum class TestAction {
-    MOVEMENT,
-    ROTATION,
-    CLAW,
-    DEBUG_ACTION
-  }
-
-  private lateinit var gamepadyn: Gamepadyn<TestAction>
-
-
-  override fun init() {
-    gamepadyn = Gamepadyn(
-      InputBackendFtc(this),
-      true,
-      TestAction.MOVEMENT            to GDesc.analog(2),
-      TestAction.ROTATION            to GDesc.analog(1),
-      TestAction.CLAW                to GDesc.digital(),
-      TestAction.DEBUG_ACTION        to GDesc.digital()
-    )
-
-    gamepadyn.players[0].configuration = Configuration(
-      ActionBind(RawInput.FACE_A, TestAction.DEBUG_ACTION)
-    )
-  }
-
-  override fun start() {
-
-    // Get a reference to the player (FTC Player 1)
-    val p0 = gamepadyn.players[0]
-
-    // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-    p0.getEventDigital(TestAction.DEBUG_ACTION)!! {
-      telemetry.addLine("Button ${if (it.digitalData) "pressed"; else "released"}!")
+    enum class TestActionDigital : ActionEnumDigital {
+        LAUNCH_DRONE
     }
 
-  }
+    enum class TestActionAnalog1 : ActionEnumAnalog1 {
+        CLAW,
+        ROTATION
+    }
 
-  override fun loop() {
-    gamepadyn.update()
-    telemetry.update()
-  }
+    enum class TestActionAnalog2 : ActionEnumAnalog2 {
+        MOVEMENT
+    }
+
+    private val gamepadyn = Gamepadyn(
+        InputBackendFtc(this),
+        strict = true,
+        ActionMap(
+            TestActionDigital.entries,
+            TestActionAnalog1.entries,
+            TestActionAnalog2.entries
+        )
+    )
+
+    override fun init() {
+
+        gamepadyn.players[0].configuration = Configuration(
+            ActionBind          (LAUNCH_DRONE,    FACE_LEFT             ),
+            ActionBind          (MOVEMENT,        STICK_LEFT            ),
+            ActionBindAnalog2to1(ROTATION,        STICK_RIGHT,  Axis.X  ),
+            ActionBind          (CLAW,            TRIGGER_RIGHT         )
+        )
+
+    }
+
+    override fun start() {
+
+        // Get a reference to the player (FTC Player 1)
+        val p0 = gamepadyn.getPlayer(0)!!
+
+//        p0.getState(LAUNCH_DRONE).active
+//        p0.getState(MOVEMENT).x
+//        p0.getState(MOVEMENT).y
+//        p0.getState(ROTATION).x
+
+        // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
+        p0.getEvent(LAUNCH_DRONE) {
+            telemetry.addLine("Button ${if (it()) "pressed" else "released"}!")
+            telemetry.update()
+        }
+
+        // Usually, analog events should be replaced with state checks, but both work.
+        p0.getEvent(MOVEMENT) {
+            telemetry.addLine("Movement input: (${it.x}, ${it.y})")
+            telemetry.update()
+        }
+
+    }
+
+    override fun loop() {
+        gamepadyn.update()
+    }
 }
 ```
 
@@ -105,35 +134,58 @@ class GamepadynKotlinImpl : OpMode() {
 ```Java
 package computer.living.gamepadyn.test;
 
-import computer.living.gamepadyn.JavaThunks.Tak;
-
-import java.util.Objects;
-
+import computer.living.gamepadyn.ActionBind;
+import computer.living.gamepadyn.Configuration;
 import computer.living.gamepadyn.Gamepadyn;
+import computer.living.gamepadyn.ActionMap;
 import computer.living.gamepadyn.Player;
+import computer.living.gamepadyn.ActionEnumDigital;
+import computer.living.gamepadyn.ActionEnumAnalog1;
+import computer.living.gamepadyn.ActionEnumAnalog2;
+
+import static computer.living.gamepadyn.RawInputDigital.*;
+import static computer.living.gamepadyn.RawInputAnalog1.*;
+import static computer.living.gamepadyn.RawInputAnalog2.*;
+import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionDigital.*;
+import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog1.*;
+import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog2.*;
+
 import computer.living.gamepadyn.ftc.InputBackendFtc;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class GamepadynJavaImpl extends OpMode {
 
-  enum TestAction {
-    MOVEMENT,
-    ROTATION,
-    CLAW,
-    DEBUG_ACTION
+  enum TestActionDigital implements ActionEnumDigital {
+    LAUNCH_DRONE
   }
 
-  Gamepadyn<TestAction> gamepadyn;
+  enum TestActionAnalog1 implements ActionEnumAnalog1 {
+    CLAW
+  }
+
+  enum TestActionAnalog2 implements ActionEnumAnalog2 {
+    MOVEMENT,
+    ROTATION
+  }
+
+  final Gamepadyn<TestActionDigital, TestActionAnalog1, TestActionAnalog2> gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
+          true,
+          new ActionMap<>(
+                  TestActionDigital.values(),
+                  TestActionAnalog1.values(),
+                  TestActionAnalog2.values()
+          )
+  );
 
   @Override
   public void init() {
-    gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
-            Tak.analog(TestAction.MOVEMENT, 2),
-            Tak.analog(TestAction.ROTATION, 1),
-            Tak.digital(TestAction.CLAW),
-            Tak.digital(TestAction.DEBUG_ACTION)
-    );
+    //noinspection RedundantSuppression DataFlowIssue
+    gamepadyn.getPlayer(0).setConfiguration(new Configuration<>(
+            new ActionBind<>(LAUNCH_DRONE, FACE_LEFT),
+            new ActionBind<>(MOVEMENT, STICK_LEFT),
+            new ActionBind<>(CLAW, TRIGGER_RIGHT)
+    ));
   }
 
   @Override
@@ -144,13 +196,21 @@ public class GamepadynJavaImpl extends OpMode {
     // It's much easier in Kotlin.
 
     // Get a reference to the player (FTC Player 1)
-    Player<TestAction> p0 = gamepadyn.getPlayer(0);
+    Player<TestActionDigital, TestActionAnalog1, TestActionAnalog2> p0 = gamepadyn.getPlayer(0);
     assert p0 != null;
 
-    // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-    Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addListener(it -> {
-      telemetry.addLine("Button " + ((it.digitalData) ? "pressed" : "released") + "!");
+    // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
+    p0.getEventDigital(LAUNCH_DRONE, it -> {
+      telemetry.addLine("Button " + ((it.active) ? "pressed" : "released") + "!");
+      telemetry.update();
     });
+
+    // Usually, analog events should be replaced with state checks, but both work.
+    p0.getEventAnalog2(MOVEMENT, it -> {
+      telemetry.addLine("Movement input: (${it.x}, ${it.y})");
+      telemetry.update();
+    });
+
   }
 
   @Override

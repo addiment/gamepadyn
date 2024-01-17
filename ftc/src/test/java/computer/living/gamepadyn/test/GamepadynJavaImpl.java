@@ -1,7 +1,5 @@
 package computer.living.gamepadyn.test;
 
-import java.util.Objects;
-
 import computer.living.gamepadyn.ActionBind;
 import computer.living.gamepadyn.Configuration;
 import computer.living.gamepadyn.Gamepadyn;
@@ -10,10 +8,6 @@ import computer.living.gamepadyn.Player;
 import computer.living.gamepadyn.ActionEnumDigital;
 import computer.living.gamepadyn.ActionEnumAnalog1;
 import computer.living.gamepadyn.ActionEnumAnalog2;
-
-import computer.living.gamepadyn.RawInputDigital;
-import computer.living.gamepadyn.RawInputAnalog1;
-import computer.living.gamepadyn.RawInputAnalog2;
 
 import static computer.living.gamepadyn.RawInputDigital.*;
 import static computer.living.gamepadyn.RawInputAnalog1.*;
@@ -53,7 +47,7 @@ public class GamepadynJavaImpl extends OpMode {
     public void init() {
         //noinspection DataFlowIssue
         gamepadyn.getPlayer(0).setConfiguration(new Configuration<>(
-            new ActionBind<>(LAUNCH_DRONE,  FACE_X),
+            new ActionBind<>(LAUNCH_DRONE,  FACE_LEFT),
             new ActionBind<>(MOVEMENT,      STICK_LEFT),
             new ActionBind<>(CLAW,          TRIGGER_RIGHT)
         ));
@@ -71,9 +65,15 @@ public class GamepadynJavaImpl extends OpMode {
         assert p0 != null;
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        //noinspection DataFlowIssue
-        p0.getEventDigital(LAUNCH_DRONE).addListener(it -> {
+        p0.getEventDigital(LAUNCH_DRONE, it -> {
             telemetry.addLine("Button " + ((it.active) ? "pressed" : "released") + "!");
+            telemetry.update();
+        });
+
+        // Usually, analog events should be replaced with state checks, but both work.
+        p0.getEventAnalog2(MOVEMENT, it -> {
+            telemetry.addLine("Movement input: (${it.x}, ${it.y})");
+            telemetry.update();
         });
 
     }

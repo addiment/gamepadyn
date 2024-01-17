@@ -12,11 +12,8 @@ import computer.living.gamepadyn.RawInputAnalog1.*
 import computer.living.gamepadyn.RawInputAnalog2.*
 import computer.living.gamepadyn.ftc.InputBackendFtc
 
-import GamepadynKotlinImpl.TestActionDigital
 import GamepadynKotlinImpl.TestActionDigital.*
-import GamepadynKotlinImpl.TestActionAnalog1
 import GamepadynKotlinImpl.TestActionAnalog1.*
-import GamepadynKotlinImpl.TestActionAnalog2
 import GamepadynKotlinImpl.TestActionAnalog2.*
 import computer.living.gamepadyn.ActionBindAnalog2to1
 import computer.living.gamepadyn.Axis
