@@ -5,7 +5,7 @@ import java.util.function.Consumer
 /**
  * Represents an event to which listeners are added and called when the event is triggered.
  */
-class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
+class Event<T: InputData> internal constructor(/*val type: InputType*/) {
     /**
      * A set of all listeners (lambdas) to this event.
      */
@@ -23,23 +23,35 @@ class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
      * Adds a callback for the event.
      * @return true if it was added and false if it was already there before
      */
+//    @JvmSynthetic
     fun addListener(listener: ((T) -> Unit)): Boolean = listeners.add(listener)
     /**
      * Java-specific overload.
      * @see addListener
      */
-    fun addJListener(listener: Consumer<T>): Boolean = javaListeners.add(listener)
+    fun addListener(listener: Consumer<T>): Boolean = javaListeners.add(listener)
+    /**
+     * Alias for [addListener]
+     */
+//    @JvmSynthetic
+    operator fun invoke(listener: ((T) -> Unit)): Boolean = listeners.add(listener)
+    /**
+     * Alias for [addListener]
+     */
+    operator fun invoke(listener: Consumer<T>): Boolean = javaListeners.add(listener)
+
 
     /**
      * Removes an already-present callback for the event.
      * @return true if it was removed and false if it wasn't a listener before
      */
+//    @JvmSynthetic
     fun removeListener(listener: ((T) -> Unit)): Boolean = listeners.remove(listener)
     /**
      * Java-specific overload.
      * @see removeListener
      */
-    fun removeJListener(listener: Consumer<T>): Boolean = javaListeners.remove(listener)
+    fun removeListener(listener: Consumer<T>): Boolean = javaListeners.remove(listener)
 
     /**
      * Removes all listeners from the event.

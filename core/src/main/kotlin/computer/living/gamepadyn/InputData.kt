@@ -1,15 +1,13 @@
 package computer.living.gamepadyn
 
+import computer.living.gamepadyn.InputType.*
+
 /**
  * Superclass represents the state of any input.
  * @see InputDataDigital
  * @see InputDataAnalog
  */
 sealed class InputData {
-
-    /**
-     * The type of the InputData, corresponding to the [InputDataDigital] and [InputDataAnalog] classes respectively.
-     */
     abstract val type: InputType
 }
 
@@ -21,65 +19,50 @@ data class InputDataDigital(
     /**
      * The boolean state of the input.
      */
-    @JvmField var digitalData: Boolean = false
+    @JvmField var active: Boolean = false
 ): InputData() {
-    override val type = InputType.DIGITAL
+    override val type = DIGITAL
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is InputDataDigital) return false
-        return this.digitalData == other.digitalData
-    }
+    operator fun invoke(): Boolean = active
 
-    override fun hashCode(): Int {
-        var result = digitalData.hashCode()
-        result = 31 * result + type.hashCode()
-        return result
-    }
+//    override fun toString(): String {
+//        return "InputData(${if (active) "true" else "false"})"
+//    }
+
+//    override fun equals(other: Any?): Boolean {
+//        if (other !is InputDataDigital) return false
+//        return this.digitalData == other.digitalData
+//    }
+//
+//    override fun hashCode(): Int {
+//        var result = digitalData.hashCode()
+//        result = 31 * result + type.hashCode()
+//        return result
+//    }
 
 }
-
-/**
- * Represents the value of an analog action.
- * @property analogData The action data. The size of the array is equal to the amount of axes the action has.
- */
-data class InputDataAnalog(
+data class InputDataAnalog1(
     /**
-     * The state of the input as an array of floats.
+     * The X axis of the analog input data.
      */
-    @JvmField val analogData: Array<Float?>
+    var x: Float = 0f
 ) : InputData() {
-    override val type = InputType.ANALOG
+    override val type: InputType = ANALOG1
 
+    operator fun invoke(): Array<Float> = arrayOf(x)
+}
 
+data class InputDataAnalog2(
     /**
-     * The amount of axes of the input. Corresponds to the array size of [analogData].
+     * The X axis of the analog input data.
      */
-    val axes: Int
-        get() { return analogData.size; }
-
-    constructor(dataFirst: Float?, vararg dataMore: Float?) : this(arrayOf(dataFirst, *dataMore))
-
-    init {
-        assert(analogData.isNotEmpty())
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is InputDataAnalog) return false
-        return this.analogData.contentEquals(other.analogData)
-    }
-
-    override fun hashCode(): Int {
-        var result = type.hashCode()
-        result = 31 * result + analogData.contentHashCode()
-        return result
-    }
-
+    var x: Float = 0f,
     /**
-     * Returns a deep copy of the data. This is different from the data class copy method, which is shallow..
+     * The Y axis of the analog input data.
      */
-    fun copy(): InputDataAnalog {
-        return InputDataAnalog(this.analogData.copyOf())
-    }
+    var y: Float = 0f
+) : InputData() {
+    override val type: InputType = ANALOG2
 
-    fun deepCopy() = this.copy()
+    operator fun invoke(): Array<Float> = arrayOf(x, y)
 }

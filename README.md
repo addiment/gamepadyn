@@ -29,14 +29,14 @@ without adding extra class-wide variables that would otherwise make code harder 
 
 Currently, distribution of this library is done via redistributed .jar and .aar files.
 Download them from the releases page (or build them yourself) and copy them into your `/TeamCode/lib` folder.
-**Make sure to replace `0.1.0-BETA` with whatever version of the library you have.**
+**Make sure to replace `0.2.0-BETA` with whatever version of the library you have.**
 Add the following to the dependencies block of your `/TeamCode/build.gradle`:
 
 ```groovy
-implementation files("lib/core-0.1.0-BETA.jar")
-implementation files("lib/core-0.1.0-BETA-sources.jar")
-implementation files("lib/ftc-0.1.0-BETA.aar")
-implementation files("lib/ftc-0.1.0-BETA-sources.jar")
+implementation files("lib/core-0.2.0-BETA.jar")
+implementation files("lib/core-0.2.0-BETA-sources.jar")
+implementation files("lib/ftc-0.2.0-BETA.aar")
+implementation files("lib/ftc-0.2.0-BETA-sources.jar")
 ```
 
 The following are sample OpModes that showcase basic usage of Gamepadyn.
@@ -70,10 +70,10 @@ class GamepadynKotlinImpl : OpMode() {
     gamepadyn = Gamepadyn(
       InputBackendFtc(this),
       true,
-      TestAction.MOVEMENT            to GDesc(ANALOG, 2),
-      TestAction.ROTATION            to GDesc(ANALOG, 1),
-      TestAction.CLAW                to GDesc(DIGITAL),
-      TestAction.DEBUG_ACTION        to GDesc(DIGITAL)
+      TestAction.MOVEMENT            to GDesc.analog(2),
+      TestAction.ROTATION            to GDesc.analog(1),
+      TestAction.CLAW                to GDesc.digital(),
+      TestAction.DEBUG_ACTION        to GDesc.digital()
     )
 
     gamepadyn.players[0].configuration = Configuration(
@@ -85,8 +85,9 @@ class GamepadynKotlinImpl : OpMode() {
 
     // Get a reference to the player (FTC Player 1)
     val p0 = gamepadyn.players[0]
+
     // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-    p0.getEventDigital(TestAction.DEBUG_ACTION)!!.addListener {
+    p0.getEventDigital(TestAction.DEBUG_ACTION)!! {
       telemetry.addLine("Button ${if (it.digitalData) "pressed"; else "released"}!")
     }
 
@@ -104,12 +105,12 @@ class GamepadynKotlinImpl : OpMode() {
 ```Java
 package computer.living.gamepadyn.test;
 
-import java.util.Arrays;
+import computer.living.gamepadyn.JavaThunks.Tak;
+
 import java.util.Objects;
 
 import computer.living.gamepadyn.Gamepadyn;
 import computer.living.gamepadyn.Player;
-import computer.living.gamepadyn.Tak;
 import computer.living.gamepadyn.ftc.InputBackendFtc;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -127,14 +128,11 @@ public class GamepadynJavaImpl extends OpMode {
 
   @Override
   public void init() {
-    // in Java 9, you can do this more easily.
     gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
-            Tak.makeActionMap(Arrays.asList(
-                    Tak.a(TestAction.MOVEMENT, 2),
-                    Tak.a(TestAction.ROTATION, 1),
-                    Tak.d(TestAction.CLAW),
-                    Tak.d(TestAction.DEBUG_ACTION)
-            ))
+            Tak.analog(TestAction.MOVEMENT, 2),
+            Tak.analog(TestAction.ROTATION, 1),
+            Tak.digital(TestAction.CLAW),
+            Tak.digital(TestAction.DEBUG_ACTION)
     );
   }
 
@@ -150,10 +148,9 @@ public class GamepadynJavaImpl extends OpMode {
     assert p0 != null;
 
     // Get the event corresponding to DEBUG_ACTION and add a lambda function as a listener to it.
-    Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addJListener(it -> {
+    Objects.requireNonNull(p0.getEventDigital(TestAction.DEBUG_ACTION)).addListener(it -> {
       telemetry.addLine("Button " + ((it.digitalData) ? "pressed" : "released") + "!");
     });
-
   }
 
   @Override

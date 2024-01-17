@@ -1,17 +1,25 @@
 package computer.living.gamepadyn
 
-/**
- * A transformation from inputs to actions.
- */
-open class ActionBind<T: Enum<T>>(val input: RawInput, internal val targetAction: T) {
+open class ActionBind<O> (
+    val targetAction: O,
+    val input: RawInput,
+)
+    where O : Enum<O>,
+          O : ActionEnum
+{
 
     /**
-     * Performs a transformation on the input data.
+     * Transforms input data.
      *
-     * NOTE: the InputData parameter should match the InputDescriptor of the `input` field, but under some circumstances, it may not. You should still assume they will match.
-     * @param targetDescriptor The return value of this function must conform with this parameter's descriptor.
-     * @return the result of the transformation.
+     * By default, this function returns [inputState] if [inputState] and [targetActionState] are the same type,
+     * returning [targetActionState] otherwise.
+     *
+     * @param inputState the current state of the input ([ActionBind.input]).
+     * @param targetActionState the current state of the target action ([ActionBind.targetAction]).
+     * @param delta the time since last update (ms)
+     * @return the new value of the [targetAction]. To maintain the state, simply return [targetActionState].
      */
-    open fun transform(data: InputData, targetDescriptor: InputDescriptor): InputData = data
-
+    open fun transform(inputState: InputData, targetActionState: InputData, delta: Double) : InputData =
+        if (inputState::class == targetActionState::class) inputState
+        else targetActionState
 }
