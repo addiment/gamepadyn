@@ -1,5 +1,12 @@
 # Version History
 
+## v0.2.0-BETA
+- Fixed a critical bug in the FTC backend that caused updates to stop entirely if using a `LinearOpMode`
+  - `OpMode.time` works, but `LinearOpMode.time` will always return a number close to 0.
+  - It now uses `OpMode.getRuntime()`, which has precision in nanoseconds.
+  This basically made the entire "input dupe checker" system irrelevant,
+  since a single function call can take a few nanos.
+- Removed `InputBackend.hasUpdated()`
 
 ## v0.2.0-BETA
 There are probably a lot of things I missed, the codebase is fairly large and the scale of the changes is larger.
@@ -9,7 +16,8 @@ There are probably a lot of things I missed, the codebase is fairly large and th
     - In Java, this does nothing (sorry not sorry).
       - More specifically, due to type erasure on the JVM,
       overloaded methods with generic arguments require separate names.
-      This makes the Java version of the API almost identical what it was previously (but hey, if you're using Gamepadyn in Java, you probably don't like change anyways).
+      This makes the Java version of the API almost identical what it was previously
+      (but hey, if you're using Gamepadyn in Java, you probably don't like change anyways).
       Despite having different names, both APIs still have type checking.
       - The largest concern with this change is that Java and Kotlin have *different* APIs, which makes porting code harder.
       - The benefits for Kotlin outweigh the downsides for Java (and I am very biased)

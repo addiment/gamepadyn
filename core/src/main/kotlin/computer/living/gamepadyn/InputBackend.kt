@@ -59,11 +59,4 @@ interface InputBackend {
      * Returns the time (in SECONDS) since [hasUpdated] changed to true (aka. a "proper" update)
      */
     fun getDelta(): Double
-
-    /**
-     * Returns whether or not any changes in state have occurred since the last call to [Gamepadyn.update].
-     * This function exists to "rate limit" event callbacks if the instance is updated multiple times per "frame."
-     * If this returns `true`, the Gamepadyn instance calling it will call [update] then precede to update itself.
-     */
-    fun hasUpdated(): Boolean = false
 }

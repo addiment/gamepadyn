@@ -131,7 +131,6 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
      * Updates state. Should be run every "frame," "tick," "update," or whatever iteration function your program uses.
      */
     fun update() {
-        if (backend.hasUpdated()) return
         backend.update()
         val delta = backend.getDelta()
         updateGamepads()

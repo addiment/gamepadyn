@@ -1,6 +1,7 @@
 package computer.living.gamepadyn.ftc
 
 import android.util.Log
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.Gamepad
 import computer.living.gamepadyn.InputBackend
@@ -25,8 +26,8 @@ class InputBackendFtc(private val opMode: OpMode) : InputBackend {
 
     private var gamepads: Array<RawGamepadFtc> = arrayOf(RawGamepadFtc(null), RawGamepadFtc(null))
 
-    private var lastUpdateTime = opMode.time
-    private var delta = 0.0
+    private var lastUpdateTime: Double = opMode.runtime
+    private var delta: Double = 0.0
 
     override fun getGamepads(): Array<out InputBackend.RawGamepad> {
         if (gamepads[0].gamepad == null || gamepads[1].gamepad == null) {
@@ -43,11 +44,17 @@ class InputBackendFtc(private val opMode: OpMode) : InputBackend {
         return gamepads.copyOf()
     }
 
-    override fun hasUpdated(): Boolean = (lastUpdateTime == opMode.time)
-
     override fun update() {
-        delta = opMode.time - lastUpdateTime
-        lastUpdateTime = opMode.time
+//        if (opMode is LinearOpMode) {
+
+        // runtime uses System.nanoTime
+        delta = opMode.runtime - lastUpdateTime
+        lastUpdateTime = opMode.runtime
+
+//        } else {
+//            delta = opMode.time - lastUpdateTime
+//            lastUpdateTime = opMode.time
+//        }
     }
 
     override fun getDelta(): Double {
