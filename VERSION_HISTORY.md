@@ -1,8 +1,52 @@
 # Version History
 
 
+## v0.3.0-BETA
+~~This will be the last version of Gamepadyn before my team's competition (assuming I finish it before then).~~
+There's no way all of this is going to be done in 2 days.
+Sorry, Gamepadyn fans. 💔 <!-- (the joke is that there aren't any) -->
+
+### Goals & Ideas
+- Introduce a separate API (events relating to `Gamepadyn` instead of to the `Player`) for listening to actions without caring about the player who performed the action.
+  - Currently, the lack of such an API increases implementation overhead,
+  example at the end of this section
+  - Player information is still useful, even in the context of player-specific events,
+  so the event API should be passing a `Player` as a parameter to the callback.
+    - This would mean that the "classic" `it()` will need to be adjusted
+  - 
+- Rename some of the `getEvent()` overloads to better represent what they actually do (i.e. `addEventListener`)
+- Currently, the default `ActionBind` will overwrite the action's value if the input is the same type as the output. Ideally, this would be a parameter, so that multiple actions could operate at the same time.
+  - This could also be solved simply creating a CommonBind that
+
+This is what we have right now:
+```kotlin
+// This is real code, from our primary implementation (aka. the FTC #5741 RoboHawks robot)
+val openLeftClaw =      { it: InputDataDigital -> if (it()) leftOpen = true }
+val closeLeftClaw =     { it: InputDataDigital -> if (it()) leftOpen = false }
+val openRightClaw =     { it: InputDataDigital -> if (it()) rightOpen = true }
+val closeRightClaw =    { it: InputDataDigital -> if (it()) rightOpen = false }
+
+gamepadyn.players[0].getEvent(CLAW_LEFT_OPEN,     openLeftClaw)
+gamepadyn.players[1].getEvent(CLAW_LEFT_OPEN,     openLeftClaw)
+gamepadyn.players[0].getEvent(CLAW_LEFT_CLOSE,    closeLeftClaw)
+gamepadyn.players[1].getEvent(CLAW_LEFT_CLOSE,    closeLeftClaw)
+gamepadyn.players[0].getEvent(CLAW_RIGHT_OPEN,    openRightClaw)
+gamepadyn.players[1].getEvent(CLAW_RIGHT_OPEN,    openRightClaw)
+gamepadyn.players[0].getEvent(CLAW_RIGHT_CLOSE,   closeRightClaw)
+gamepadyn.players[1].getEvent(CLAW_RIGHT_CLOSE,   closeRightClaw)
+```
+
+This is the code we want to have.
+
+```kotlin
+gamepadyn.addGlobalEventListener(CLAW_LEFT_OPEN)    { if (data()) leftOpen    = true  }
+gamepadyn.addGlobalEventListener(CLAW_LEFT_CLOSE)   { if (data()) leftOpen    = false }
+gamepadyn.addGlobalEventListener(CLAW_RIGHT_OPEN)   { if (data()) rightOpen   = true  }
+gamepadyn.addGlobalEventListener(CLAW_RIGHT_CLOSE)  { if (data()) rightOpen   = false }
+```
+
 ## v0.2.0-BETA
-There are probably a lot of things I missed, the codebase is fairly large and the scale of the changes is larger.
+There are probably a lot of things I missed, I don't usually work on codebases of this size, and I've just made so many changes.
 - Completely reworked the project to provide near 100% compile-time type checking.
   - This makes everything significantly less error prone,
   - In Kotlin, this makes use significantly more convenient, concise, and intuitive.

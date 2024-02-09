@@ -1,6 +1,7 @@
 package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
+import java.util.function.Consumer
 import kotlin.enums.EnumEntries
 
 sealed interface ActionEnum
@@ -241,6 +242,71 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
             }
         }
     }
+
+    /**
+     * Gets a Digital Event
+     */
+    @JvmName("getEventDigital")
+    fun getEvent(action: TD): Event<InputDataDigital>   = eventsDigital[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+    /**
+     * Gets an Analog1 Event
+     */
+    @JvmName("getEventAnalog1")
+    fun getEvent(action: TA): Event<InputDataAnalog1>   = eventsAnalog1[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+    /**
+     * Gets an Analog2 Event
+     */
+    @JvmName("getEventAnalog2")
+    fun getEvent(action: TAA): Event<InputDataAnalog2>  = eventsAnalog2[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+
+    /**
+     * Adds a listener to the event
+     */
+    @JvmName("addEventListenerDigital")
+    fun addEventListener(action: TD, listener: (InputDataDigital) -> Unit): Event<InputDataDigital>     = eventsDigital[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+        .also { it.addListener(listener) }
+
+    /**
+     * Gets an Analog1 Event and also adds a listener
+     */
+    @JvmName("addEventListenerAnalog1")
+    fun addEventListener(action: TA, listener: (InputDataAnalog1) -> Unit): Event<InputDataAnalog1>     = eventsAnalog1[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+        .also { it.addListener(listener) }
+    /**
+     * Gets an Analog2 Event and also adds a listener
+     */
+    @JvmName("addEventListenerAnalog2")
+    fun addEventListener(action: TAA, listener: (InputDataAnalog2) -> Unit): Event<InputDataAnalog2>    = eventsAnalog2[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+        .also { it.addListener(listener) }
+
+    /**
+     * Gets a Digital Event and also adds a Java listener
+     */
+    @JvmName("addEventListenerDigital")
+    fun addEventListener(action: TD, listener: Consumer<InputDataDigital>): Event<InputDataDigital>     = eventsDigital[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+        .also { it.addListener(listener) }
+
+    /**
+     * Gets an Analog1 Event and also adds a Java event listener
+     */
+    @JvmName("addEventListenerAnalog1")
+    fun addEventListener(action: TA, listener: Consumer<InputDataAnalog1>): Event<InputDataAnalog1>     = eventsAnalog1[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+        .also { it.addListener(listener) }
+    /**
+     * Gets an Analog2 Event and also adds a Java event listener
+     */
+    @JvmName("addEventListenerAnalog2")
+    fun addEventListener(action: TAA, listener: Consumer<InputDataAnalog2>): Event<InputDataAnalog2>    = eventsAnalog2[action]
+        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+        .also { it.addListener(listener) }
 
     //        get() = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
 

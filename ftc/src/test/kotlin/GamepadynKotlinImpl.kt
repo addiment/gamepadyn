@@ -15,7 +15,7 @@ import computer.living.gamepadyn.ftc.InputBackendFtc
 import GamepadynKotlinImpl.TestActionDigital.*
 import GamepadynKotlinImpl.TestActionAnalog1.*
 import GamepadynKotlinImpl.TestActionAnalog2.*
-import computer.living.gamepadyn.ActionBindAnalog2to1
+import computer.living.gamepadyn.ActionBindAnalog2To1
 import computer.living.gamepadyn.Axis
 
 class GamepadynKotlinImpl : OpMode() {
@@ -47,7 +47,7 @@ class GamepadynKotlinImpl : OpMode() {
         gamepadyn.players[0].configuration = Configuration(
             ActionBind          (LAUNCH_DRONE,    FACE_LEFT             ),
             ActionBind          (MOVEMENT,        STICK_LEFT            ),
-            ActionBindAnalog2to1(ROTATION,        STICK_RIGHT,  Axis.X  ),
+            ActionBindAnalog2To1(ROTATION,        STICK_RIGHT,  Axis.X  ),
             ActionBind          (CLAW,            TRIGGER_RIGHT         )
         )
 
@@ -64,13 +64,13 @@ class GamepadynKotlinImpl : OpMode() {
 //        p0.getState(ROTATION).x
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        p0.getEvent(LAUNCH_DRONE) {
+        p0.addEventListener(LAUNCH_DRONE) {
             telemetry.addLine("Button ${if (it()) "pressed" else "released"}!")
             telemetry.update()
         }
 
         // Usually, analog events should be replaced with state checks, but both work.
-        p0.getEvent(MOVEMENT) {
+        p0.addEventListener(MOVEMENT) {
             telemetry.addLine("Movement input: (${it.x}, ${it.y})")
             telemetry.update()
         }

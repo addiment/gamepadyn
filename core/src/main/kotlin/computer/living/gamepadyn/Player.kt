@@ -50,48 +50,48 @@ class Player<TD, TA, TAA> internal constructor(
         .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
 
     /**
-     * Gets a Digital Event and also adds a Java listener
+     * Adds a listener to the event
      */
-    @JvmName("getEventDigital")
-    fun getEvent(action: TD, listener: (InputDataDigital) -> Unit): Event<InputDataDigital>     = eventsDigital[action]
+    @JvmName("addEventListenerDigital")
+    fun addEventListener(action: TD, listener: (InputDataDigital) -> Unit): Event<InputDataDigital>     = eventsDigital[action]
         .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
         .also { it.addListener(listener) }
 
     /**
      * Gets an Analog1 Event and also adds a listener
      */
-    @JvmName("getEventAnalog1")
-    fun getEvent(action: TA, listener: (InputDataAnalog1) -> Unit): Event<InputDataAnalog1>     = eventsAnalog1[action]
+    @JvmName("addEventListenerAnalog1")
+    fun addEventListener(action: TA, listener: (InputDataAnalog1) -> Unit): Event<InputDataAnalog1>     = eventsAnalog1[action]
         .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
         .also { it.addListener(listener) }
     /**
      * Gets an Analog2 Event and also adds a listener
      */
-    @JvmName("getEventAnalog2")
-    fun getEvent(action: TAA, listener: (InputDataAnalog2) -> Unit): Event<InputDataAnalog2>    = eventsAnalog2[action]
+    @JvmName("addEventListenerAnalog2")
+    fun addEventListener(action: TAA, listener: (InputDataAnalog2) -> Unit): Event<InputDataAnalog2>    = eventsAnalog2[action]
         .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
         .also { it.addListener(listener) }
 
     /**
      * Gets a Digital Event and also adds a Java listener
      */
-    @JvmName("getEventDigital")
-    fun getEvent(action: TD, listener: Consumer<InputDataDigital>): Event<InputDataDigital>     = eventsDigital[action]
+    @JvmName("addEventListenerDigital")
+    fun addEventListener(action: TD, listener: Consumer<InputDataDigital>): Event<InputDataDigital>     = eventsDigital[action]
         .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
         .also { it.addListener(listener) }
 
     /**
      * Gets an Analog1 Event and also adds a Java event listener
      */
-    @JvmName("getEventAnalog1")
-    fun getEvent(action: TA, listener: Consumer<InputDataAnalog1>): Event<InputDataAnalog1>     = eventsAnalog1[action]
+    @JvmName("addEventListenerAnalog1")
+    fun addEventListener(action: TA, listener: Consumer<InputDataAnalog1>): Event<InputDataAnalog1>     = eventsAnalog1[action]
         .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
         .also { it.addListener(listener) }
     /**
      * Gets an Analog2 Event and also adds a Java event listener
      */
-    @JvmName("getEventAnalog2")
-    fun getEvent(action: TAA, listener: Consumer<InputDataAnalog2>): Event<InputDataAnalog2>    = eventsAnalog2[action]
+    @JvmName("addEventListenerAnalog2")
+    fun addEventListener(action: TAA, listener: Consumer<InputDataAnalog2>): Event<InputDataAnalog2>    = eventsAnalog2[action]
         .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
         .also { it.addListener(listener) }
 

@@ -1,4 +1,3 @@
-import computer.living.gamepadyn.InputType.DIGITAL
 import SimulatedInputUnitTest.TestActionAnalog1.*
 import SimulatedInputUnitTest.TestActionAnalog2.ANALOG_2D_ACTION
 import SimulatedInputUnitTest.TestActionDigital.DIGITAL_ACTION
@@ -9,12 +8,8 @@ import computer.living.gamepadyn.ActionEnumDigital
 import computer.living.gamepadyn.ActionMap
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
-import computer.living.gamepadyn.RawInput
-import computer.living.gamepadyn.RawInputAnalog1
 import computer.living.gamepadyn.RawInputAnalog1.*
-import computer.living.gamepadyn.RawInputAnalog2
 import computer.living.gamepadyn.RawInputAnalog2.*
-import computer.living.gamepadyn.RawInputDigital
 import computer.living.gamepadyn.RawInputDigital.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

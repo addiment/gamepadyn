@@ -65,13 +65,13 @@ public class GamepadynJavaImpl extends OpMode {
         assert p0 != null;
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        p0.getEventDigital(LAUNCH_DRONE, it -> {
+        p0.addEventListenerDigital(LAUNCH_DRONE, it -> {
             telemetry.addLine("Button " + ((it.active) ? "pressed" : "released") + "!");
             telemetry.update();
         });
 
         // Usually, analog events should be replaced with state checks, but both work.
-        p0.getEventAnalog2(MOVEMENT, it -> {
+        p0.addEventListenerAnalog2(MOVEMENT, it -> {
             telemetry.addLine("Movement input: (${it.x}, ${it.y})");
             telemetry.update();
         });
