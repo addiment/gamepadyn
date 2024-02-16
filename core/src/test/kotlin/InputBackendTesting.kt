@@ -33,18 +33,11 @@ class InputBackendTesting : InputBackend {
         override fun getState(input: RawInputAnalog2): InputDataAnalog2 = InputDataAnalog2(manipulableStateAnalog2d.first, manipulableStateAnalog2d.second)
 
         override fun getState(): Map<RawInput, InputData> = mapOf(
-//            RawInputDigital.FACE_A              to InputDataDigital(manipulableStateDigital),
             RawInputDigital.FACE_DOWN           to InputDataDigital(manipulableStateDigital),
-//            RawInputDigital.FACE_B              to InputDataDigital(manipulableStateDigital),
             RawInputDigital.FACE_RIGHT          to InputDataDigital(manipulableStateDigital),
-//            RawInputDigital.FACE_X              to InputDataDigital(manipulableStateDigital),
             RawInputDigital.FACE_LEFT           to InputDataDigital(manipulableStateDigital),
-//            RawInputDigital.FACE_Y              to InputDataDigital(manipulableStateDigital),
             RawInputDigital.FACE_UP             to InputDataDigital(manipulableStateDigital),
-//            RawInputDigital.FACE_CROSS          to InputDataDigital(manipulableStateDigital),
-//            RawInputDigital.FACE_CIRCLE         to InputDataDigital(manipulableStateDigital),
-//            RawInputDigital.FACE_SQUARE         to InputDataDigital(manipulableStateDigital),
-//            RawInputDigital.FACE_TRIANGLE       to InputDataDigital(manipulableStateDigital),
+
             RawInputDigital.BUMPER_LEFT         to InputDataDigital(manipulableStateDigital),
             RawInputDigital.BUMPER_RIGHT        to InputDataDigital(manipulableStateDigital),
             RawInputDigital.DPAD_UP             to InputDataDigital(manipulableStateDigital),
@@ -61,7 +54,6 @@ class InputBackendTesting : InputBackend {
             RawInputAnalog1.TRIGGER_RIGHT       to InputDataAnalog1(manipulableStateAnalog1d)
         )
 
-//        override fun getId(): UUID = this.id
     }
 
     private val gamepads: Array<RawGamepadTesting> = arrayOf(RawGamepadTesting())

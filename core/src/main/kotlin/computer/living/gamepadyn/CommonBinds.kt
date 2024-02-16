@@ -29,31 +29,6 @@ open class ActionBindAnalog1To2<O> (
         } else targetActionState
 }
 
-/**
- * Binds the state of one Analog1 axis to a single axis of an Analog2 action.
- * This can be "layered" if [zeroOtherAxis] is false (i.e. to bind two analog1 triggers to one analog2 action)
- */
-open class ActionBindAnalog1Threshold<O> (
-    targetAction: O,
-    input: RawInputAnalog1,
-    /**
-     * If true, the unused axis will be set to 0f.
-     * If false, the unused axis won't be modified.
-     */
-    val zeroOtherAxis: Boolean = false
-) : ActionBind<O>(targetAction, input)
-        where O : Enum<O>,
-              O : ActionEnumAnalog2
-{
-    override fun transform(inputState: InputData, targetActionState: InputData, delta: Double) : InputData =
-        if (inputState is InputDataAnalog1 && targetActionState is InputDataAnalog2) {
-            when (targetAxis) {
-                Axis.X -> InputDataAnalog2(inputState.x, if (zeroOtherAxis) 0f else targetActionState.y)
-                Axis.Y -> InputDataAnalog2(if (zeroOtherAxis) 0f else targetActionState.x, inputState.x)
-            }
-        } else targetActionState
-}
-
 open class ActionBindAnalog2To1<O> (
     targetAction: O,
     input: RawInputAnalog2,

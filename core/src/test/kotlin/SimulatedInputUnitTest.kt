@@ -5,7 +5,6 @@ import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
-import computer.living.gamepadyn.ActionMap
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.RawInputAnalog1.*
@@ -35,13 +34,14 @@ class SimulatedInputUnitTest {
         InputBackendTesting.manipulableStateDigital = false
         InputBackendTesting.manipulableStateAnalog2d = Pair(0f, 0f)
 
-        val actionMap = ActionMap(
-            TestActionDigital.entries.toSet(),
-            TestActionAnalog1.entries.toSet(),
-            TestActionAnalog2.entries.toSet()
-        )
+        val gamepadyn = Gamepadyn.new(
+            TestActionDigital::class,
+            TestActionAnalog1::class,
+            TestActionAnalog2::class,
 
-        val gamepadyn = Gamepadyn(sysTest, strict = true, actionMap)
+            sysTest,
+            strict = true
+        )
 
         println("Player count: ${gamepadyn.players.size}")
 
@@ -138,8 +138,6 @@ class SimulatedInputUnitTest {
 
 
         assertEquals(expectedStateChangeCount, stateChangeCount)
-//        assert(stateChangeCount == 2, "BAD!!!")
-
     }
 
 }

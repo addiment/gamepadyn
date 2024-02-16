@@ -10,8 +10,11 @@ import computer.living.gamepadyn.InputDataAnalog2
 import computer.living.gamepadyn.InputDataDigital
 import computer.living.gamepadyn.RawInput
 import computer.living.gamepadyn.RawInputAnalog1
+import computer.living.gamepadyn.RawInputAnalog1.*
 import computer.living.gamepadyn.RawInputAnalog2
+import computer.living.gamepadyn.RawInputAnalog2.*
 import computer.living.gamepadyn.RawInputDigital
+import computer.living.gamepadyn.RawInputDigital.*
 import java.util.UUID
 
 /**
@@ -36,7 +39,6 @@ class InputBackendFtc(private val opMode: OpMode) : InputBackend {
                 gamepads = arrayOf(RawGamepadFtc(gp0), RawGamepadFtc(gp1))
             } catch (e: Exception) {
                 // yeah, nothing we can really do about it ¯\_(￣▽￣)_/¯
-//                opMode.hardwareMap.appContext
                 Log.w(LOG_TAG, "Tried to get access to opMode gamepads, but an exception was thrown (have we initialized yet?)")
             }
         }
@@ -54,62 +56,49 @@ class InputBackendFtc(private val opMode: OpMode) : InputBackend {
         return delta
     }
 
+    /**
+     * Major differences between Gamepadyn's core control layout and the FTC gamepad access API:
+     * 1. joystick axes are corrected to what every other input system on the planet earth uses (aka. THE MATHEMATICALLY STANDARD ONE)
+     * 2. face buttons are referred to by their position on the controller rather than their label (some FTC-legal controllers don't even have standard labels!)
+     */
     class RawGamepadFtc(internal val gamepad: Gamepad?) : InputBackend.RawGamepad {
-        @Suppress("MemberVisibilityCanBePrivate")
-//        internal val id: UUID = UUID.randomUUID()
-
-//        override fun getId(): UUID = this.id
-
         override fun getState(input: RawInputDigital): InputDataDigital = if (gamepad != null) {
             when (input) {
-                RawInputDigital.FACE_DOWN,
-                /*RawInputDigital.FACE_A,
-                RawInputDigital.FACE_CROSS*/        -> InputDataDigital(gamepad.a /*.cross*/)
+                FACE_DOWN           -> InputDataDigital(gamepad.a)
+                FACE_RIGHT          -> InputDataDigital(gamepad.b)
+                FACE_LEFT           -> InputDataDigital(gamepad.x)
+                FACE_UP             -> InputDataDigital(gamepad.y)
 
-                RawInputDigital.FACE_RIGHT,
-                /*RawInputDigital.FACE_B,
-                RawInputDigital.FACE_CIRCLE*/       -> InputDataDigital(gamepad.b /*.circle*/)
+                BUMPER_LEFT         -> InputDataDigital(gamepad.left_bumper)
+                BUMPER_RIGHT        -> InputDataDigital(gamepad.right_bumper)
 
-                RawInputDigital.FACE_LEFT,
-                /*RawInputDigital.FACE_X,
-                RawInputDigital.FACE_SQUARE*/       -> InputDataDigital(gamepad.x /*.square*/)
+                DPAD_UP             -> InputDataDigital(gamepad.dpad_up)
+                DPAD_DOWN           -> InputDataDigital(gamepad.dpad_down)
+                DPAD_LEFT           -> InputDataDigital(gamepad.dpad_left)
+                DPAD_RIGHT          -> InputDataDigital(gamepad.dpad_right)
 
-                RawInputDigital.FACE_UP,
-                /*RawInputDigital.FACE_Y,
-                RawInputDigital.FACE_TRIANGLE*/     -> InputDataDigital(gamepad.y /*.triangle*/)
+                STICK_LEFT_BUTTON   -> InputDataDigital(gamepad.left_stick_button)
+                STICK_RIGHT_BUTTON  -> InputDataDigital(gamepad.right_stick_button)
 
-                RawInputDigital.BUMPER_LEFT         -> InputDataDigital(gamepad.left_bumper)
-                RawInputDigital.BUMPER_RIGHT        -> InputDataDigital(gamepad.right_bumper)
-
-                RawInputDigital.DPAD_UP             -> InputDataDigital(gamepad.dpad_up)
-                RawInputDigital.DPAD_DOWN           -> InputDataDigital(gamepad.dpad_down)
-                RawInputDigital.DPAD_LEFT           -> InputDataDigital(gamepad.dpad_left)
-                RawInputDigital.DPAD_RIGHT          -> InputDataDigital(gamepad.dpad_right)
-
-                RawInputDigital.STICK_LEFT_BUTTON   -> InputDataDigital(gamepad.left_stick_button)
-                RawInputDigital.STICK_RIGHT_BUTTON  -> InputDataDigital(gamepad.right_stick_button)
-
-//                RawInputDigital.SPECIAL_LEFT        -> InputDataDigital(gamepad.back)
-                RawInputDigital.SPECIAL_BACK        -> InputDataDigital(gamepad.back)
-                RawInputDigital.SPECIAL_START       -> InputDataDigital(gamepad.start)
-//                RawInputDigital.SPECIAL_OPTIONS     -> InputDataDigital(gamepad.back /*.options*/)
+                SPECIAL_BACK        -> InputDataDigital(gamepad.back)
+                SPECIAL_START       -> InputDataDigital(gamepad.start)
             }
         } else InputDataDigital()
 
         override fun getState(input: RawInputAnalog1): InputDataAnalog1 = if (gamepad != null) {
             when (input) {
-                RawInputAnalog1.TRIGGER_LEFT        -> InputDataAnalog1(gamepad.left_trigger)
-                RawInputAnalog1.TRIGGER_RIGHT       -> InputDataAnalog1(gamepad.right_trigger)
+                TRIGGER_LEFT        -> InputDataAnalog1(gamepad.left_trigger)
+                TRIGGER_RIGHT       -> InputDataAnalog1(gamepad.right_trigger)
             }
         } else InputDataAnalog1()
 
         override fun getState(input: RawInputAnalog2): InputDataAnalog2 = if (gamepad != null) {
             when (input) {
-                RawInputAnalog2.STICK_LEFT -> InputDataAnalog2(
+                STICK_LEFT -> InputDataAnalog2(
                     gamepad.left_stick_x,
                     if (-gamepad.left_stick_y == -0f) 0f else -gamepad.left_stick_y
                 )
-                RawInputAnalog2.STICK_RIGHT -> InputDataAnalog2(
+                STICK_RIGHT -> InputDataAnalog2(
                     gamepad.right_stick_x,
                     if (-gamepad.right_stick_y == -0f) 0f else -gamepad.right_stick_y
                 )
@@ -118,88 +107,62 @@ class InputBackendFtc(private val opMode: OpMode) : InputBackend {
 
         override fun getState(): Map<RawInput, InputData> = if (gamepad != null)
             mapOf(
-                RawInputDigital.FACE_DOWN           to InputDataDigital(gamepad.a),
-//                RawInputDigital.FACE_A              to InputDataDigital(gamepad.a),
-//                RawInputDigital.FACE_CROSS          to InputDataDigital(gamepad.a),
+                FACE_DOWN           to InputDataDigital(gamepad.a),
+                FACE_RIGHT          to InputDataDigital(gamepad.b),
+                FACE_LEFT           to InputDataDigital(gamepad.x),
+                FACE_UP             to InputDataDigital(gamepad.y),
 
-                RawInputDigital.FACE_RIGHT          to InputDataDigital(gamepad.b),
-//                RawInputDigital.FACE_B              to InputDataDigital(gamepad.b),
-//                RawInputDigital.FACE_CIRCLE         to InputDataDigital(gamepad.b),
+                BUMPER_LEFT         to InputDataDigital(gamepad.left_bumper),
+                BUMPER_RIGHT        to InputDataDigital(gamepad.right_bumper),
 
-                RawInputDigital.FACE_LEFT           to InputDataDigital(gamepad.x),
-//                RawInputDigital.FACE_X              to InputDataDigital(gamepad.x),
-//                RawInputDigital.FACE_SQUARE         to InputDataDigital(gamepad.x),
+                DPAD_UP             to InputDataDigital(gamepad.dpad_up),
+                DPAD_DOWN           to InputDataDigital(gamepad.dpad_down),
+                DPAD_LEFT           to InputDataDigital(gamepad.dpad_left),
+                DPAD_RIGHT          to InputDataDigital(gamepad.dpad_right),
 
-                RawInputDigital.FACE_UP             to InputDataDigital(gamepad.y),
-//                RawInputDigital.FACE_TRIANGLE       to InputDataDigital(gamepad.y),
-//                RawInputDigital.FACE_Y              to InputDataDigital(gamepad.y),
+                STICK_LEFT_BUTTON   to InputDataDigital(gamepad.left_stick_button),
+                STICK_RIGHT_BUTTON  to InputDataDigital(gamepad.right_stick_button),
 
-                RawInputDigital.BUMPER_LEFT         to InputDataDigital(gamepad.left_bumper),
-                RawInputDigital.BUMPER_RIGHT        to InputDataDigital(gamepad.right_bumper),
+                SPECIAL_BACK        to InputDataDigital(gamepad.back),
+                SPECIAL_START       to InputDataDigital(gamepad.start),
 
-                RawInputDigital.DPAD_UP             to InputDataDigital(gamepad.dpad_up),
-                RawInputDigital.DPAD_DOWN           to InputDataDigital(gamepad.dpad_down),
-                RawInputDigital.DPAD_LEFT           to InputDataDigital(gamepad.dpad_left),
-                RawInputDigital.DPAD_RIGHT          to InputDataDigital(gamepad.dpad_right),
+                TRIGGER_LEFT        to InputDataAnalog1(gamepad.left_trigger),
+                TRIGGER_RIGHT       to InputDataAnalog1(gamepad.right_trigger),
 
-                RawInputDigital.STICK_LEFT_BUTTON   to InputDataDigital(gamepad.left_stick_button),
-                RawInputDigital.STICK_RIGHT_BUTTON  to InputDataDigital(gamepad.right_stick_button),
-
-//                RawInputDigital.SPECIAL_LEFT        to InputDataDigital(gamepad.back),
-                RawInputDigital.SPECIAL_BACK        to InputDataDigital(gamepad.back),
-                RawInputDigital.SPECIAL_START       to InputDataDigital(gamepad.start),
-//                RawInputDigital.SPECIAL_OPTIONS     to InputDataDigital(gamepad.back),
-
-                RawInputAnalog2.STICK_LEFT          to InputDataAnalog2(
+                STICK_LEFT          to InputDataAnalog2(
                     gamepad.left_stick_x,
                     if (-gamepad.left_stick_y == -0f) 0f else -gamepad.left_stick_y
                 ),
-                RawInputAnalog2.STICK_RIGHT         to InputDataAnalog2(
+                STICK_RIGHT         to InputDataAnalog2(
                     gamepad.right_stick_x,
                     if (-gamepad.right_stick_y == -0f) 0f else -gamepad.right_stick_y
-                ),
-
-                RawInputAnalog1.TRIGGER_LEFT        to InputDataAnalog1(gamepad.left_trigger),
-                RawInputAnalog1.TRIGGER_RIGHT       to InputDataAnalog1(gamepad.right_trigger)
+                )
             )
         else mapOf(
-            RawInputDigital.FACE_DOWN               to InputDataDigital(),
-//            RawInputDigital.FACE_A                  to InputDataDigital(),
-//            RawInputDigital.FACE_CROSS              to InputDataDigital(),
+            FACE_DOWN               to InputDataDigital(),
+            FACE_RIGHT              to InputDataDigital(),
+            FACE_LEFT               to InputDataDigital(),
+            FACE_UP                 to InputDataDigital(),
 
-            RawInputDigital.FACE_RIGHT              to InputDataDigital(),
-//            RawInputDigital.FACE_B                  to InputDataDigital(),
-//            RawInputDigital.FACE_CIRCLE             to InputDataDigital(),
+            BUMPER_LEFT             to InputDataDigital(),
+            BUMPER_RIGHT            to InputDataDigital(),
 
-            RawInputDigital.FACE_LEFT               to InputDataDigital(),
-//            RawInputDigital.FACE_X                  to InputDataDigital(),
-//            RawInputDigital.FACE_SQUARE             to InputDataDigital(),
+            DPAD_UP                 to InputDataDigital(),
+            DPAD_DOWN               to InputDataDigital(),
+            DPAD_LEFT               to InputDataDigital(),
+            DPAD_RIGHT              to InputDataDigital(),
 
-            RawInputDigital.FACE_UP                 to InputDataDigital(),
-//            RawInputDigital.FACE_TRIANGLE           to InputDataDigital(),
-//            RawInputDigital.FACE_Y                  to InputDataDigital(),
+            STICK_LEFT_BUTTON       to InputDataDigital(),
+            STICK_RIGHT_BUTTON      to InputDataDigital(),
 
-            RawInputDigital.BUMPER_LEFT             to InputDataDigital(),
-            RawInputDigital.BUMPER_RIGHT            to InputDataDigital(),
+            SPECIAL_BACK            to InputDataDigital(),
+            SPECIAL_START           to InputDataDigital(),
 
-            RawInputDigital.DPAD_UP                 to InputDataDigital(),
-            RawInputDigital.DPAD_DOWN               to InputDataDigital(),
-            RawInputDigital.DPAD_LEFT               to InputDataDigital(),
-            RawInputDigital.DPAD_RIGHT              to InputDataDigital(),
+            TRIGGER_LEFT            to InputDataAnalog1(),
+            TRIGGER_RIGHT           to InputDataAnalog1(),
 
-            RawInputDigital.STICK_LEFT_BUTTON       to InputDataDigital(),
-            RawInputDigital.STICK_RIGHT_BUTTON      to InputDataDigital(),
-
-//            RawInputDigital.SPECIAL_LEFT            to InputDataDigital(),
-            RawInputDigital.SPECIAL_BACK            to InputDataDigital(),
-            RawInputDigital.SPECIAL_START           to InputDataDigital(),
-//            RawInputDigital.SPECIAL_OPTIONS         to InputDataDigital(),
-
-            RawInputAnalog2.STICK_LEFT              to InputDataAnalog2(),
-            RawInputAnalog2.STICK_RIGHT             to InputDataAnalog2(),
-
-            RawInputAnalog1.TRIGGER_LEFT            to InputDataAnalog1(),
-            RawInputAnalog1.TRIGGER_RIGHT           to InputDataAnalog1()
+            STICK_LEFT              to InputDataAnalog2(),
+            STICK_RIGHT             to InputDataAnalog2(),
         )
     }
 }

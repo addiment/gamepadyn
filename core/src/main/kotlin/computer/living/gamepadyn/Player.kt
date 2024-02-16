@@ -4,24 +4,27 @@ package computer.living.gamepadyn
 
 import java.util.function.Consumer
 
+/**
+ * Represents a specific controller.
+ */
 class Player<TD, TA, TAA> internal constructor(
     internal val parent: Gamepadyn<TD, TA, TAA>,
     internal var rawGamepad: InputBackend.RawGamepad
 )
-        where TD : ActionEnumDigital,
-              TA : ActionEnumAnalog1,
-              TAA : ActionEnumAnalog2,
-              TD : Enum<TD>,
-              TA : Enum<TA>,
-              TAA : Enum<TAA>
+    where TD : ActionEnumDigital,
+          TA : ActionEnumAnalog1,
+          TAA : ActionEnumAnalog2,
+          TD : Enum<TD>,
+          TA : Enum<TA>,
+          TAA : Enum<TAA>
 {
-    internal var stateDigital: MutableMap<TD,   InputDataDigital> = parent.actions.digitalActions.associateWith { InputDataDigital() }.toMutableMap()
-    internal var stateAnalog1: MutableMap<TA,   InputDataAnalog1> = parent.actions.analog1Actions.associateWith { InputDataAnalog1() }.toMutableMap()
-    internal var stateAnalog2: MutableMap<TAA,  InputDataAnalog2> = parent.actions.analog2Actions.associateWith { InputDataAnalog2() }.toMutableMap()
+    internal var stateDigital: MutableMap<TD,   InputDataDigital> = parent.actionsDigital.associateWith { InputDataDigital() }.toMutableMap()
+    internal var stateAnalog1: MutableMap<TA,   InputDataAnalog1> = parent.actionsAnalog1.associateWith { InputDataAnalog1() }.toMutableMap()
+    internal var stateAnalog2: MutableMap<TAA,  InputDataAnalog2> = parent.actionsAnalog2.associateWith { InputDataAnalog2() }.toMutableMap()
 
-    internal var eventsDigital: Map<TD,   Event<InputDataDigital>> = parent.actions.digitalActions.associateWith { Event() }
-    internal var eventsAnalog1: Map<TA,   Event<InputDataAnalog1>> = parent.actions.analog1Actions.associateWith { Event() }
-    internal var eventsAnalog2: Map<TAA,  Event<InputDataAnalog2>> = parent.actions.analog2Actions.associateWith { Event() }
+    internal var eventsDigital: Map<TD,   Event<InputDataDigital>> = parent.actionsDigital.associateWith { Event() }
+    internal var eventsAnalog1: Map<TA,   Event<InputDataAnalog1>> = parent.actionsAnalog1.associateWith { Event() }
+    internal var eventsAnalog2: Map<TAA,  Event<InputDataAnalog2>> = parent.actionsAnalog2.associateWith { Event() }
 
     internal var isEnabled: Boolean = true
 

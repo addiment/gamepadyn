@@ -12,31 +12,21 @@ sealed interface RawInput {
 enum class RawInputDigital(override val type: InputType) : RawInput {
 
     /**
-     * Generic face button (= A / CROSS)
+     * Generic face button (= A / Cross)
      */
     FACE_DOWN           (DIGITAL),
     /**
-     * Generic face button (= B / CIRCLE)
+     * Generic face button (= B / Circle)
      */
     FACE_RIGHT          (DIGITAL),
     /**
-     * Generic face button (= X / SQUARE)
+     * Generic face button (= X / Square)
      */
     FACE_LEFT           (DIGITAL),
     /**
-     * Generic face button (= Y / TRIANGLE)
+     * Generic face button (= Y / Triangle)
      */
     FACE_UP             (DIGITAL),
-
-//    FACE_A              (DIGITAL), // XB face button (= DOWN)
-//    FACE_B              (DIGITAL), // XB face button (= RIGHT)
-//    FACE_X              (DIGITAL), // XB face button (= LEFT)
-//    FACE_Y              (DIGITAL), // XB face button (= UP)
-//
-//    FACE_CROSS          (DIGITAL), // PS face button (= A)
-//    FACE_CIRCLE         (DIGITAL), // PS face button (= B)
-//    FACE_SQUARE         (DIGITAL), // PS face button (= X)
-//    FACE_TRIANGLE       (DIGITAL), // PS face button (= Y)
 
     BUMPER_LEFT         (DIGITAL),
     BUMPER_RIGHT        (DIGITAL),
@@ -49,24 +39,29 @@ enum class RawInputDigital(override val type: InputType) : RawInput {
     STICK_LEFT_BUTTON   (DIGITAL),
     STICK_RIGHT_BUTTON  (DIGITAL),
     /**
-     * Generic special button (= SHARE)
+     * Generic special button (= SHARE / VIEW)
      */
     SPECIAL_BACK        (DIGITAL), // Generic special button
-//    SPECIAL_VIEW        (DIGITAL), // XB special button
-//    SPECIAL_SHARE       (DIGITAL), // PS special button (= BACK)
     /**
-     * Generic special button (= OPTIONS)
+     * Generic special button (= OPTIONS / MENU)
      */
     SPECIAL_START       (DIGITAL), // Generic special button
-//    SPECIAL_MENU        (DIGITAL), // XB special button
-//    SPECIAL_OPTIONS     (DIGITAL), // PS special button (= BACK)
 }
 
 enum class RawInputAnalog1(override val type: InputType) : RawInput {
+    /**
+     * Digital triggers will be pseudo-analog, 0.0 or 1.0 based on their state.
+     */
     TRIGGER_LEFT        (ANALOG1),
+    /**
+     * Digital triggers will be pseudo-analog, 0.0 or 1.0 based on their state.
+     */
     TRIGGER_RIGHT       (ANALOG1)
 }
 
+/**
+ * All analog inputs should be treated with +X as right and +Y as up.
+ */
 enum class RawInputAnalog2(override val type: InputType) : RawInput {
     STICK_LEFT          (ANALOG2),
     STICK_RIGHT         (ANALOG2),

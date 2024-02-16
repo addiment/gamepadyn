@@ -3,6 +3,7 @@ package computer.living.gamepadyn
 import computer.living.gamepadyn.InputType.*
 import java.util.function.Consumer
 import kotlin.enums.EnumEntries
+import kotlin.reflect.KClass
 
 sealed interface ActionEnum
 interface ActionEnumDigital : ActionEnum
@@ -10,53 +11,10 @@ interface ActionEnumAnalog1 : ActionEnum
 interface ActionEnumAnalog2 : ActionEnum
 
 /**
- * @constructor The entries of the enum that you use for actions (i.e. ActionDigital.entries, ActionAnalog1.entries, ActionAnalog2.entries).
- */
-data class ActionMap<TD, TA, TAA>(
-    var digitalActions: Set<TD>,
-    var analog1Actions: Set<TA>,
-    var analog2Actions: Set<TAA>
-)
-        where TD : ActionEnumDigital,
-              TA : ActionEnumAnalog1,
-              TAA : ActionEnumAnalog2,
-              TD : Enum<TD>,
-              TA : Enum<TA>,
-              TAA : Enum<TAA>
-{
-    /**
-     * Creates the ActionMap with the entries of the enum that you use for actions (i.e. ActionDigital.entries, ActionAnalog1.entries, ActionAnalog2.entries).
-     */
-    constructor(
-        digitalActions: Array<TD>,
-        analog1Actions: Array<TA>,
-        analog2Actions: Array<TAA>
-    ) : this (digitalActions.toSet(), analog1Actions.toSet(), analog2Actions.toSet())
-
-    /**
-     * Creates the ActionMap with the entries of the enum that you use for actions (i.e. ActionDigital.entries, ActionAnalog1.entries, ActionAnalog2.entries).
-     */
-    constructor(
-        digitalActions: EnumEntries<TD>,
-        analog1Actions: EnumEntries<TA>,
-        analog2Actions: EnumEntries<TAA>
-    ) : this (digitalActions.toSet(), analog1Actions.toSet(), analog2Actions.toSet())
-
-    val size: Int
-        get() = digitalActions.size + analog1Actions.size + analog2Actions.size
-
-    init {
-        require(digitalActions.isNotEmpty() || analog1Actions.isNotEmpty() || analog2Actions.isNotEmpty()) { "Must provide at least 1 action!" }
-    }
-}
-
-/**
  * A Gamepadyn instance.
- *
- * @param actions A map of actions that this Gamepadyn instance should be aware of
  */
 @Suppress("MemberVisibilityCanBePrivate"/*, "BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER"*/)
-class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
+class Gamepadyn<TD, TA, TAA> private constructor(
     /**
      * The backend input source.
      */
@@ -65,7 +23,9 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
      * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
      */
     var strict: Boolean = true,
-    var actions: ActionMap<TD, TA, TAA>
+    internal val actionsDigital: Array<TD>,
+    internal val actionsAnalog1: Array<TA>,
+    internal val actionsAnalog2: Array<TAA>
 )
         where
               TD : ActionEnumDigital,
@@ -74,13 +34,7 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
               TD : Enum<TD>,
               TA : Enum<TA>,
               TAA : Enum<TAA>
-//              TAAA : ActionEnumAnalog3,
-//              TD : Ti,
-//              TA : Ti,
-//              TAA : Ti,
-//              TAAA : Ti,
 {
-
     /**
      * A list of active Players.
      */
@@ -100,6 +54,13 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
      */
     fun getPlayer(index: Int): Player<TD, TA, TAA>? = players.getOrNull(index)
 
+    internal var eventsDigital: Map<TD,   Event<InputDataDigital>> = actionsDigital.associateWith { Event() }
+    internal var eventsAnalog1: Map<TA,   Event<InputDataAnalog1>> = actionsAnalog1.associateWith { Event() }
+    internal var eventsAnalog2: Map<TAA,  Event<InputDataAnalog2>> = actionsAnalog2.associateWith { Event() }
+
+    /**
+     * Request new state from the [InputBackend].
+     */
     private fun updateGamepads() {
         val rawGamepads = backend.getGamepads()
         // TODO: check that this can't cause any issues
@@ -314,13 +275,65 @@ class Gamepadyn<TD, TA, TAA> @JvmOverloads constructor(
     // TODO: implement timing
     internal var lastUpdateTime: Double = 0.0
 
-    init {
-        actions = ActionMap(
-            actions.digitalActions.toSet(),
-            actions.analog1Actions.toSet(),
-            actions.analog2Actions.toSet()
-        )
-        require(actions.digitalActions.isNotEmpty() || actions.analog1Actions.isNotEmpty() || actions.analog2Actions.isNotEmpty()) { "Must provide at least 1 action!" }
+    companion object {
+        /**
+         * Kotlin-specific (sorta) factory method to create a new Gamepadyn instance.
+         * @param backend See [Gamepadyn.backend]
+         * @param strict See [Gamepadyn.strict]
+         * @param digitalEnum The Kotlin class of your enum that implements of [ActionEnumDigital]
+         * @param analog1Enum The Kotlin class of your enum that implements of [ActionEnumAnalog1]
+         * @param analog2Enum The Kotlin class of your enum that implements of [ActionEnumAnalog2]
+         */
+        @JvmSynthetic
+        fun <TD, TA, TAA> new(
+            digitalEnum: KClass<TD>,
+            analog1Enum: KClass<TA>,
+            analog2Enum: KClass<TAA>,
+            backend: InputBackend,
+            strict: Boolean = true
+        ): Gamepadyn<TD, TA, TAA>
+            where TD : ActionEnumDigital,
+                  TA : ActionEnumAnalog1,
+                  TAA : ActionEnumAnalog2,
+                  TD : Enum<TD>,
+                  TA : Enum<TA>,
+                  TAA : Enum<TAA>
+        {
+            val d: Array<TD> = digitalEnum.java.enumConstants
+            val a: Array<TA> = analog1Enum.java.enumConstants
+            val aa: Array<TAA> = analog2Enum.java.enumConstants
+            return Gamepadyn(backend, strict, d, a, aa)
+        }
+
+        /**
+         * Java-specific (sorta) factory method to create a new Gamepadyn instance.
+         * @param digitalEnum The Java class of your enum that implements of [ActionEnumDigital]
+         * @param analog1Enum The Java class of your enum that implements of [ActionEnumAnalog1]
+         * @param analog2Enum The Java class of your enum that implements of [ActionEnumAnalog2]
+         * @param backend See [Gamepadyn.backend]
+         * @param strict See [Gamepadyn.strict]
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun <TD, TA, TAA> new(
+            digitalEnum: Class<TD>,
+            analog1Enum: Class<TA>,
+            analog2Enum: Class<TAA>,
+            backend: InputBackend,
+            strict: Boolean = true
+        ): Gamepadyn<TD, TA, TAA>
+                where TD : ActionEnumDigital,
+                      TA : ActionEnumAnalog1,
+                      TAA : ActionEnumAnalog2,
+                      TD : Enum<TD>,
+                      TA : Enum<TA>,
+                      TAA : Enum<TAA>
+        {
+            val d: Array<TD> = digitalEnum.enumConstants
+            val a: Array<TA> = analog1Enum.enumConstants
+            val aa: Array<TAA> = analog2Enum.enumConstants
+            return Gamepadyn(backend, strict, d, a, aa)
+        }
     }
 
 }
