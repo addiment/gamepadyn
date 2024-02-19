@@ -61,6 +61,7 @@ There are probably a lot of things I missed, I don't usually work on codebases o
 This is somewhat of a small and annoying change,
 but the goal is readability. *Putting the action first*
 makes understanding a configuration miles easier.
+- Backends must now provide timing information, accessible by `ActionBind`s.
 
 ## v0.1.1-BETA
 NOTE: this version never made it to main. Most of the changes were adapted to work for the 0.2.0 BETA, and the version number was slightly misleading. 

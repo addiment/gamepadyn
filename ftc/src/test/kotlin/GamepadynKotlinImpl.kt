@@ -4,7 +4,6 @@ import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
-import computer.living.gamepadyn.ActionMap
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.RawInputDigital.*
@@ -32,14 +31,12 @@ class GamepadynKotlinImpl : OpMode() {
         MOVEMENT
     }
 
-    private val gamepadyn = Gamepadyn(
+    private val gamepadyn = Gamepadyn.create(
+        TestActionDigital::class,
+        TestActionAnalog1::class,
+        TestActionAnalog2::class,
         InputBackendFtc(this),
         strict = true,
-        ActionMap(
-            TestActionDigital.entries,
-            TestActionAnalog1.entries,
-            TestActionAnalog2.entries
-        )
     )
 
     override fun init() {
@@ -64,14 +61,14 @@ class GamepadynKotlinImpl : OpMode() {
 //        p0.getState(ROTATION).x
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        p0.addEventListener(LAUNCH_DRONE) {
-            telemetry.addLine("Button ${if (it()) "pressed" else "released"}!")
+        p0.addEventListener(LAUNCH_DRONE) { data, _ ->
+            telemetry.addLine("Button ${if (data()) "pressed" else "released"}!")
             telemetry.update()
         }
 
         // Usually, analog events should be replaced with state checks, but both work.
-        p0.addEventListener(MOVEMENT) {
-            telemetry.addLine("Movement input: (${it.x}, ${it.y})")
+        p0.addEventListener(MOVEMENT) { data, _ ->
+            telemetry.addLine("Movement input: (${data.x}, ${data.y})")
             telemetry.update()
         }
 

@@ -1,8 +1,6 @@
 package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
-import java.util.function.Consumer
-import kotlin.enums.EnumEntries
 import kotlin.reflect.KClass
 
 sealed interface ActionEnum
@@ -54,9 +52,9 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      */
     fun getPlayer(index: Int): Player<TD, TA, TAA>? = players.getOrNull(index)
 
-    internal var eventsDigital: Map<TD,   Event<InputDataDigital>> = actionsDigital.associateWith { Event() }
-    internal var eventsAnalog1: Map<TA,   Event<InputDataAnalog1>> = actionsAnalog1.associateWith { Event() }
-    internal var eventsAnalog2: Map<TAA,  Event<InputDataAnalog2>> = actionsAnalog2.associateWith { Event() }
+    internal var globalEventsDigital: Map<TD,   Event<InputDataDigital, TD, TA, TAA>> = actionsDigital.associateWith { Event() }
+    internal var globalEventsAnalog1: Map<TA,   Event<InputDataAnalog1, TD, TA, TAA>> = actionsAnalog1.associateWith { Event() }
+    internal var globalEventsAnalog2: Map<TAA,  Event<InputDataAnalog2, TD, TA, TAA>> = actionsAnalog2.associateWith { Event() }
 
     /**
      * Request new state from the [InputBackend].
@@ -180,7 +178,8 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                         val cast = (update as? TD) ?: continue
                         val currentState = player.getState(cast)
                         if (statePreviousDigital[update] != currentState) {
-                            player.getEvent(cast).trigger(currentState)
+                            player.getEvent(cast).trigger(currentState, player)
+                            this.getEvent(cast).trigger(currentState, player)
                         }
                     }
                     is ActionEnumAnalog1 -> {
@@ -188,7 +187,8 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                         val cast = (update as? TA) ?: continue
                         val currentState = player.getState(cast)
                         if (statePreviousAnalog1[update] != currentState) {
-                            player.getEvent(cast).trigger(currentState)
+                            player.getEvent(cast).trigger(currentState, player)
+                            this.getEvent(cast).trigger(currentState, player)
                         }
                     }
                     is ActionEnumAnalog2 -> {
@@ -196,7 +196,8 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                         val cast = (update as? TAA) ?: continue
                         val currentState = player.getState(cast)
                         if (statePreviousAnalog2[update] != currentState) {
-                            player.getEvent(cast).trigger(currentState)
+                            player.getEvent(cast).trigger(currentState, player)
+                            this.getEvent(cast).trigger(currentState, player)
                         }
                     }
                 }
@@ -208,66 +209,59 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      * Gets a Digital Event
      */
     @JvmName("getEventDigital")
-    fun getEvent(action: TD): Event<InputDataDigital>   = eventsDigital[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+    fun getEvent(action: TD): Event<InputDataDigital, TD, TA, TAA>   = globalEventsDigital[action]!!
+
     /**
      * Gets an Analog1 Event
      */
     @JvmName("getEventAnalog1")
-    fun getEvent(action: TA): Event<InputDataAnalog1>   = eventsAnalog1[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+    fun getEvent(action: TA): Event<InputDataAnalog1, TD, TA, TAA>   = globalEventsAnalog1[action]!!
+
     /**
      * Gets an Analog2 Event
      */
     @JvmName("getEventAnalog2")
-    fun getEvent(action: TAA): Event<InputDataAnalog2>  = eventsAnalog2[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+    fun getEvent(action: TAA): Event<InputDataAnalog2, TD, TA, TAA>  = globalEventsAnalog2[action]!!
 
     /**
-     * Adds a listener to the event
+     * Adds an event listener.
+     * @see [Event.addListener]
      */
     @JvmName("addEventListenerDigital")
-    fun addEventListener(action: TD, listener: (InputDataDigital) -> Unit): Event<InputDataDigital>     = eventsDigital[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
-        .also { it.addListener(listener) }
+    fun addEventListener(action: TD, listener: (InputDataDigital, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
-     * Gets an Analog1 Event and also adds a listener
+     * Adds an event listener.
+     * @see [Event.addListener]
      */
     @JvmName("addEventListenerAnalog1")
-    fun addEventListener(action: TA, listener: (InputDataAnalog1) -> Unit): Event<InputDataAnalog1>     = eventsAnalog1[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
-        .also { it.addListener(listener) }
+    fun addEventListener(action: TA, listener: (InputDataAnalog1, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
     /**
-     * Gets an Analog2 Event and also adds a listener
+     * Adds an event listener.
+     * @see [Event.addListener]
      */
     @JvmName("addEventListenerAnalog2")
-    fun addEventListener(action: TAA, listener: (InputDataAnalog2) -> Unit): Event<InputDataAnalog2>    = eventsAnalog2[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
-        .also { it.addListener(listener) }
+    fun addEventListener(action: TAA, listener: (InputDataAnalog2, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     /**
-     * Gets a Digital Event and also adds a Java listener
+     * Adds an event listener.
+     * @see [Event.addListener]
      */
     @JvmName("addEventListenerDigital")
-    fun addEventListener(action: TD, listener: Consumer<InputDataDigital>): Event<InputDataDigital>     = eventsDigital[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
-        .also { it.addListener(listener) }
+    fun addEventListener(action: TD, listener: InputEventListener<InputDataDigital, TD, TA, TAA>): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
-     * Gets an Analog1 Event and also adds a Java event listener
+     * Adds an event listener.
+     * @see [Event.addListener]
      */
     @JvmName("addEventListenerAnalog1")
-    fun addEventListener(action: TA, listener: Consumer<InputDataAnalog1>): Event<InputDataAnalog1>     = eventsAnalog1[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
-        .also { it.addListener(listener) }
+    fun addEventListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
     /**
-     * Gets an Analog2 Event and also adds a Java event listener
+     * Adds an event listener.
+     * @see [Event.addListener]
      */
     @JvmName("addEventListenerAnalog2")
-    fun addEventListener(action: TAA, listener: Consumer<InputDataAnalog2>): Event<InputDataAnalog2>    = eventsAnalog2[action]
-        .let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
-        .also { it.addListener(listener) }
+    fun addEventListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     //        get() = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
 
@@ -280,12 +274,12 @@ class Gamepadyn<TD, TA, TAA> private constructor(
          * Kotlin-specific (sorta) factory method to create a new Gamepadyn instance.
          * @param backend See [Gamepadyn.backend]
          * @param strict See [Gamepadyn.strict]
-         * @param digitalEnum The Kotlin class of your enum that implements of [ActionEnumDigital]
-         * @param analog1Enum The Kotlin class of your enum that implements of [ActionEnumAnalog1]
-         * @param analog2Enum The Kotlin class of your enum that implements of [ActionEnumAnalog2]
+         * @param digitalEnum The Kotlin class of your enum that implements [ActionEnumDigital]
+         * @param analog1Enum The Kotlin class of your enum that implements [ActionEnumAnalog1]
+         * @param analog2Enum The Kotlin class of your enum that implements [ActionEnumAnalog2]
          */
         @JvmSynthetic
-        fun <TD, TA, TAA> new(
+        fun <TD, TA, TAA> create(
             digitalEnum: KClass<TD>,
             analog1Enum: KClass<TA>,
             analog2Enum: KClass<TAA>,
@@ -299,39 +293,54 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                   TA : Enum<TA>,
                   TAA : Enum<TAA>
         {
-            val d: Array<TD> = digitalEnum.java.enumConstants
-            val a: Array<TA> = analog1Enum.java.enumConstants
-            val aa: Array<TAA> = analog2Enum.java.enumConstants
+            val d: Array<TD>? = digitalEnum.java.enumConstants
+            val a: Array<TA>? = analog1Enum.java.enumConstants
+            val aa: Array<TAA>? = analog2Enum.java.enumConstants
+            if (d == null || a == null || aa == null) {
+                val s = mutableSetOf<String>()
+                if (d == null) s.add("digital")
+                if (a == null) s.add("analog1")
+                if (aa == null) s.add("analog2")
+                throw Exception("Unable to find enum constants of the following action types: ${s.joinToString()}")
+            }
             return Gamepadyn(backend, strict, d, a, aa)
         }
 
         /**
          * Java-specific (sorta) factory method to create a new Gamepadyn instance.
-         * @param digitalEnum The Java class of your enum that implements of [ActionEnumDigital]
-         * @param analog1Enum The Java class of your enum that implements of [ActionEnumAnalog1]
-         * @param analog2Enum The Java class of your enum that implements of [ActionEnumAnalog2]
+         * @param digitalEnum The Java class of your enum that implements [ActionEnumDigital]
+         * @param analog1Enum The Java class of your enum that implements [ActionEnumAnalog1]
+         * @param analog2Enum The Java class of your enum that implements [ActionEnumAnalog2]
          * @param backend See [Gamepadyn.backend]
          * @param strict See [Gamepadyn.strict]
          */
         @JvmStatic
         @JvmOverloads
-        fun <TD, TA, TAA> new(
+        @Throws()
+        fun <TD, TA, TAA> create(
             digitalEnum: Class<TD>,
             analog1Enum: Class<TA>,
             analog2Enum: Class<TAA>,
             backend: InputBackend,
             strict: Boolean = true
         ): Gamepadyn<TD, TA, TAA>
-                where TD : ActionEnumDigital,
-                      TA : ActionEnumAnalog1,
-                      TAA : ActionEnumAnalog2,
-                      TD : Enum<TD>,
-                      TA : Enum<TA>,
-                      TAA : Enum<TAA>
+            where TD : ActionEnumDigital,
+                  TA : ActionEnumAnalog1,
+                  TAA : ActionEnumAnalog2,
+                  TD : Enum<TD>,
+                  TA : Enum<TA>,
+                  TAA : Enum<TAA>
         {
-            val d: Array<TD> = digitalEnum.enumConstants
-            val a: Array<TA> = analog1Enum.enumConstants
-            val aa: Array<TAA> = analog2Enum.enumConstants
+            val d: Array<TD>? = digitalEnum.enumConstants
+            val a: Array<TA>? = analog1Enum.enumConstants
+            val aa: Array<TAA>? = analog2Enum.enumConstants
+            if (d == null || a == null || aa == null) {
+                val s = mutableSetOf<String>()
+                if (d == null) s.add("digital")
+                if (a == null) s.add("analog1")
+                if (aa == null) s.add("analog2")
+                throw Exception("Unable to find enum constants of the following action types: ${s.joinToString()}")
+            }
             return Gamepadyn(backend, strict, d, a, aa)
         }
     }

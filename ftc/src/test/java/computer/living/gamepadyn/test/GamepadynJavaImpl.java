@@ -3,7 +3,6 @@ package computer.living.gamepadyn.test;
 import computer.living.gamepadyn.ActionBind;
 import computer.living.gamepadyn.Configuration;
 import computer.living.gamepadyn.Gamepadyn;
-import computer.living.gamepadyn.ActionMap;
 import computer.living.gamepadyn.Player;
 import computer.living.gamepadyn.ActionEnumDigital;
 import computer.living.gamepadyn.ActionEnumAnalog1;
@@ -26,20 +25,20 @@ public class GamepadynJavaImpl extends OpMode {
     }
 
     enum TestActionAnalog1 implements ActionEnumAnalog1 {
-        CLAW
+        CLAW,
+        ROTATION
     }
 
     enum TestActionAnalog2 implements ActionEnumAnalog2 {
         MOVEMENT,
-        ROTATION
     }
-    final Gamepadyn<TestActionDigital, TestActionAnalog1, TestActionAnalog2> gamepadyn = new Gamepadyn<>(new InputBackendFtc(this),
-        true,
-        new ActionMap<>(
-            TestActionDigital.values(),
-            TestActionAnalog1.values(),
-            TestActionAnalog2.values()
-        )
+
+    final Gamepadyn<TestActionDigital, TestActionAnalog1, TestActionAnalog2> gamepadyn = Gamepadyn.create(
+        TestActionDigital.class,
+        TestActionAnalog1.class,
+        TestActionAnalog2.class,
+        new InputBackendFtc(this),
+        true
     );
 
 
@@ -65,14 +64,14 @@ public class GamepadynJavaImpl extends OpMode {
         assert p0 != null;
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        p0.addEventListenerDigital(LAUNCH_DRONE, it -> {
-            telemetry.addLine("Button " + ((it.active) ? "pressed" : "released") + "!");
+        p0.addEventListenerDigital(LAUNCH_DRONE, (data, player) -> {
+            telemetry.addLine("Button " + ((data.active) ? "pressed" : "released") + "!");
             telemetry.update();
         });
 
         // Usually, analog events should be replaced with state checks, but both work.
-        p0.addEventListenerAnalog2(MOVEMENT, it -> {
-            telemetry.addLine("Movement input: (${it.x}, ${it.y})");
+        p0.addEventListenerAnalog2(MOVEMENT, (data, player) -> {
+            telemetry.addLine("Movement input: (" + data.x + ", " + data.y + ")");
             telemetry.update();
         });
 

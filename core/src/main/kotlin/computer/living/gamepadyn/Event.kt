@@ -6,8 +6,9 @@ import java.util.function.Consumer
 /**
  * Represents an event to which listeners are added and called when the event is triggered.
  */
-class Event<T: InputData, TD, TA, TAA> internal constructor()
-    where TD : ActionEnumDigital,
+class Event<T, TD, TA, TAA> internal constructor()
+    where T : InputData,
+          TD : ActionEnumDigital,
           TA : ActionEnumAnalog1,
           TAA : ActionEnumAnalog2,
           TD : Enum<TD>,
@@ -25,7 +26,7 @@ class Event<T: InputData, TD, TA, TAA> internal constructor()
      * We don't really need to know the bytecode differences
      * because we can just have an array of Java's SAM interfaces.
      */
-    private val javaListeners = mutableSetOf<BiConsumer<T, Player<TD, TA, TAA>>>()
+    private val javaListeners = mutableSetOf<InputEventListener<T, TD, TA, TAA>>()
 
     /**
      * Adds a callback for the event.
@@ -36,7 +37,7 @@ class Event<T: InputData, TD, TA, TAA> internal constructor()
      * Java-specific overload.
      * @see addListener
      */
-    fun addListener(listener: BiConsumer<T, Player<TD, TA, TAA>>): Boolean = javaListeners.add(listener)
+    fun addListener(listener: InputEventListener<T, TD, TA, TAA>): Boolean = javaListeners.add(listener)
 
     /**
      * Alias for [addListener]
@@ -45,7 +46,7 @@ class Event<T: InputData, TD, TA, TAA> internal constructor()
     /**
      * Alias for [addListener]
      */
-    operator fun invoke(listener: BiConsumer<T, Player<TD, TA, TAA>>): Boolean = javaListeners.add(listener)
+    operator fun invoke(listener: InputEventListener<T, TD, TA, TAA>): Boolean = javaListeners.add(listener)
 
 
     /**
@@ -58,7 +59,7 @@ class Event<T: InputData, TD, TA, TAA> internal constructor()
      * Java-specific overload.
      * @see removeListener
      */
-    fun removeListener(listener: BiConsumer<T, Player<TD, TA, TAA>>): Boolean = javaListeners.remove(listener)
+    fun removeListener(listener: InputEventListener<T, TD, TA, TAA>): Boolean = javaListeners.remove(listener)
 
     /**
      * Removes all listeners from the event.

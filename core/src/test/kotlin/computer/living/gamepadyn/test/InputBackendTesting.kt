@@ -1,3 +1,5 @@
+package computer.living.gamepadyn.test
+
 import computer.living.gamepadyn.InputBackend
 import computer.living.gamepadyn.InputData
 import computer.living.gamepadyn.InputDataAnalog1
@@ -7,14 +9,13 @@ import computer.living.gamepadyn.RawInput
 import computer.living.gamepadyn.RawInputDigital
 import computer.living.gamepadyn.RawInputAnalog1
 import computer.living.gamepadyn.RawInputAnalog2
-import java.util.UUID
 
 class InputBackendTesting : InputBackend {
 
     companion object {
-        var manipulableStateDigital: Boolean = false
-        var manipulableStateAnalog1d: Float = 0f
-        var manipulableStateAnalog2d: Pair<Float, Float> = Pair(0f, 0f)
+        @JvmField var manipulableStateDigital: Boolean = false
+        @JvmField var manipulableStateAnalog1d: Float = 0f
+        @JvmField var manipulableStateAnalog2d: Pair<Float, Float> = Pair(0f, 0f)
     }
 
     override fun getDelta(): Double {
@@ -26,11 +27,16 @@ class InputBackendTesting : InputBackend {
 //        @Suppress("MemberVisibilityCanBePrivate")
 //        internal val id: UUID = UUID.randomUUID()
 
-        override fun getState(input: RawInputDigital): InputDataDigital = InputDataDigital(manipulableStateDigital)
+        override fun getState(input: RawInputDigital): InputDataDigital = InputDataDigital(
+            manipulableStateDigital
+        )
 
-        override fun getState(input: RawInputAnalog1): InputDataAnalog1 = InputDataAnalog1(manipulableStateAnalog1d)
+        override fun getState(input: RawInputAnalog1): InputDataAnalog1 = InputDataAnalog1(
+            manipulableStateAnalog1d
+        )
 
-        override fun getState(input: RawInputAnalog2): InputDataAnalog2 = InputDataAnalog2(manipulableStateAnalog2d.first, manipulableStateAnalog2d.second)
+        override fun getState(input: RawInputAnalog2): InputDataAnalog2 = InputDataAnalog2(
+            manipulableStateAnalog2d.first, manipulableStateAnalog2d.second)
 
         override fun getState(): Map<RawInput, InputData> = mapOf(
             RawInputDigital.FACE_DOWN           to InputDataDigital(manipulableStateDigital),

@@ -1,6 +1,8 @@
-import SimulatedInputUnitTest.TestActionAnalog1.*
-import SimulatedInputUnitTest.TestActionAnalog2.ANALOG_2D_ACTION
-import SimulatedInputUnitTest.TestActionDigital.DIGITAL_ACTION
+package computer.living.gamepadyn.test
+
+import computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionAnalog1.*
+import computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionAnalog2.ANALOG_2D_ACTION
+import computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionDigital.DIGITAL_ACTION
 import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
@@ -13,7 +15,7 @@ import computer.living.gamepadyn.RawInputDigital.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SimulatedInputUnitTest {
+class KotlinSimulatedInputUnitTest {
 
     enum class TestActionDigital : ActionEnumDigital {
         DIGITAL_ACTION
@@ -28,13 +30,13 @@ class SimulatedInputUnitTest {
     }
 
     @Test
-    fun main() {
-
+    fun testMainKotlin() {
+        println("!!! Gamepadyn test: ${this::class.simpleName} !!!")
         val sysTest = InputBackendTesting()
         InputBackendTesting.manipulableStateDigital = false
         InputBackendTesting.manipulableStateAnalog2d = Pair(0f, 0f)
 
-        val gamepadyn = Gamepadyn.new(
+        val gamepadyn = Gamepadyn.create(
             TestActionDigital::class,
             TestActionAnalog1::class,
             TestActionAnalog2::class,
@@ -43,12 +45,12 @@ class SimulatedInputUnitTest {
             strict = true
         )
 
-        println("Player count: ${gamepadyn.players.size}")
+        kotlin.io.println("Player count: ${gamepadyn.players.size}")
 
         var stateChangeCount = 0
         var expectedStateChangeCount = 0
 
-        println("Player count: ${gamepadyn.players.size}")
+        kotlin.io.println("Player count: ${gamepadyn.players.size}")
 
         val p0 = gamepadyn.players[0]
 
@@ -62,18 +64,18 @@ class SimulatedInputUnitTest {
 
         gamepadyn.update()
 
-        p0.getEvent(DIGITAL_ACTION).addListener {
-            println("Debug action ran! (new value: ${it.active})")
+        p0.getEvent(DIGITAL_ACTION).addListener { data, _ ->
+            kotlin.io.println("Debug action ran! (new value: ${data.active})")
             stateChangeCount++
         }
 
-        p0.getEvent(ANALOG_1D_ACTION).addListener {
-            println("Analog 1D action ran! (new value: (${it.x}))")
+        p0.getEvent(ANALOG_1D_ACTION).addListener { data, _ ->
+            kotlin.io.println("Analog 1D action ran! (new value: (${data.x}))")
             stateChangeCount++
         }
 
-        p0.getEvent(ANALOG_2D_ACTION).addListener {
-            println("Analog 2D action ran! (new value: (${it.x}, ${it.y}))")
+        p0.getEvent(ANALOG_2D_ACTION).addListener { data, _ ->
+            kotlin.io.println("Analog 2D action ran! (new value: (${data.x}, ${data.y}))")
             stateChangeCount++
         }
 
