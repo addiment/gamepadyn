@@ -52,53 +52,53 @@ class Player<TD, TA, TAA> internal constructor(
     /**
      * Adds a listener to the event
      */
-    @JvmName("addEventListenerDigital")
-    fun addEventListener(action: TD, listener: (InputDataDigital, Player<TD, TA, TAA>) -> Unit): Boolean = eventsDigital[action]!!.addListener(listener)
+    @JvmName("addListenerDigital")
+    fun addListener(action: TD, listener: (InputDataDigital, Player<TD, TA, TAA>) -> Unit): Boolean = eventsDigital[action]!!.addListener(listener)
 
     /**
      * Gets an Analog1 Event and also adds a listener
      */
-    @JvmName("addEventListenerAnalog1")
-    fun addEventListener(action: TA, listener: (InputDataAnalog1, Player<TD, TA, TAA>) -> Unit): Boolean = eventsAnalog1[action]!!.addListener(listener)
+    @JvmName("addListenerAnalog1")
+    fun addListener(action: TA, listener: (InputDataAnalog1, Player<TD, TA, TAA>) -> Unit): Boolean = eventsAnalog1[action]!!.addListener(listener)
     /**
      * Gets an Analog2 Event and also adds a listener
      */
-    @JvmName("addEventListenerAnalog2")
-    fun addEventListener(action: TAA, listener: (InputDataAnalog2, Player<TD, TA, TAA>) -> Unit): Boolean = eventsAnalog2[action]!!.addListener(listener)
+    @JvmName("addListenerAnalog2")
+    fun addListener(action: TAA, listener: (InputDataAnalog2, Player<TD, TA, TAA>) -> Unit): Boolean = eventsAnalog2[action]!!.addListener(listener)
 
     /**
      * Gets a Digital Event and also adds a Java listener
      */
-    @JvmName("addEventListenerDigital")
-    fun addEventListener(action: TD, listener: InputEventListener<InputDataDigital, TD, TA, TAA>): Boolean = eventsDigital[action]!!.addListener(listener)
+    @JvmName("addListenerDigital")
+    fun addListener(action: TD, listener: InputEventListener<InputDataDigital, TD, TA, TAA>): Boolean = eventsDigital[action]!!.addListener(listener)
 
     /**
      * Gets an Analog1 Event and also adds a Java event listener
      */
-    @JvmName("addEventListenerAnalog1")
-    fun addEventListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = eventsAnalog1[action]!!.addListener(listener)
+    @JvmName("addListenerAnalog1")
+    fun addListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = eventsAnalog1[action]!!.addListener(listener)
 
     /**
      * Gets an Analog2 Event and also adds a Java event listener
      */
-    @JvmName("addEventListenerAnalog2")
-    fun addEventListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean    = eventsAnalog2[action]!!.addListener(listener)
+    @JvmName("addListenerAnalog2")
+    fun addListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean    = eventsAnalog2[action]!!.addListener(listener)
 
     /**
      * Returns the state of the digital action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateDigital")
-    fun getState(action: TD): InputDataDigital     = stateDigital[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
+    fun getState(action: TD): InputDataDigital     = stateDigital[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
     /**
      * Returns the state of the 1D analog action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateAnalog1")
-    fun getState(action: TA): InputDataAnalog1     = stateAnalog1[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
+    fun getState(action: TA): InputDataAnalog1     = stateAnalog1[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
     /**
      * Returns the state of the 2D analog action provided, or `null` for an invalid action (you can safely use `!!`)
      */
     @JvmName("getStateAnalog2")
-    fun getState(action: TAA): InputDataAnalog2    = stateAnalog2[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries! ()") }
+    fun getState(action: TAA): InputDataAnalog2    = stateAnalog2[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
 
     /*
      * NOTE: This API is... *unpleasant* in Java.

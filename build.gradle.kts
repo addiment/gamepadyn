@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
 }
 
-val libVersion by extra { "0.2.0-BETA" }
+val libVersion by extra { "0.3.0-BETA" }
 
 allprojects {
     group = "computer.living.gamepadyn"

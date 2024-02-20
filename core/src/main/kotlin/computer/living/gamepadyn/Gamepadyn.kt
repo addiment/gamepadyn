@@ -227,43 +227,41 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      * Adds an event listener.
      * @see [Event.addListener]
      */
-    @JvmName("addEventListenerDigital")
-    fun addEventListener(action: TD, listener: (InputDataDigital, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsDigital[action]!!.addListener(listener)
+    @JvmName("addListenerDigital")
+    fun addListener(action: TD, listener: (InputDataDigital, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
-    @JvmName("addEventListenerAnalog1")
-    fun addEventListener(action: TA, listener: (InputDataAnalog1, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
+    @JvmName("addListenerAnalog1")
+    fun addListener(action: TA, listener: (InputDataAnalog1, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
-    @JvmName("addEventListenerAnalog2")
-    fun addEventListener(action: TAA, listener: (InputDataAnalog2, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
+    @JvmName("addListenerAnalog2")
+    fun addListener(action: TAA, listener: (InputDataAnalog2, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
-    @JvmName("addEventListenerDigital")
-    fun addEventListener(action: TD, listener: InputEventListener<InputDataDigital, TD, TA, TAA>): Boolean = globalEventsDigital[action]!!.addListener(listener)
+    @JvmName("addListenerDigital")
+    fun addListener(action: TD, listener: InputEventListener<InputDataDigital, TD, TA, TAA>): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
-    @JvmName("addEventListenerAnalog1")
-    fun addEventListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
+    @JvmName("addListenerAnalog1")
+    fun addListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
-    @JvmName("addEventListenerAnalog2")
-    fun addEventListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
-
-    //        get() = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
+    @JvmName("addListenerAnalog2")
+    fun addListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     // for calculating delta time
     // TODO: implement timing

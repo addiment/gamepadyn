@@ -61,13 +61,13 @@ class GamepadynKotlinImpl : OpMode() {
 //        p0.getState(ROTATION).x
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
-        p0.addEventListener(LAUNCH_DRONE) { data, _ ->
+        p0.addListener(LAUNCH_DRONE) { data, _ ->
             telemetry.addLine("Button ${if (data()) "pressed" else "released"}!")
             telemetry.update()
         }
 
         // Usually, analog events should be replaced with state checks, but both work.
-        p0.addEventListener(MOVEMENT) { data, _ ->
+        p0.addListener(MOVEMENT) { data, _ ->
             telemetry.addLine("Movement input: (${data.x}, ${data.y})")
             telemetry.update()
         }

@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":core:test" />
+          <option value="test" />
           <option value="--tests" />
           <option value="&quot;computer.living.gamepadyn.test*&quot;" />
         </list>
