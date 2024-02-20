@@ -67,18 +67,18 @@ class JavaSimulatedInputUnitTest {
 
         gamepadyn.update();
 
-        p0.getEventDigital(DIGITAL_ACTION).addListener((data, player) -> {
-            println("Debug action ran! (new value: " + data.active + ")");
+        p0.getEventDigital(DIGITAL_ACTION).addListener(ev -> {
+            println("Debug action ran! (new value: " + ev.data.active + ")");
             stateChangeCount.getAndIncrement();
         });
 
-        p0.getEventAnalog1(ANALOG_1D_ACTION).addListener((data, player) -> {
-            println("Analog 1D action ran! (new value: (" + data.x + ")");
+        p0.getEventAnalog1(ANALOG_1D_ACTION).addListener(ev -> {
+            println("Analog 1D action ran! (new value: (" + ev.data.x + ")");
             stateChangeCount.getAndIncrement();
         });
 
-        p0.getEventAnalog2(ANALOG_2D_ACTION).addListener((InputDataAnalog2 data, Player<TestActionDigital, TestActionAnalog1, TestActionAnalog2> player) -> {
-            println("Analog 2D action ran! (new value: (" + data.x + ", " + data.y + ")");
+        p0.getEventAnalog2(ANALOG_2D_ACTION).addListener(ev -> {
+            println("Analog 2D action ran! (new value: (" + ev.data.x + ", " + ev.data.y + ")");
             stateChangeCount.getAndIncrement();
         });
 

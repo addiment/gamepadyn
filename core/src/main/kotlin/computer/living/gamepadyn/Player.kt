@@ -53,18 +53,18 @@ class Player<TD, TA, TAA> internal constructor(
      * Adds a listener to the event
      */
     @JvmName("addListenerDigital")
-    fun addListener(action: TD, listener: (InputDataDigital, Player<TD, TA, TAA>) -> Unit): Boolean = eventsDigital[action]!!.addListener(listener)
+    fun addListener(action: TD, listener: (Event.EventData<InputDataDigital, TD, TA, TAA>) -> Unit): Boolean = eventsDigital[action]!!.addListener(listener)
 
     /**
      * Gets an Analog1 Event and also adds a listener
      */
     @JvmName("addListenerAnalog1")
-    fun addListener(action: TA, listener: (InputDataAnalog1, Player<TD, TA, TAA>) -> Unit): Boolean = eventsAnalog1[action]!!.addListener(listener)
+    fun addListener(action: TA, listener: (Event.EventData<InputDataAnalog1, TD, TA, TAA>) -> Unit): Boolean = eventsAnalog1[action]!!.addListener(listener)
     /**
      * Gets an Analog2 Event and also adds a listener
      */
     @JvmName("addListenerAnalog2")
-    fun addListener(action: TAA, listener: (InputDataAnalog2, Player<TD, TA, TAA>) -> Unit): Boolean = eventsAnalog2[action]!!.addListener(listener)
+    fun addListener(action: TAA, listener: (Event.EventData<InputDataAnalog2, TD, TA, TAA>) -> Unit): Boolean = eventsAnalog2[action]!!.addListener(listener)
 
     /**
      * Gets a Digital Event and also adds a Java listener

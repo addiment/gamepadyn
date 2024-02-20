@@ -10,6 +10,7 @@ import computer.living.gamepadyn.InputType.*
  */
 sealed class InputData {
     abstract val type: InputType
+//    abstract operator fun invoke(): Any
 }
 
 /**
@@ -50,7 +51,7 @@ data class InputDataAnalog1(
 ) : InputData() {
     override val type: InputType = ANALOG1
 
-    operator fun invoke(): Array<Float> = arrayOf(x)
+    operator fun invoke(): Float = x
 }
 
 data class InputDataAnalog2(
@@ -64,6 +65,4 @@ data class InputDataAnalog2(
     @JvmField var y: Float = 0f
 ) : InputData() {
     override val type: InputType = ANALOG2
-
-    operator fun invoke(): Array<Float> = arrayOf(x, y)
 }

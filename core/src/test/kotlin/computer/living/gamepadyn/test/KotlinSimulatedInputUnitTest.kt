@@ -64,18 +64,18 @@ class KotlinSimulatedInputUnitTest {
 
         gamepadyn.update()
 
-        p0.getEvent(DIGITAL_ACTION).addListener { data, _ ->
-            kotlin.io.println("Debug action ran! (new value: ${data.active})")
+        p0.getEvent(DIGITAL_ACTION).addListener {
+            kotlin.io.println("Debug action ran! (new value: ${it.data.active})")
             stateChangeCount++
         }
 
-        p0.getEvent(ANALOG_1D_ACTION).addListener { data, _ ->
-            kotlin.io.println("Analog 1D action ran! (new value: (${data.x}))")
+        p0.getEvent(ANALOG_1D_ACTION).addListener {
+            kotlin.io.println("Analog 1D action ran! (new value: (${it.data.x}))")
             stateChangeCount++
         }
 
-        p0.getEvent(ANALOG_2D_ACTION).addListener { data, _ ->
-            kotlin.io.println("Analog 2D action ran! (new value: (${data.x}, ${data.y}))")
+        p0.getEvent(ANALOG_2D_ACTION).addListener {
+            kotlin.io.println("Analog 2D action ran! (new value: (${it.data.x}, ${it.data.y}))")
             stateChangeCount++
         }
 

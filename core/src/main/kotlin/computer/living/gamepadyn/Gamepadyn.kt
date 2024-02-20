@@ -228,20 +228,20 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      * @see [Event.addListener]
      */
     @JvmName("addListenerDigital")
-    fun addListener(action: TD, listener: (InputDataDigital, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsDigital[action]!!.addListener(listener)
+    fun addListener(action: TD, listener: (Event.EventData<InputDataDigital, TD, TA, TAA>) -> Unit): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog1")
-    fun addListener(action: TA, listener: (InputDataAnalog1, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
+    fun addListener(action: TA, listener: (Event.EventData<InputDataAnalog1, TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog2")
-    fun addListener(action: TAA, listener: (InputDataAnalog2, Player<TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
+    fun addListener(action: TAA, listener: (Event.EventData<InputDataAnalog2, TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
