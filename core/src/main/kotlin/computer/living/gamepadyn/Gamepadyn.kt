@@ -9,9 +9,10 @@ interface ActionEnumAnalog1 : ActionEnum
 interface ActionEnumAnalog2 : ActionEnum
 
 /**
- * A Gamepadyn instance.
+ * A Gamepadyn instance. Use the factory method instead of a constructor.
+ * @see [Gamepadyn.create]
  */
-@Suppress("MemberVisibilityCanBePrivate"/*, "BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER"*/)
+//@Suppress("MemberVisibilityCanBePrivate"/*, "BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER"*/)
 class Gamepadyn<TD, TA, TAA> private constructor(
     /**
      * The backend input source.
@@ -170,7 +171,6 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                 }
             }
 
-
             for (update in potentialMutations) {
                 when (update) {
                     is ActionEnumDigital -> {
@@ -236,6 +236,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      */
     @JvmName("addListenerAnalog1")
     fun addListener(action: TA, listener: (Event.EventData<InputDataAnalog1, TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
+
     /**
      * Adds an event listener.
      * @see [Event.addListener]
@@ -256,6 +257,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      */
     @JvmName("addListenerAnalog1")
     fun addListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
+
     /**
      * Adds an event listener.
      * @see [Event.addListener]
@@ -314,7 +316,6 @@ class Gamepadyn<TD, TA, TAA> private constructor(
          */
         @JvmStatic
         @JvmOverloads
-        @Throws()
         fun <TD, TA, TAA> create(
             digitalEnum: Class<TD>,
             analog1Enum: Class<TA>,
