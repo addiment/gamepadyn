@@ -3,6 +3,7 @@ import org.gradle.kotlin.dsl.extra
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    kotlin("plugin.serialization")
     `maven-publish`
 }
 
@@ -84,9 +85,11 @@ publishing {
 dependencies {
 //    implementation("androidx.core:core-ktx:1.9.0")
 //    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("org.firstinspires.ftc:RobotCore:9.0.1")
-    implementation("org.firstinspires.ftc:Hardware:9.0.1")
-    implementation("org.firstinspires.ftc:FtcCommon:9.0.1")
+    implementation("org.firstinspires.ftc:RobotCore:9.1.0")
+    implementation("org.firstinspires.ftc:Hardware:9.1.0")
+    implementation("org.firstinspires.ftc:FtcCommon:9.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation(project(":core"))
+    implementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
 }

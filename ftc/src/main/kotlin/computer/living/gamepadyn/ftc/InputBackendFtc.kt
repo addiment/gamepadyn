@@ -18,7 +18,7 @@ import computer.living.gamepadyn.RawInputDigital.*
 import java.util.UUID
 
 /**
- * Pre-made FTC implementation of a Gamepadyn [InputBackend]
+ * Pre-made FTC implementation of a Gamepadyn [InputBackend].
  */
 class InputBackendFtc(private val opMode: OpMode) : InputBackend {
 

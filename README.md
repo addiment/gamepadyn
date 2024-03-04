@@ -25,6 +25,8 @@ without adding extra class-wide variables that would otherwise make code harder 
 
 # Getting Started for FTC Developers
 
+The only major difference between
+
 ## Installing
 
 Currently, distribution of this library is done via redistributed .jar and .aar files.
@@ -130,6 +132,14 @@ class GamepadynKotlinImpl : OpMode() {
 ```
 
 ## Java
+
+**Wait!** There's a fair bit of boilerplate in this sample because of limitations in Java.
+Gamepadyn was designed with Kotlin in mind, but it is still 100% compatible with Java.
+We still highly recommend Kotlin for all FTC teams willing to try something new (and better!).
+Learn more about Kotlin below:
+- [FIRST Official Team Resources - Using the Kotlin Programming Language](https://ftc-docs.firstinspires.org/en/latest/programming_resources/shared/installing_kotlin/Installing-Kotlin.html)
+- [Official Kotlin docs - Kotlin Tour](https://kotlinlang.org/docs/kotlin-tour-welcome.html)
+- [Official Kotlin Playground](https://play.kotlinlang.org/)
 
 ```Java
 package computer.living.gamepadyn.test;
@@ -238,5 +248,7 @@ and it would be awful to actually use.
 ## Goals
 
 - Provide more ways of compile-time validation
-  - We may change the `Gamepadyn` class and its children to take 3 type templates instead of 1: one for a supertype and the others for analog and digital subtypes.
 - Provide more pre-made `ActionBind` transformations to prevent rewriting code
+
+## Non-Goals
+- 

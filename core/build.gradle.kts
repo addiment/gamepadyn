@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(kotlin("reflect"))
 //    testImplementation("junit:junit:4.13.2")
 }
 
