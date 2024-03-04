@@ -19,5 +19,5 @@ fun interface InputEventListener<T : InputData, TD, TA, TAA>
      * Called when an action's state changes.
      * @param ev The relevant event data.
      */
-    fun onStateChange(ev: EventData<T, TD, TA, TAA>?)
+    fun onStateChange(ev: EventData<T, TD, TA, TAA>)
 }

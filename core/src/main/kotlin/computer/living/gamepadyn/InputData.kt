@@ -26,23 +26,8 @@ data class InputDataDigital(
     override val type = DIGITAL
 
     operator fun invoke(): Boolean = active
-
-//    override fun toString(): String {
-//        return "InputData(${if (active) "true" else "false"})"
-//    }
-
-//    override fun equals(other: Any?): Boolean {
-//        if (other !is InputDataDigital) return false
-//        return this.digitalData == other.digitalData
-//    }
-//
-//    override fun hashCode(): Int {
-//        var result = digitalData.hashCode()
-//        result = 31 * result + type.hashCode()
-//        return result
-//    }
-
 }
+
 data class InputDataAnalog1(
     /**
      * The X axis of the analog input data.
