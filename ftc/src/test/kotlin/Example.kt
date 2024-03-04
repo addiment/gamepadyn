@@ -1,4 +1,5 @@
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode.*
 import com.qualcomm.robotcore.hardware.Servo
@@ -8,7 +9,6 @@ import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
-import computer.living.gamepadyn.RawInput
 import computer.living.gamepadyn.RawInputDigital
 import computer.living.gamepadyn.ftc.InputBackendFtc
 
@@ -132,39 +132,48 @@ private class Test5 : OpMode() {
 }
 
 enum class ActionDigital : ActionEnumDigital {
-    ARM_UP
+    DO_STUFF,
 }
 
 enum class ActionAnalog1 : ActionEnumAnalog1
 enum class ActionAnalog2 : ActionEnumAnalog2
 
-private class Test6 : OpMode() {
+@TeleOp(name = "Gamepadyn Example")
+private class ExampleGamepadynOpMode : OpMode() {
+    // Construct the initial Gamepadyn instance.
+    // Kotlin's compiler infers all type parameters.
     var gamepadyn = Gamepadyn.create(
+        // our user-defined actions
         ActionDigital::class,
         ActionAnalog1::class,
         ActionAnalog2::class,
+        // The FTC backend, constructed with a reference to this OpMode
         InputBackendFtc(this)
     )
 
-    var isArmUp = false
+    fun doStuff() { /* do thing */ }
 
     override fun init() {
+        // Set the configuration of the first player.
         gamepadyn.players[0].configuration = Configuration(
-            ActionBind(ActionDigital.ARM_UP, RawInputDigital.FACE_LEFT)
+            // Bind the DO_STUFF action to FACE_RIGHT (B on XBOX, Circle on PlayStation, A on Nintendo).
+            // This will set the state of the DO_STUFF action to the state of FACE_RIGHT.
+            ActionBind(ActionDigital.DO_STUFF, RawInputDigital.FACE_RIGHT)
         )
 
-        gamepadyn.addListener(ActionDigital.ARM_UP) {
-            if (it.data()) isArmUp = !isArmUp
+        // whenever the state of DO_STUFF changes,
+        // the code within the curly braces will be invoked.
+        gamepadyn.addListener(ActionDigital.DO_STUFF) {
+            // the "data" of the event is the new state,
+            // so the code in the conditional will be run  if the new state is "true".
+            // Basically, it runs the code when you press the button.
+            if (it.data()) doStuff()
         }
     }
 
-    // this would not work in reality, but this is for example
-    val servoClaw: Servo = hardwareMap.get(Servo::class.java, "claw")
-
     override fun loop() {
+        // Update the state
         gamepadyn.update()
-
-        servoClaw.position = if (isArmUp) 1.0 else 0.0
     }
 }
 
