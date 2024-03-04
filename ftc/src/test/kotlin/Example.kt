@@ -177,9 +177,55 @@ private class ExampleGamepadynOpMode : OpMode() {
     }
 }
 
-
-
-
+// TODO: pipeline-based binds
+//       basically, we make a bunch of functions, and we can serialize them easily
+///*
+//
+//functions:
+//
+//// produce raw input
+//raw (rawinput_digital) -> bool
+//raw (rawinput_analog1) -> float
+//raw (rawinput_analog2) -> vec2
+//
+//// remap the axes
+//swizzle (vec2, axis, axis) -> vec2
+//// get one component of a vec2
+//break (vec2, axis) -> float
+//
+//add (int|float|double, int|float|double) -> int|float|double
+//sub (int|float|double, int|float|double) -> int|float|double
+//mul (int|float|double, int|float|double) -> int|float|double
+//div (int|float|double, int|float|double) -> int|float|double
+//pow (int|float|double, int|float|double) -> int|float|double
+//
+//if (bool, T, T) -> T
+//
+//*/
+//
+//// bind right trigger to right, left trigger to left, face up to forward, face down to backward. stupid, but it's an example.
+//
+//MOVEMENT {
+//    x = add (
+//        raw(TRIGGER_RIGHT),
+//        mul(
+//            raw(TRIGGER_LEFT),
+//            -1f
+//        )
+//    )
+//    y = add (
+//        if (
+//            raw(FACE_UP),
+//        1f,
+//        0f
+//    ),
+//    if (
+//        raw(FACE_DOWN),
+//    -1f,
+//    0f
+//    )
+//    )
+//}
 
 
 

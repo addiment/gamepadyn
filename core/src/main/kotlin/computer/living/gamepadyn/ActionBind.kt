@@ -29,3 +29,4 @@ open class ActionBind<O> (
     ): InputData =
         if (inputState::class == targetActionState::class) inputState else targetActionState
 }
+
