@@ -142,7 +142,7 @@ enum class ActionAnalog2 : ActionEnumAnalog2
 private class ExampleGamepadynOpMode : OpMode() {
     // Construct the initial Gamepadyn instance.
     // Kotlin's compiler infers all type parameters.
-    var gamepadyn = Gamepadyn.create(
+    val gamepadyn = Gamepadyn.create(
         // our user-defined actions
         ActionDigital::class,
         ActionAnalog1::class,
