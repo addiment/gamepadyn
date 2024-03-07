@@ -7,10 +7,16 @@ import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
+import computer.living.gamepadyn.Axis
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
+import computer.living.gamepadyn.InputData
+import computer.living.gamepadyn.InputDataAnalog1
+import computer.living.gamepadyn.InputDataAnalog2
 import computer.living.gamepadyn.RawInputDigital
 import computer.living.gamepadyn.ftc.InputBackendFtc
+import kotlin.math.pow
+import kotlin.reflect.KClass
 
 private class Test0 : OpMode() {
     override fun init() {}
@@ -175,6 +181,80 @@ private class ExampleGamepadynOpMode : OpMode() {
         // Update the state
         gamepadyn.update()
     }
+}
+
+sealed class BindPipeExpression {
+    internal abstract fun eval(): InputData
+    companion object {
+        @JvmStatic fun fromString(name: String): KClass<*>? {
+            return when (name) {
+                "addf" -> BindPipeAddFloat::class
+                "subf" -> BindPipeSubtractFloat::class
+                "mulf" -> BindPipeMultiplyFloat::class
+                "divf" -> BindPipeDivideFloat::class
+                "expf" -> BindPipeExponentiateFloat::class
+                "swzv" -> BindPipeExponentiateFloat::class
+                "brkv" -> BindPipeBreak::class
+                else -> null
+            }
+        }
+    }
+}
+
+sealed class BindPipeBool : BindPipeExpression()
+sealed class BindPipeFloat : BindPipeExpression()
+sealed class BindPipeVec2 : BindPipeExpression()
+
+class BindPipeAddFloat(private val a: BindPipeFloat, private val b: BindPipeFloat) : BindPipeFloat() {
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        (a.eval() as InputDataAnalog1).x + (b.eval() as InputDataAnalog1).x
+    )
+}
+
+class BindPipeSubtractFloat(private val a: BindPipeFloat, private val b: BindPipeFloat) : BindPipeFloat() {
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        (a.eval() as InputDataAnalog1).x - (b.eval() as InputDataAnalog1).x
+    )
+}
+
+class BindPipeMultiplyFloat(private val a: BindPipeFloat, private val b: BindPipeFloat) : BindPipeFloat() {
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        (a.eval() as InputDataAnalog1).x * (b.eval() as InputDataAnalog1).x
+    )
+}
+class BindPipeDivideFloat(private val a: BindPipeFloat, private val b: BindPipeFloat) : BindPipeFloat() {
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        (a.eval() as InputDataAnalog1).x / (b.eval() as InputDataAnalog1).x
+    )
+}
+
+class BindPipeExponentiateFloat(private val a: BindPipeFloat, private val b: BindPipeFloat) : BindPipeFloat() {
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        (a.eval() as InputDataAnalog1).x.pow((b.eval() as InputDataAnalog1).x)
+    )
+}
+
+class BindPipeSwizzle(private val v: BindPipeVec2, private val x: Axis, private val y: Axis) : BindPipeVec2() {
+    override fun eval(): InputDataAnalog2 {
+        val data = (v.eval() as InputDataAnalog2)
+        return InputDataAnalog2(
+            when (x) {
+                Axis.X -> data.x
+                Axis.Y -> data.y
+            },
+            when (y) {
+                Axis.X -> data.x
+                Axis.Y -> data.y
+            }
+        )
+    }
+}
+
+class BindPipeBreak(private val v: BindPipeVec2, private val x: Axis, private val y: Axis) : BindPipeVec2() {
+    override fun eval(): InputData {
+        TODO("Not yet implemented")
+    }
+
 }
 
 // TODO: pipeline-based binds
