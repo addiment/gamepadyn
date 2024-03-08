@@ -49,8 +49,6 @@ open class ActionBind<O> (
 //      * gt (float, float) -> float, >
 //      * eq (float, float) -> float, ==
 sealed class BindPipe {
-    internal abstract fun eval(): InputData
-
     enum class BindPipeDataType {
         BOOL,
         FLOAT,
@@ -99,7 +97,7 @@ sealed class BindPipe {
         INPUT_FLOAT(        FLOAT,  INPUT_ANALOG1),
         INPUT_VEC2(         VEC2,   INPUT_ANALOG2),
 
-        LENGTH(             FLOAT,  VEC2,   VEC2),
+        LENGTH(             FLOAT,  VEC2),
         BREAK(              FLOAT,  VEC2,   AXIS),
         SWIZZLE(            VEC2,   AXIS,   AXIS),
         JOIN(               VEC2,   FLOAT,  FLOAT),
@@ -119,110 +117,47 @@ sealed class BindPipe {
         val params: Array<BindPipeDataType> = arrayOf(param1, *params)
     }
 
-    sealed class BindPipeBool : BindPipe() {
-        abstract override fun eval(): InputDataDigital
-    }
-    sealed class BindPipeFloat : BindPipe() {
-        abstract override fun eval(): InputDataAnalog1
-    }
-    sealed class BindPipeVec2 : BindPipe() {
-        abstract override fun eval(): InputDataAnalog2
-    }
-
-    class AddFloat(internal val a: BindPipeFloat, internal val b: BindPipeFloat) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 = InputDataAnalog1(
-            a.eval().x + b.eval().x
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        a.eval().x + b.eval().x
+    )
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        a.eval().x - b.eval().x
+    )
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        a.eval().x * b.eval().x
+    )
+        a.eval().x / b.eval().x
+    )
+    override fun eval(): InputDataAnalog1 = InputDataAnalog1(
+        a.eval().x.pow(b.eval().x)
+    )
+    override fun eval(): InputDataAnalog2 {
+        val data = v.eval()
+        return InputDataAnalog2(
+            when (x) {
+                Axis.X -> data.x
+                Axis.Y -> data.y
+            },
+            when (y) {
+                Axis.X -> data.x
+                Axis.Y -> data.y
+            }
         )
     }
-
-    class SubtractFloat(internal val a: BindPipeFloat, internal val b: BindPipeFloat) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 = InputDataAnalog1(
-            a.eval().x - b.eval().x
+    override fun eval(): InputDataAnalog1 {
+        val data = v.eval()
+        return InputDataAnalog1(
+            when (x) {
+                Axis.X -> data.x
+                Axis.Y -> data.y
+            }
         )
     }
-
-    class MultiplyFloat(internal val a: BindPipeFloat, internal val b: BindPipeFloat) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 = InputDataAnalog1(
-            a.eval().x * b.eval().x
-        )
-    }
-    class DivideFloat(internal val a: BindPipeFloat, internal val b: BindPipeFloat) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 = InputDataAnalog1(
-            a.eval().x / b.eval().x
-        )
-    }
-
-    class ExponentiateFloat(internal val a: BindPipeFloat, internal val b: BindPipeFloat) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 = InputDataAnalog1(
-            a.eval().x.pow(b.eval().x)
-        )
-    }
-
-    class SwizzleVec2(internal val v: BindPipeVec2, internal val x: Axis, internal val y: Axis) : BindPipeVec2() {
-        override fun eval(): InputDataAnalog2 {
-            val data = v.eval()
-            return InputDataAnalog2(
-                when (x) {
-                    Axis.X -> data.x
-                    Axis.Y -> data.y
-                },
-                when (y) {
-                    Axis.X -> data.x
-                    Axis.Y -> data.y
-                }
-            )
-        }
-    }
-
-    class BreakFloat(internal val v: BindPipeVec2, internal val x: Axis) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 {
-            val data = v.eval()
-            return InputDataAnalog1(
-                when (x) {
-                    Axis.X -> data.x
-                    Axis.Y -> data.y
-                }
-            )
-        }
-    }
-
-    class ConditionalFloat(internal val v: BindPipeBool, internal val onTrue: BindPipeFloat, internal val onFalse: BindPipeFloat) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 = if (v.eval().active) onTrue.eval() else onFalse.eval()
-    }
-
-    class ConditionalVec2(internal val v: BindPipeBool, internal val onTrue: BindPipeVec2, internal val onFalse: BindPipeVec2) : BindPipeVec2() {
-        override fun eval(): InputDataAnalog2 = if (v.eval().active) onTrue.eval() else onFalse.eval()
-    }
-
-    class NotBool(internal val v: BindPipeBool) : BindPipeBool() {
-        override fun eval(): InputDataDigital = InputDataDigital(!v.eval().active)
-    }
-
-    class InputStateFloat(internal val input: RawInputAnalog1) : BindPipeFloat() {
-        override fun eval(): InputDataAnalog1 = TODO() // we need access to the backend to implement this
-    }
+    override fun eval(): InputDataAnalog1 = if (v.eval().active) onTrue.eval() else onFalse.eval()
+    override fun eval(): InputDataAnalog2 = if (v.eval().active) onTrue.eval() else onFalse.eval()
+    override fun eval(): InputDataDigital = InputDataDigital(!v.eval().active)
 
     companion object {
-//        @Suppress("SpellCheckingInspection")
-//        @JvmStatic fun fromString(name: String): KClass<*>? {
-//            return when (name) {
-//                "addf" -> AddFloat::class
-//                "subf" -> SubtractFloat::class
-//                "mulf" -> MultiplyFloat::class
-//                "divf" -> DivideFloat::class
-//                "expf" -> ExponentiateFloat::class
-//                "brkf" -> BreakFloat::class
-//                "conf" -> ConditionalFloat::class
-//
-//                "swzv" -> SwizzleVec2::class
-//                "conv" -> ConditionalVec2::class
-//
-//                "notb" -> NotBool::class
-//
-//                else -> null
-//            }
-//        }
-
         class BindPipeBuilder<TD, TA, TAA>
                 where TD : ActionEnumDigital,
                   TA : ActionEnumAnalog1,
@@ -231,10 +166,47 @@ sealed class BindPipe {
                   TA : Enum<TA>,
                   TAA : Enum<TAA>
         {
-            inline fun add(a: BindPipeFloat, b: BindPipeFloat) = AddFloat(a, b)
-//            fun input(rawInput: RawInputDigital) = InputStateBool(rawInput)
-            fun input(rawInput: RawInputAnalog1) = InputStateFloat(rawInput)
-//            fun input(rawInput: RawInputAnalog2) = InputStateVec2(rawInput)
+            class BindPipeFloat
+            class BindPipeBool
+            class BindPipeVec2
+
+            fun ADD_FLOAT(          a: FLOAT,   b: FLOAT): FLOAT { }
+            fun SUBTRACT_FLOAT(     a: FLOAT,   b: FLOAT): FLOAT { }
+            fun MULTIPLY_FLOAT(     a: FLOAT,   b: FLOAT): FLOAT { }
+            fun DIVIDE_FLOAT(       a: FLOAT,   b: FLOAT): FLOAT { }
+            fun POWER_FLOAT(        a: FLOAT,   b: FLOAT): FLOAT { }
+            fun SIGN_FLOAT(         x: FLOAT): FLOAT { }
+            fun ABS_FLOAT(          x: FLOAT): FLOAT { }
+            fun BRANCH_FLOAT(       a: BOOL,    b: FLOAT,   c: FLOAT): FLOAT { }
+            fun ADD_VEC2(           a: VEC2,    b: VEC2): VEC2 { }
+            fun SUBTRACT_VEC2(      a: VEC2,    b: VEC2): VEC2 { }
+            fun MULTIPLY_VEC2(      a: VEC2,    b:VEC2): VEC2 { }
+            fun DIVIDE_VEC2(        a: VEC2,    b:VEC2): VEC2 { }
+            fun POWER_VEC2(         a: VEC2,    b:VEC2): VEC2 { }
+            fun SIGN_VEC2(          a: VEC2): VEC2 { }
+            fun ABS_VEC2(           a: VEC2): VEC2 { }
+            fun BRANCH_VEC2(        a: BOOL,    b: VEC2,    c: VEC2): VEC2 { }
+            fun ADD_VEC2_FLOAT(     a: VEC2,    b: FLOAT): VEC2 { }
+            fun SUBTRACT_VEC2_FLOAT(a: VEC2,    b: FLOAT): VEC2 { }
+            fun MULTIPLY_VEC2_FLOAT(a: VEC2,    b: FLOAT): VEC2 { }
+            fun DIVIDE_VEC2_FLOAT(  a: VEC2,    b: FLOAT): VEC2 { }
+            fun POWER_VEC2_FLOAT(   a: VEC2,    b: FLOAT): VEC2 { }
+            fun INPUT_BOOL(         rawInput: INPUT_DIGITAL): BOOL { }
+            fun INPUT_FLOAT(        rawInput: INPUT_ANALOG1): FLOAT { }
+            fun INPUT_VEC2(         rawInput: INPUT_ANALOG2): VEC2 { }
+            fun LENGTH(             a: VEC2): FLOAT { }
+            fun BREAK(              a: VEC2,   AXIS): FLOAT { }
+            fun SWIZZLE(            AXIS,   AXIS): VEC2 { }
+            fun JOIN(               FLOAT,  FLOAT): VEC2 { }
+            fun NOT(                BOOL): BOOL { }
+            fun AND(                BOOL,   BOOL): BOOL { }
+            fun OR(                 BOOL,   BOOL): BOOL { }
+            fun XOR(                BOOL,   BOOL): BOOL { }
+            fun EQUALS(             FLOAT,  FLOAT): BOOL { }
+            fun LT(                 FLOAT,  FLOAT): BOOL { }
+            fun GT(                 FLOAT,  FLOAT): BOOL { }
+            fun LT_EQ(              FLOAT,  FLOAT): BOOL { }
+            fun GT_EQ(              FLOAT,  FLOAT): BOOL { }
         }
 
         inline fun <TD, TA, TAA> builder(gamepadyn: Gamepadyn<TD, TA, TAA>, config: BindPipeBuilder<TD, TA, TAA>.() -> Unit): BindPipe
