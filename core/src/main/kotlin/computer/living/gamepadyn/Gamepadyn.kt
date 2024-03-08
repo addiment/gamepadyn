@@ -270,6 +270,9 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     internal var lastUpdateTime: Double = 0.0
 
     companion object {
+
+        @JvmStatic val GAMEPADYN_VERSION = "0.3.0"
+
         /**
          * Kotlin-specific (sorta) factory method to create a new Gamepadyn instance.
          * @param backend See [Gamepadyn.backend]

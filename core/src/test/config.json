@@ -1,0 +1,48 @@
+{
+    "$schema": "https://gamepadyn.living.computer/config-0.3.0.schema.json",
+    "gamepadynVersion": "0.3.0",
+    "actionClasses": {
+        "digital": "computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionDigital",
+        "analog1": "computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionAnalog1",
+        "analog2": "computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionAnalog2"
+    },
+    "binds": {
+        "digital": { },
+        "analog1": { },
+        "analog2": {
+            "MOVEMENT": {
+                "op": "makv",
+                "data": [
+                    {
+                        "op": "subf",
+                        "data": [
+                            { "op": "rawf", "raw": "TRIGGER_RIGHT"},
+                            { "op": "rawf", "raw": "TRIGGER_LEFT" }
+                        ]
+                    },
+                    {
+                        "op": "subf",
+                        "data": [
+                            {
+                                "op": "if",
+                                "data": [
+                                    { "op": "rawb", "raw": "FACE_UP" },
+                                    1.0,
+                                    0.0
+                                ]
+                            },
+                            {
+                                "op": "if",
+                                "data": [
+                                    { "op": "rawb", "raw": "FACE_DOWN" },
+                                    1.0,
+                                    0.0
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

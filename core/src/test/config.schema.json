@@ -1,0 +1,282 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://gamepadyn.living.computer/config-0.3.0.schema.json",
+    "title": "Gamepadyn Config",
+    "description": "A serialized gamepadyn config (for version 0.3.0)",
+    "type": "object",
+    "properties": {
+        "gamepadynVersion": {
+            "description": "The version that this configuration targets",
+            "const": "0.3.0"
+        },
+        "actionClasses": {
+            "description": "Fully-qualified enum class references for this class's actions",
+            "type": "object",
+            "properties": {
+                "digital": {
+                    "description": "The reference for digital actions",
+                    "type": "string"
+                },
+                "analog1": {
+                    "description": "The reference for analog1 actions",
+                    "type": "string"
+                },
+                "analog2": {
+                    "description": "The reference for analog2 actions",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "digital",
+                "analog1",
+                "analog2"
+            ]
+        },
+        "binds": {
+            "description": "The binds described by this config",
+            "type": "object",
+            "properties": {
+                "digital": {
+                    "type": "object",
+                    "patternProperties ": {
+                        "[^\\$]": { "$ref": "#/$defs/boolExpression" }
+                    }
+                },
+                "analog1": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/$defs/floatExpression"
+                    }
+                },
+                "analog2": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/$defs/vectorExpression"
+                    }
+                }
+            },
+            "required": [
+                "digital",
+                "analog1",
+                "analog2"
+            ]
+        }
+    },
+    "required": [
+        "gamepadynVersion",
+        "actionClasses",
+        "binds"
+    ],
+    "$defs": {
+        "boolExpression": {
+            "oneOf": [
+                { "type": "boolean" },
+                {
+                    "type": "object",
+                    "properties": {
+                        "op": {
+                            "type": "string",
+                            "enum": [
+                                "notb",
+                                "rawb"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "op"
+                    ],
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                    "op": {
+                                        "const": "rawb"
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "raw": {
+                                        "$ref": "#/$defs/rawInputDigital"
+                                    }
+                                },
+                                "required": [
+                                    "raw"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "floatExpression": {
+            "oneOf": [
+                { "type": "number" },
+                {
+                    "type": "object",
+                    "properties": {
+                        "op": {
+                            "type": "string",
+                            "enum": [
+                                "addf",
+                                "subf",
+                                "mulf",
+                                "divf",
+                                "expf",
+                                "brkf",
+                                "conf",
+                                "rawf"
+                            ]
+                        }
+                    },
+                    "required": [ "op" ],
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                    "op": {
+                                        "const": "rawf"
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "raw": {
+                                        "$ref": "#/$defs/rawInputAnalog1"
+                                    }
+                                },
+                                "required": [ "raw" ]
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "op": {
+                                        "const": "subf"
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "data": {
+                                        "type": "array",
+                                        "prefixItems": [
+                                            { "$ref": "#/$defs/rawInputAnalog1" },
+                                            { "$ref": "#/$defs/rawInputAnalog1" }
+                                        ],
+                                        "length": 2
+                                    }
+                                },
+                                "required": [ "data" ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "vectorExpression": {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "prefixItems": [
+                        { "type": "number" },
+                        { "type": "number" }
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "op": {
+                            "type": "string",
+                            "enum": [
+                                "swzv",
+                                "conv",
+                                "makv",
+                                "rawv"
+                            ]
+                        }
+                    },
+                    "required": [ "op" ],
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                    "op": {
+                                        "const": "rawv"
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "raw": {
+                                        "$ref": "#/$defs/rawInputAnalog2"
+                                    }
+                                },
+                                "required": [ "raw" ]
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "op": {
+                                        "const": "makv"
+                                    }
+                                }
+                            },
+                            "then": {
+                                "properties": {
+                                    "data": {
+                                        "type": "array",
+                                        "prefixItems": [
+                                            { "$ref": "#/$defs/rawInputAnalog1" },
+                                            { "$ref": "#/$defs/rawInputAnalog1" }
+                                        ],
+                                        "length": 2
+                                    }
+                                },
+                                "required": [ "data" ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "rawInputDigital": {
+            "type": "string",
+            "enum": [
+                "FACE_DOWN",
+                "FACE_RIGHT",
+                "FACE_LEFT",
+                "FACE_UP",
+                "BUMPER_LEFT",
+                "BUMPER_RIGHT",
+                "DPAD_UP",
+                "DPAD_DOWN",
+                "DPAD_LEFT",
+                "DPAD_RIGHT",
+                "STICK_LEFT_BUTTON",
+                "STICK_RIGHT_BUTTON",
+                "SPECIAL_BACK",
+                "SPECIAL_START"
+            ]
+        },
+        "rawInputAnalog1": {
+            "type": "string",
+            "enum": [
+                "TRIGGER_LEFT",
+                "TRIGGER_RIGHT"
+            ]
+        },
+        "rawInputAnalog2": {
+            "type": "string",
+            "enum": [
+                "STICK_LEFT",
+                "STICK_RIGHT"
+            ]
+        },
+        "uriReferenceString": {
+            "type": "string",
+            "format": "uri-reference"
+        }
+    }
+}
