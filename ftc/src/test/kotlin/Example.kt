@@ -8,11 +8,13 @@ import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
 import computer.living.gamepadyn.Axis
+import computer.living.gamepadyn.BindPipe
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.InputData
 import computer.living.gamepadyn.InputDataAnalog1
 import computer.living.gamepadyn.InputDataAnalog2
+import computer.living.gamepadyn.RawInputAnalog1
 import computer.living.gamepadyn.RawInputDigital
 import computer.living.gamepadyn.ftc.InputBackendFtc
 import kotlin.math.pow
@@ -141,8 +143,12 @@ enum class ActionDigital : ActionEnumDigital {
     DO_STUFF,
 }
 
-enum class ActionAnalog1 : ActionEnumAnalog1
-enum class ActionAnalog2 : ActionEnumAnalog2
+enum class ActionAnalog1 : ActionEnumAnalog1 {
+    ROTATION,
+}
+enum class ActionAnalog2 : ActionEnumAnalog2 {
+    MOVEMENT,
+}
 
 @TeleOp(name = "Gamepadyn Example")
 private class ExampleGamepadynOpMode : OpMode() {
@@ -182,4 +188,82 @@ private class ExampleGamepadynOpMode : OpMode() {
         gamepadyn.update()
     }
 }
+
+private class BindPipeTest : OpMode() {
+    // Construct the initial Gamepadyn instance.
+    // Kotlin's compiler infers all type parameters.
+    val gamepadyn = Gamepadyn.create(
+        // our user-defined actions
+        ActionDigital::class,
+        ActionAnalog1::class,
+        ActionAnalog2::class,
+        // The FTC backend, constructed with a reference to this OpMode
+        InputBackendFtc(this)
+    )
+
+    override fun init() {
+
+        BindPipe.builder(gamepadyn) {
+
+            // the only thing that gets added to scope in receiver functions are non-static (aka. no inner classes)
+            // as much as I struggle to write code in rust, it's right about now where I wish I had its enum types.
+            BindPipe.BindPipeVec2(
+                BindPipe.Join(
+                    BindPipe.AddFloat(
+                        BindPipe.InputStateFloat(RawInputAnalog1.TRIGGER_RIGHT),
+                        BindPipe.MultiplyFloat(
+                            RawInputAnalog1.TRIGGER_LEFT,
+                            BindPipe.BindPipeFloat(-1f)
+                        )
+                    )
+                )
+            )
+
+            digital(ActionAnalog2.MOVEMENT) {
+                join(
+                    add(
+                        input(TRIGGER_RIGHT),
+                        multiply(
+                            input(TRIGGER_LEFT),
+                            -1f
+                        )
+                    ),
+                    add (
+                        branch(
+                            input(FACE_UP),
+                            1f,
+                            0f
+                        ),
+                        branch (
+                            input(FACE_DOWN),
+                            -1f,
+                            0f
+                        )
+                    )
+                )
+            }
+        }
+
+        BindPipe.BindPipeVec2(
+            BindPipe.Join(
+                BindPipe.AddFloat(
+                    BindPipe.InputStateFloat(RawInputAnalog1.TRIGGER_RIGHT),
+                    BindPipe.MultiplyFloat(
+                        RawInputAnalog1.TRIGGER_LEFT,
+                        BindPipe.BindPipeFloat(-1f)
+                    )
+                )
+            )
+        )
+
+    }
+
+
+    override fun loop() {
+        // Update the state
+        gamepadyn.update()
+    }
+}
+
+
 
