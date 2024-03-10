@@ -1,9 +1,8 @@
+package computer.living.gamepadyn.test
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode.*
 import com.qualcomm.robotcore.hardware.Servo
-import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
@@ -11,14 +10,9 @@ import computer.living.gamepadyn.Axis
 import computer.living.gamepadyn.BindPipe
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
-import computer.living.gamepadyn.InputData
-import computer.living.gamepadyn.InputDataAnalog1
-import computer.living.gamepadyn.InputDataAnalog2
-import computer.living.gamepadyn.RawInputAnalog1
-import computer.living.gamepadyn.RawInputDigital
+import computer.living.gamepadyn.RawInputAnalog1.*
+import computer.living.gamepadyn.RawInputDigital.*
 import computer.living.gamepadyn.ftc.InputBackendFtc
-import kotlin.math.pow
-import kotlin.reflect.KClass
 
 private class Test0 : OpMode() {
     override fun init() {}
@@ -150,44 +144,44 @@ enum class ActionAnalog2 : ActionEnumAnalog2 {
     MOVEMENT,
 }
 
-@TeleOp(name = "Gamepadyn Example")
-private class ExampleGamepadynOpMode : OpMode() {
-    // Construct the initial Gamepadyn instance.
-    // Kotlin's compiler infers all type parameters.
-    val gamepadyn = Gamepadyn.create(
-        // our user-defined actions
-        ActionDigital::class,
-        ActionAnalog1::class,
-        ActionAnalog2::class,
-        // The FTC backend, constructed with a reference to this OpMode
-        InputBackendFtc(this)
-    )
-
-    fun doStuff() { /* do thing */ }
-
-    override fun init() {
-        // Set the configuration of the first player.
-        gamepadyn.players[0].configuration = Configuration(
-            // Bind the DO_STUFF action to FACE_RIGHT (B on XBOX, Circle on PlayStation, A on Nintendo).
-            // This will set the state of the DO_STUFF action to the state of FACE_RIGHT.
-            ActionBind(ActionDigital.DO_STUFF, RawInputDigital.FACE_RIGHT)
-        )
-
-        // whenever the state of DO_STUFF changes,
-        // the code within the curly braces will be invoked.
-        gamepadyn.addListener(ActionDigital.DO_STUFF) {
-            // the "data" of the event is the new state,
-            // so the code in the conditional will be run  if the new state is "true".
-            // Basically, it runs the code when you press the button.
-            if (it.data()) doStuff()
-        }
-    }
-
-    override fun loop() {
-        // Update the state
-        gamepadyn.update()
-    }
-}
+//@TeleOp(name = "Gamepadyn Example")
+//private class ExampleGamepadynOpMode : OpMode() {
+//    // Construct the initial Gamepadyn instance.
+//    // Kotlin's compiler infers all type parameters.
+//    val gamepadyn = Gamepadyn.create(
+//        // our user-defined actions
+//        ActionDigital::class,
+//        ActionAnalog1::class,
+//        ActionAnalog2::class,
+//        // The FTC backend, constructed with a reference to this OpMode
+//        InputBackendFtc(this)
+//    )
+//
+//    fun doStuff() { /* do thing */ }
+//
+//    override fun init() {
+//        // Set the configuration of the first player.
+//        gamepadyn.getPlayer(0)!!.binds = Configuration(
+//            // Bind the DO_STUFF action to FACE_RIGHT (B on XBOX, Circle on PlayStation, A on Nintendo).
+//            // This will set the state of the DO_STUFF action to the state of FACE_RIGHT.
+//            ActionBind(ActionDigital.DO_STUFF, FACE_RIGHT)
+//        )
+//
+//        // whenever the state of DO_STUFF changes,
+//        // the code within the curly braces will be invoked.
+//        gamepadyn.addListener(ActionDigital.DO_STUFF) {
+//            // the "data" of the event is the new state,
+//            // so the code in the conditional will be run  if the new state is "true".
+//            // Basically, it runs the code when you press the button.
+//            if (it.data()) doStuff()
+//        }
+//    }
+//
+//    override fun loop() {
+//        // Update the state
+//        gamepadyn.update()
+//    }
+//}
 
 private class BindPipeTest : OpMode() {
     // Construct the initial Gamepadyn instance.
@@ -202,60 +196,26 @@ private class BindPipeTest : OpMode() {
     )
 
     override fun init() {
+        gamepadyn.getPlayer(0)!!.configuration = Configuration {
 
-        BindPipe.builder(gamepadyn) {
+            action(ActionDigital.DO_STUFF) { input(FACE_RIGHT) }
 
-            // the only thing that gets added to scope in receiver functions are non-static (aka. no inner classes)
-            // as much as I struggle to write code in rust, it's right about now where I wish I had its enum types.
-            BindPipe.BindPipeVec2(
-                BindPipe.Join(
-                    BindPipe.AddFloat(
-                        BindPipe.InputStateFloat(RawInputAnalog1.TRIGGER_RIGHT),
-                        BindPipe.MultiplyFloat(
-                            RawInputAnalog1.TRIGGER_LEFT,
-                            BindPipe.BindPipeFloat(-1f)
-                        )
-                    )
-                )
-            )
-
-            digital(ActionAnalog2.MOVEMENT) {
+            // a needlessly complicated bind, for pushing the limits of the system.
+            action(ActionAnalog2.MOVEMENT) {
                 join(
-                    add(
+                    x = add(
                         input(TRIGGER_RIGHT),
-                        multiply(
-                            input(TRIGGER_LEFT),
-                            -1f
-                        )
+                        multiply(input(TRIGGER_LEFT), constant(-1f))
                     ),
-                    add (
-                        branch(
-                            input(FACE_UP),
-                            1f,
-                            0f
-                        ),
-                        branch (
-                            input(FACE_DOWN),
-                            -1f,
-                            0f
-                        )
+                    // if neither are pressed, inherit Y
+                    y = branch(
+                        xor(input(FACE_UP), input(FACE_DOWN)),
+                        branch(input(FACE_UP), constant(1f), constant(-1f)),
+                        split(previousState, Axis.Y)
                     )
                 )
             }
         }
-
-        BindPipe.BindPipeVec2(
-            BindPipe.Join(
-                BindPipe.AddFloat(
-                    BindPipe.InputStateFloat(RawInputAnalog1.TRIGGER_RIGHT),
-                    BindPipe.MultiplyFloat(
-                        RawInputAnalog1.TRIGGER_LEFT,
-                        BindPipe.BindPipeFloat(-1f)
-                    )
-                )
-            )
-        )
-
     }
 
 

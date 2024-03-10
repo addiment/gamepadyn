@@ -1,21 +1,21 @@
+package computer.living.gamepadyn.test
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 
-import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
-import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.RawInputDigital.*
 import computer.living.gamepadyn.RawInputAnalog1.*
 import computer.living.gamepadyn.RawInputAnalog2.*
 import computer.living.gamepadyn.ftc.InputBackendFtc
 
-import GamepadynKotlinImpl.TestActionDigital.*
-import GamepadynKotlinImpl.TestActionAnalog1.*
-import GamepadynKotlinImpl.TestActionAnalog2.*
-import computer.living.gamepadyn.ActionBindAnalog2To1
+import computer.living.gamepadyn.test.GamepadynKotlinImpl.TestActionDigital.*
+import computer.living.gamepadyn.test.GamepadynKotlinImpl.TestActionAnalog1.*
+import computer.living.gamepadyn.test.GamepadynKotlinImpl.TestActionAnalog2.*
 import computer.living.gamepadyn.Axis
+import computer.living.gamepadyn.Configuration
 
 class GamepadynKotlinImpl : OpMode() {
     enum class TestActionDigital : ActionEnumDigital {
@@ -41,12 +41,12 @@ class GamepadynKotlinImpl : OpMode() {
 
     override fun init() {
 
-        gamepadyn.players[0].configuration = Configuration(
-            ActionBind          (LAUNCH_DRONE,    FACE_LEFT             ),
-            ActionBind          (MOVEMENT,        STICK_LEFT            ),
-            ActionBindAnalog2To1(ROTATION,        STICK_RIGHT,  Axis.X  ),
-            ActionBind          (CLAW,            TRIGGER_RIGHT         )
-        )
+        gamepadyn.getPlayer(0)!!.configuration = Configuration {
+            action(LAUNCH_DRONE)    { input(FACE_LEFT) }
+            action(MOVEMENT)        { input(STICK_LEFT) }
+            action(CLAW)            { input(TRIGGER_RIGHT) }
+            action(ROTATION)        { split(input(STICK_RIGHT), Axis.X) }
+        }
 
     }
 

@@ -79,10 +79,11 @@ class Event<T, TD, TA, TAA> internal constructor()
 
     /**
      * A set of all Java listeners (lambdas) to this event.
-     * Java lambdas are implementations of functional interfaces,
-     * but Kotlin does stuff differently.
-     * We don't really need to know the bytecode differences
-     * because we can just have an array of Java's SAM interfaces.
+     * TODO: should we even have this? I somehow missed that Java lambda expressions
+     *       can be implicitly converted to Kotlin lambdas
+     *       (with the caveat that they must return [Unit.INSTANCE] or `null`).
+     *       The downside is that returning `Unit.INSTANCE` is unintuitive and stupid,
+     *       and the easiest way to work around that is by doing what we already are.
      */
     private val javaListeners = mutableSetOf<InputEventListener<T, TD, TA, TAA>>()
 

@@ -61,7 +61,10 @@ class InputBackendFtc(private val opMode: OpMode) : InputBackend {
      * 1. joystick axes are corrected to what every other input system on the planet earth uses (aka. THE MATHEMATICALLY STANDARD ONE)
      * 2. face buttons are referred to by their position on the controller rather than their label (some FTC-legal controllers don't even have standard labels!)
      */
-    class RawGamepadFtc(internal val gamepad: Gamepad?) : InputBackend.RawGamepad {
+    class RawGamepadFtc(
+        @JvmSynthetic
+        internal val gamepad: Gamepad?
+    ) : InputBackend.RawGamepad {
         override fun getState(input: RawInputDigital): InputDataDigital = if (gamepad != null) {
             when (input) {
                 FACE_DOWN           -> InputDataDigital(gamepad.a)

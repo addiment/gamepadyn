@@ -8,7 +8,7 @@ import static computer.living.gamepadyn.RawInputAnalog2.*;
 import static computer.living.gamepadyn.test.JthunksKt.println;
 import computer.living.gamepadyn.*;
 import kotlin.Pair;
-import computer.living.gamepadyn.test.InputBackendTesting;
+
 import org.junit.jupiter.api.Test;
 
 import static computer.living.gamepadyn.test.JavaSimulatedInputUnitTest.TestActionDigital.*;
@@ -59,7 +59,7 @@ class JavaSimulatedInputUnitTest {
 
         gamepadyn.update();
 
-        p0.setConfiguration(new Configuration<>(
+        p0.setBinds(new Configuration<>(
             new ActionBind<>(DIGITAL_ACTION,      FACE_DOWN),
             new ActionBind<>(ANALOG_1D_ACTION,    TRIGGER_RIGHT),
             new ActionBind<>(ANALOG_2D_ACTION,    STICK_RIGHT)

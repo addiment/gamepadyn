@@ -1,7 +1,5 @@
 package computer.living.gamepadyn.test;
 
-import computer.living.gamepadyn.ActionBind;
-import computer.living.gamepadyn.ActionBindAnalog2To1;
 import computer.living.gamepadyn.Axis;
 import computer.living.gamepadyn.Configuration;
 import computer.living.gamepadyn.Gamepadyn;
@@ -18,9 +16,9 @@ import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog1
 import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog2.*;
 
 import computer.living.gamepadyn.ftc.InputBackendFtc;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import kotlin.Unit;
 
-import java.util.Objects;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class GamepadynJavaImpl extends OpMode {
 
@@ -50,12 +48,14 @@ public class GamepadynJavaImpl extends OpMode {
         Player<TestActionDigital, TestActionAnalog1, TestActionAnalog2> p0 = gamepadyn.getPlayer(0);
         assert p0 != null;
 
-        p0.setConfiguration(new Configuration<>(
-            new ActionBind<>            (LAUNCH_DRONE,  FACE_LEFT),
-            new ActionBind<>            (MOVEMENT,      STICK_LEFT),
-            new ActionBindAnalog2To1<>  (ROTATION,      STICK_RIGHT,    Axis.X),
-            new ActionBind<>            (CLAW,          TRIGGER_RIGHT)
-        ));
+        p0.configuration = new Configuration<>(bindPipe -> {
+            bindPipe.action(LAUNCH_DRONE,     it -> it.input(FACE_LEFT));
+            bindPipe.action(MOVEMENT,         it -> it.input(STICK_LEFT));
+            bindPipe.action(CLAW,             it -> it.input(TRIGGER_RIGHT));
+            bindPipe.action(ROTATION,         it -> it.split(it.input(STICK_RIGHT), Axis.X));
+
+            return null;
+        });
     }
 
     @Override
@@ -69,6 +69,7 @@ public class GamepadynJavaImpl extends OpMode {
         p0.addListenerDigital(LAUNCH_DRONE, ev -> {
             telemetry.addLine("Button " + ((ev.data.active) ? "pressed" : "released") + "!");
             telemetry.update();
+            return Unit.INSTANCE;
         });
 
         // Usually, analog events should be replaced with state checks, but both work.

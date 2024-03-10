@@ -3,10 +3,6 @@ package computer.living.gamepadyn
 import computer.living.gamepadyn.InputType.*
 import kotlin.reflect.KClass
 
-sealed interface ActionEnum
-interface ActionEnumDigital : ActionEnum
-interface ActionEnumAnalog1 : ActionEnum
-interface ActionEnumAnalog2 : ActionEnum
 
 /**
  * A Gamepadyn instance. Use the factory method instead of a constructor.
@@ -17,17 +13,20 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     /**
      * The backend input source.
      */
+    @JvmSynthetic
     internal val backend: InputBackend,
     /**
      * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
      */
     var strict: Boolean = true,
+    @JvmSynthetic
     internal val actionsDigital: Array<TD>,
+    @JvmSynthetic
     internal val actionsAnalog1: Array<TA>,
+    @JvmSynthetic
     internal val actionsAnalog2: Array<TAA>
 )
-        where
-              TD : ActionEnumDigital,
+        where TD : ActionEnumDigital,
               TA : ActionEnumAnalog1,
               TAA : ActionEnumAnalog2,
               TD : Enum<TD>,
@@ -37,24 +36,20 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     /**
      * A list of active Players.
      */
-    // Note for me/other developers:
-    // I might make this private, because it would allow for more control over access.
-    // It would also make getPlayer() the correct method across different languages (consistency = good)
-    // and it would also mean less array OOB exceptions (yay!)
-
-    var players: ArrayList<Player<TD, TA, TAA>> = ArrayList(
+    private var players: ArrayList<Player<TD, TA, TAA>> = ArrayList(
         backend.getGamepads().map { Player(this, it) }
     )
-        private set
 
     /**
-     * Convenience function (equivalent to [players]`.getOrNull(index)`).
-     * This is mainly for Java, which can't use Kotlin getters with property access syntax.
+     * Returns a reference to the player at the specified index (starting from 0), or `null` if they don't exist.
      */
     fun getPlayer(index: Int): Player<TD, TA, TAA>? = players.getOrNull(index)
 
+    @JvmSynthetic
     internal var globalEventsDigital: Map<TD,   Event<InputDataDigital, TD, TA, TAA>> = actionsDigital.associateWith { Event() }
+    @JvmSynthetic
     internal var globalEventsAnalog1: Map<TA,   Event<InputDataAnalog1, TD, TA, TAA>> = actionsAnalog1.associateWith { Event() }
+    @JvmSynthetic
     internal var globalEventsAnalog2: Map<TAA,  Event<InputDataAnalog2, TD, TA, TAA>> = actionsAnalog2.associateWith { Event() }
 
     /**
@@ -64,6 +59,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
         val rawGamepads = backend.getGamepads()
         // TODO: check that this can't cause any issues
         if (rawGamepads.size != players.size) {
+            // less players than we had previously, shift downwards
             if (rawGamepads.size < players.size) {
                 // update old player gamepads
                 for ((i, e) in rawGamepads.withIndex()) players[i].rawGamepad = e
@@ -72,7 +68,8 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                 // TODO: decide if we should disable or delete old players
                 for (i in range) players[i].isEnabled = false
 
-            } else if (rawGamepads.size > players.size) {
+            // more players than we had previously, shift upwards.
+            } else {
                 // update their raw gamepads, also make sure they're enabled (just in case)
                 for ((i, e) in players.withIndex()) {
                     e.isEnabled = true
@@ -100,8 +97,8 @@ class Gamepadyn<TD, TA, TAA> private constructor(
 //        println("----------UPDATE----------")
         // update each player
         for (player in players) {
-            // make the configuration local and constant
-            val config = player.configuration
+
+            val binds = player.configuration
 
             // freeze state
             val statePreviousDigital = player.stateDigital.entries.associate { it.key to it.value.copy() }
@@ -116,59 +113,44 @@ class Gamepadyn<TD, TA, TAA> private constructor(
 
             val potentialMutations: MutableSet<Enum<*>> = mutableSetOf()
 
-            bindLoop@ for (bind in config.binds) {
-//                println("bind (${bind.input.name} to ${bind.targetAction.name}) {")
+            if (binds == null) continue
+            for (bind in binds.digital) {
+                val newData = bind.pipe.eval(
+                    this,
+                    rawState,
+                    statePreviousDigital,
+                    statePreviousAnalog1,
+                    statePreviousAnalog2
+                ) as InputDataDigital
 
-                val previousState = when (bind.targetAction) {
-                    is ActionEnumDigital -> statePreviousDigital[bind.targetAction]
-                    is ActionEnumAnalog1 -> statePreviousAnalog1[bind.targetAction]
-                    is ActionEnumAnalog2 -> statePreviousAnalog2[bind.targetAction]
-                    else -> if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid") else null
-                } ?: continue
+                potentialMutations.add(bind.action)
+                player.stateDigital[bind.action] = newData
+            }
 
-                val newData: InputData = bind.transform(
-                    rawState[bind.input] ?: (when (bind.input.type) {
-                        DIGITAL -> InputDataDigital()
-                        ANALOG1 -> InputDataAnalog1()
-                        ANALOG2 -> InputDataAnalog2()
-                    }),
-                    previousState,
-                    delta
-                )
+            for (bind in binds.analog1) {
+                val newData = bind.pipe.eval(
+                    this,
+                    rawState,
+                    statePreviousDigital,
+                    statePreviousAnalog1,
+                    statePreviousAnalog2
+                ) as InputDataAnalog1
 
-//                println(rawState[bind.input])
-//                println("old data: $previousState")
-//                println("new data: $newData")
+                potentialMutations.add(bind.action)
+                player.stateAnalog1[bind.action] = newData
+            }
 
-                potentialMutations.add(bind.targetAction)
+            for (bind in binds.analog2) {
+                val newData = bind.pipe.eval(
+                    this,
+                    rawState,
+                    statePreviousDigital,
+                    statePreviousAnalog1,
+                    statePreviousAnalog2
+                ) as InputDataAnalog2
 
-                when (bind.targetAction) {
-                    is ActionEnumDigital -> {
-                        @Suppress("UNCHECKED_CAST")
-                        val cast: TD = (bind.targetAction as? TD)
-                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid (guessed type Digital?)") else continue@bindLoop
-                        val inCast = newData as? InputDataDigital
-                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} is digital but was provided type ${newData.type}") else continue@bindLoop
-                        player.stateDigital[cast] = inCast
-                    }
-                    is ActionEnumAnalog1 -> {
-                        @Suppress("UNCHECKED_CAST")
-                        val cast: TA = (bind.targetAction as? TA)
-                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid (guessed type Analog1?)") else continue@bindLoop
-                        val inCast = newData as? InputDataAnalog1
-                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} is analog1 but was provided type ${newData.type}") else continue@bindLoop
-                        player.stateAnalog1[cast] = inCast
-                    }
-                    is ActionEnumAnalog2 -> {
-                        @Suppress("UNCHECKED_CAST")
-                        val cast: TAA = (bind.targetAction as? TAA)
-                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid (guessed type Analog2?)") else continue@bindLoop
-                        val inCast = newData as? InputDataAnalog2
-                            ?: if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} is analog2 but was provided type ${newData.type}") else continue@bindLoop
-                        player.stateAnalog2[cast] = inCast
-                    }
-                    else -> if (strict) throw Exception("Gamepadyn (strict): bind with target action \"${bind.targetAction.name}\" and raw input ${bind.input} was invalid") else continue@bindLoop
-                }
+                potentialMutations.add(bind.action)
+                player.stateAnalog2[bind.action] = newData
             }
 
             for (update in potentialMutations) {
@@ -267,6 +249,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
 
     // for calculating delta time
     // TODO: implement timing
+    @JvmSynthetic
     internal var lastUpdateTime: Double = 0.0
 
     companion object {

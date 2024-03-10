@@ -6,7 +6,9 @@ package computer.living.gamepadyn
  * Represents a specific controller.
  */
 class Player<TD, TA, TAA> internal constructor(
+    @JvmSynthetic
     internal val parent: Gamepadyn<TD, TA, TAA>,
+    @JvmSynthetic
     internal var rawGamepad: InputBackend.RawGamepad
 )
     where TD : ActionEnumDigital,
@@ -16,20 +18,28 @@ class Player<TD, TA, TAA> internal constructor(
           TA : Enum<TA>,
           TAA : Enum<TAA>
 {
+    @JvmSynthetic
     internal var stateDigital: MutableMap<TD,   InputDataDigital> = parent.actionsDigital.associateWith { InputDataDigital() }.toMutableMap()
+    @JvmSynthetic
     internal var stateAnalog1: MutableMap<TA,   InputDataAnalog1> = parent.actionsAnalog1.associateWith { InputDataAnalog1() }.toMutableMap()
+    @JvmSynthetic
     internal var stateAnalog2: MutableMap<TAA,  InputDataAnalog2> = parent.actionsAnalog2.associateWith { InputDataAnalog2() }.toMutableMap()
 
+    @JvmSynthetic
     internal var eventsDigital: Map<TD,   Event<InputDataDigital, TD, TA, TAA>> = parent.actionsDigital.associateWith { Event() }
+    @JvmSynthetic
     internal var eventsAnalog1: Map<TA,   Event<InputDataAnalog1, TD, TA, TAA>> = parent.actionsAnalog1.associateWith { Event() }
+    @JvmSynthetic
     internal var eventsAnalog2: Map<TAA,  Event<InputDataAnalog2, TD, TA, TAA>> = parent.actionsAnalog2.associateWith { Event() }
 
+    @JvmSynthetic
     internal var isEnabled: Boolean = true
 
     /**
      * The player's configuration.
      */
-    var configuration: Configuration<TD, TA, TAA> = Configuration()
+    @JvmField
+    var configuration: Configuration<TD, TA, TAA>? = null
 
     /**
      * Gets a Digital Event

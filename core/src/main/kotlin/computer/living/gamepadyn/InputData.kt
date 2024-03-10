@@ -43,11 +43,12 @@ data class InputDataAnalog2(
     /**
      * The X axis of the analog input data.
      */
-    @JvmField var x: Float = 0f,
+    @JvmField var x: Float,
     /**
      * The Y axis of the analog input data.
      */
-    @JvmField var y: Float = 0f
+    @JvmField var y: Float
 ) : InputData() {
+    constructor() : this(0f, 0f)
     override val type: InputType = ANALOG2
 }
