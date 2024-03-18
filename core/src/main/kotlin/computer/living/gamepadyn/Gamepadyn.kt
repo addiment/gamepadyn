@@ -36,7 +36,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     /**
      * A list of active Players.
      */
-    private var players: ArrayList<Player<TD, TA, TAA>> = ArrayList(
+    internal var players: ArrayList<Player<TD, TA, TAA>> = ArrayList(
         backend.getGamepads().map { Player(this, it) }
     )
 
@@ -44,6 +44,8 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      * Returns a reference to the player at the specified index (starting from 0), or `null` if they don't exist.
      */
     fun getPlayer(index: Int): Player<TD, TA, TAA>? = players.getOrNull(index)
+    val playerCount: Int
+        get() = players.size
 
     @JvmSynthetic
     internal var globalEventsDigital: Map<TD,   Event<InputDataDigital, TD, TA, TAA>> = actionsDigital.associateWith { Event() }

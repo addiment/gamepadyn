@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=
+    device-width, initial-scale=1.0">
+    <title>gamepadyn control panel</title>
+    <link rel="preload" href="reusables.css" as="style">
+    <link rel="preload" href="visualizer.css" as="style">
+    <link rel="preload" href="status.css" as="style">
+    <link rel="preload" href="fonts/inter.css" as="style">
+    <link rel="preload" href="index.css" as="style">
+    <link rel="stylesheet" href="fonts/inter.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <gamepad-visualizer id="bigvis">
+    </gamepad-visualizer>
+    <div id="cpanel"></div>
+    <div id="apimapper">
+        <h1>API Input Mapper</h1>
+        <label for="agpstatus">Connected Gamepads</label>
+        <div class="altli" id="agpstatus"></div>
+        <label for="clarifier">Clarify Gamepad Controls</label>
+        <div class="mc" id="clarifier"></div>
+    </div>
+</body>
+
+<script src="index.js"></script>
+
+</html>

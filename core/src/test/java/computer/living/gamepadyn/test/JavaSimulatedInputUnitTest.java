@@ -47,23 +47,25 @@ class JavaSimulatedInputUnitTest {
             true
         );
 
-        println("Player count: " + gamepadyn.getPlayers().size());
+        println("Player count: " + gamepadyn.getPlayerCount());
 
         AtomicInteger stateChangeCount = new AtomicInteger();
         int expectedStateChangeCount = 0;
 
-        println("Player count: ${gamepadyn.players.size}");
+        println("Player count: " + gamepadyn.getPlayerCount());
 
         Player<TestActionDigital, TestActionAnalog1, TestActionAnalog2> p0 = gamepadyn.getPlayer(0);
         assert p0 != null;
 
         gamepadyn.update();
 
-        p0.setBinds(new Configuration<>(
-            new ActionBind<>(DIGITAL_ACTION,      FACE_DOWN),
-            new ActionBind<>(ANALOG_1D_ACTION,    TRIGGER_RIGHT),
-            new ActionBind<>(ANALOG_2D_ACTION,    STICK_RIGHT)
-        ));
+        p0.configuration = new Configuration<>(bindPipe -> {
+            bindPipe.actionDigital(DIGITAL_ACTION, it -> it.input(FACE_DOWN));
+            bindPipe.actionAnalog1(ANALOG_1D_ACTION, it -> it.input(TRIGGER_RIGHT));
+            bindPipe.actionAnalog2(ANALOG_2D_ACTION, it -> it.input(STICK_RIGHT));
+
+            return null;
+        });
 
         gamepadyn.update();
 

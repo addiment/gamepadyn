@@ -3,10 +3,10 @@ package computer.living.gamepadyn.test
 import computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionAnalog1.*
 import computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionAnalog2.ANALOG_2D_ACTION
 import computer.living.gamepadyn.test.KotlinSimulatedInputUnitTest.TestActionDigital.DIGITAL_ACTION
-import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
+import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.RawInputAnalog1.*
 import computer.living.gamepadyn.RawInputAnalog2.*
@@ -44,22 +44,22 @@ class KotlinSimulatedInputUnitTest {
             strict = true
         )
 
-        kotlin.io.println("Player count: ${gamepadyn.players.size}")
+        kotlin.io.println("Player count: ${gamepadyn.playerCount}")
 
         var stateChangeCount = 0
         var expectedStateChangeCount = 0
 
-        kotlin.io.println("Player count: ${gamepadyn.players.size}")
+        kotlin.io.println("Player count: ${gamepadyn.playerCount}")
 
-        val p0 = gamepadyn.players[0]
+        val p0 = gamepadyn.getPlayer(0)!!
 
         gamepadyn.update()
 
-        gamepadyn.players[0].configuration = Configuration(
-            ActionBind(DIGITAL_ACTION,      FACE_DOWN),
-            ActionBind(ANALOG_1D_ACTION,    TRIGGER_RIGHT),
-            ActionBind(ANALOG_2D_ACTION,    STICK_RIGHT)
-        )
+        p0.configuration = Configuration {
+            action(DIGITAL_ACTION) { input(FACE_DOWN) }
+            action(ANALOG_1D_ACTION) { input(TRIGGER_RIGHT) }
+            action(ANALOG_2D_ACTION) { input(STICK_RIGHT) }
+        }
 
         gamepadyn.update()
 

@@ -7,7 +7,6 @@ import computer.living.gamepadyn.ActionEnumAnalog1
 import computer.living.gamepadyn.ActionEnumAnalog2
 import computer.living.gamepadyn.ActionEnumDigital
 import computer.living.gamepadyn.Axis
-import computer.living.gamepadyn.BindPipe
 import computer.living.gamepadyn.Configuration
 import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.RawInputAnalog1.*

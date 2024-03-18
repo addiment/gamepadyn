@@ -28,7 +28,7 @@ class Configuration<TD, TA, TAA> (config: BindPipeBuilder<TD, TA, TAA>.() -> Uni
     internal var analog2: ArrayList<Bind<TAA, BindPipeVector>>
 
     sealed class BindPipe {
-        // TODO: implement this. the blocking factor is recursion, I really don't want it
+        // TODO: implement this. and just do it with recursion, it will make everything miles easier
         @JvmSynthetic
         internal open fun <TD, TA, TAA> eval(
             gamepadyn: Gamepadyn<TD, TA, TAA>,
@@ -498,12 +498,15 @@ class Configuration<TD, TA, TAA> (config: BindPipeBuilder<TD, TA, TAA>.() -> Uni
                 @JvmField val previousState: BindPipeVector = PreviousStateMarkerVector<TAA>()
             }
 
+            @JvmName("actionDigital")
             fun action(action: TD, bindPipe: BindPipeBuilderDigital<TD>.() -> BindPipeBool) {
                 digitalPipes.add(Bind(action, BindPipeBuilderDigital<TD>().bindPipe()))
             }
+            @JvmName("actionAnalog1")
             fun action(action: TA, bindPipe: BindPipeBuilderAnalog1<TA>.() -> BindPipeFloat) {
                 analog1Pipes.add(Bind(action, BindPipeBuilderAnalog1<TA>().bindPipe()))
             }
+            @JvmName("actionAnalog2")
             fun action(action: TAA, bindPipe: BindPipeBuilderAnalog2<TAA>.() -> BindPipeVector) {
                 analog2Pipes.add(Bind(action, BindPipeBuilderAnalog2<TAA>().bindPipe()))
             }
