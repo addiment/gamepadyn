@@ -183,6 +183,7 @@ enum class ActionAnalog2 : ActionEnumAnalog2 {
 //}
 
 private class BindPipeTest : OpMode() {
+
     // Construct the initial Gamepadyn instance.
     // Kotlin's compiler infers all type parameters.
     val gamepadyn = Gamepadyn.create(
@@ -197,10 +198,10 @@ private class BindPipeTest : OpMode() {
     override fun init() {
         gamepadyn.getPlayer(0)!!.configuration = Configuration {
 
-            action(ActionDigital.DO_STUFF) { input(FACE_RIGHT) }
+            actionDigital(ActionDigital.DO_STUFF) { input(FACE_RIGHT) }
 
             // a needlessly complicated bind, for pushing the limits of the system.
-            action(ActionAnalog2.MOVEMENT) {
+            actionAnalog2(ActionAnalog2.MOVEMENT) {
                 join(
                     x = add(
                         input(TRIGGER_RIGHT),

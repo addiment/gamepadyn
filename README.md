@@ -275,4 +275,33 @@ and it would be awful to actually use.
 - Provide more pre-made `ActionBind` transformations to prevent rewriting code
 
 ## Non-Goals
-- 
+- We don't have any explicit non-goals just yet, but again, we aren't aiming to do _everything_
+
+# FAQ (Users)
+
+## Is Gamepadyn worth using?
+
+We say this with extreme bias, but yes!
+Gamepadyn's API has been designed to be easy to pick up, and with extensibility in mind.
+We recommend you read the examples, then try it if it seems to fit your use cases.
+
+## We _really_ want to use Java. Is Gamepadyn _really_ compatible with Java?
+
+Yes!
+While we avoid using Java to develop Gamepadyn,
+we try to ensure that its API is convenient and consistent across its two targeted languages.
+
+## Will Gamepadyn ever support other languages besides Kotlin and Java?
+
+Probably not. We don't plan on targeting anything that Kotlin doesn't already support.
+If you find out that something we never planned on supporting works with Gamepadyn, let us know!
+
+# FAQ (Developers)
+
+## What does `@JvmSynthetic` do and why is it used so much?
+
+Kotlin's wonderful `internal` visibility modifier technically doesn't do anything when used with Java.
+We annotate almost everything `internal` with `@JvmSynthetic` because we're paranoid that people
+might use/abuse internal APIs, which would break our almost-entirely-safe guarantee.
+Using the `@JvmSynthetic` annotation prevents the Java compiler from compiling code that calls
+any internal methods. We're probably abusing this, but we don't see any consequence for doing so.

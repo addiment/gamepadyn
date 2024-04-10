@@ -56,9 +56,9 @@ class KotlinSimulatedInputUnitTest {
         gamepadyn.update()
 
         p0.configuration = Configuration {
-            action(DIGITAL_ACTION) { input(FACE_DOWN) }
-            action(ANALOG_1D_ACTION) { input(TRIGGER_RIGHT) }
-            action(ANALOG_2D_ACTION) { input(STICK_RIGHT) }
+            actionDigital(DIGITAL_ACTION) { input(FACE_DOWN) }
+            actionAnalog1(ANALOG_1D_ACTION) { input(TRIGGER_RIGHT) }
+            actionAnalog2(ANALOG_2D_ACTION) { input(STICK_RIGHT) }
         }
 
         gamepadyn.update()

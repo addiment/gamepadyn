@@ -32,7 +32,7 @@ package computer.living.gamepadyn
  *      because then we stick with the philosophy of "different types for different things."
  *      It also would mean that we can add custom shorthand (a la `.invoke()`) to make API use
  *      even easier. When I started writing extension functions for *my own library*,
- *      I realized I was probably doing something wrong from a design stanpoint.
+ *      I realized I was probably doing something wrong from a design standpoint.
  */
 class Event<T, TD, TA, TAA> internal constructor()
         where T : InputData,
@@ -44,8 +44,8 @@ class Event<T, TD, TA, TAA> internal constructor()
               TAA : Enum<TAA>
 {
     /**
-     * TODO: should there be a field for the previous state? [ActionBind]s have one.
-     *      on that note, what about a field for *which action it was?*
+     * TODO: should there be a field for the previous state? The BindPipe system has one.
+     *      On that note, what about a field for *which action it was?*
      *      all of those could be helpful, and now that we have a class specifically for event data,
      *      we can basically add whatever we need.
      *      It's not fundamental for the functionality of event listeners, but it would be convenient.
@@ -117,6 +117,7 @@ class Event<T, TD, TA, TAA> internal constructor()
     /**
      * Broadcasts an event to all listeners. For internal use only (inside of the Gamepadyn class)
      */
+    @JvmSynthetic
     internal fun trigger(data: T, player: Player<TD, TA, TAA>) {
         for (e in listeners) e.invoke(EventData(data, player))
         for (e in javaListeners) e.onStateChange(EventData(data, player))

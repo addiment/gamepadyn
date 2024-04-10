@@ -30,10 +30,10 @@ public class ExampleTest extends OpMode {
 
         p0.configuration = new Configuration<>(bindPipe -> {
 
-            bindPipe.action(ActionDigital.DO_STUFF, builder -> builder.input(FACE_RIGHT));
+            bindPipe.actionDigital(ActionDigital.DO_STUFF, builder -> builder.input(FACE_RIGHT));
 
             // a needlessly complicated bind, for pushing the limits of the system.
-            bindPipe.action(ActionAnalog2.MOVEMENT,
+            bindPipe.actionAnalog2(ActionAnalog2.MOVEMENT,
                 it -> it.join(
                     it.add(
                         it.input(TRIGGER_RIGHT),

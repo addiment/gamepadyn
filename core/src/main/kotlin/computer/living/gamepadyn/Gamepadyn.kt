@@ -1,6 +1,5 @@
 package computer.living.gamepadyn
 
-import computer.living.gamepadyn.InputType.*
 import kotlin.reflect.KClass
 
 
@@ -13,12 +12,12 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     /**
      * The backend input source.
      */
-    @JvmSynthetic
-    internal val backend: InputBackend,
+    private val backend: InputBackend,
     /**
      * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
      */
     var strict: Boolean = true,
+
     @JvmSynthetic
     internal val actionsDigital: Array<TD>,
     @JvmSynthetic
@@ -31,12 +30,11 @@ class Gamepadyn<TD, TA, TAA> private constructor(
               TAA : ActionEnumAnalog2,
               TD : Enum<TD>,
               TA : Enum<TA>,
-              TAA : Enum<TAA>
-{
+              TAA : Enum<TAA> {
     /**
      * A list of active Players.
      */
-    internal var players: ArrayList<Player<TD, TA, TAA>> = ArrayList(
+    private var players: ArrayList<Player<TD, TA, TAA>> = ArrayList(
         backend.getGamepads().map { Player(this, it) }
     )
 
@@ -47,12 +45,14 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     val playerCount: Int
         get() = players.size
 
-    @JvmSynthetic
-    internal var globalEventsDigital: Map<TD,   Event<InputDataDigital, TD, TA, TAA>> = actionsDigital.associateWith { Event() }
-    @JvmSynthetic
-    internal var globalEventsAnalog1: Map<TA,   Event<InputDataAnalog1, TD, TA, TAA>> = actionsAnalog1.associateWith { Event() }
-    @JvmSynthetic
-    internal var globalEventsAnalog2: Map<TAA,  Event<InputDataAnalog2, TD, TA, TAA>> = actionsAnalog2.associateWith { Event() }
+    private var globalEventsDigital: Map<TD, Event<InputDataDigital, TD, TA, TAA>> =
+        actionsDigital.associateWith { Event() }
+
+    private var globalEventsAnalog1: Map<TA, Event<InputDataAnalog1, TD, TA, TAA>> =
+        actionsAnalog1.associateWith { Event() }
+
+    private var globalEventsAnalog2: Map<TAA, Event<InputDataAnalog2, TD, TA, TAA>> =
+        actionsAnalog2.associateWith { Event() }
 
     /**
      * Request new state from the [InputBackend].
@@ -70,7 +70,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                 // TODO: decide if we should disable or delete old players
                 for (i in range) players[i].isEnabled = false
 
-            // more players than we had previously, shift upwards.
+                // more players than we had previously, shift upwards.
             } else {
                 // update their raw gamepads, also make sure they're enabled (just in case)
                 for ((i, e) in players.withIndex()) {
@@ -103,9 +103,12 @@ class Gamepadyn<TD, TA, TAA> private constructor(
             val binds = player.configuration
 
             // freeze state
-            val statePreviousDigital = player.stateDigital.entries.associate { it.key to it.value.copy() }
-            val statePreviousAnalog1 = player.stateAnalog1.entries.associate { it.key to it.value.copy() }
-            val statePreviousAnalog2 = player.stateAnalog2.entries.associate { it.key to it.value.copy() }
+            val statePreviousDigital =
+                player.stateDigital.entries.associate { it.key to it.value.copy() }
+            val statePreviousAnalog1 =
+                player.stateAnalog1.entries.associate { it.key to it.value.copy() }
+            val statePreviousAnalog2 =
+                player.stateAnalog2.entries.associate { it.key to it.value.copy() }
 
 //            println("PREVIOUS STATE:")
 //            for (e in statePrevious) {
@@ -118,12 +121,13 @@ class Gamepadyn<TD, TA, TAA> private constructor(
             if (binds == null) continue
             for (bind in binds.digital) {
                 val newData = bind.pipe.eval(
-                    this,
-                    rawState,
-                    statePreviousDigital,
-                    statePreviousAnalog1,
-                    statePreviousAnalog2
-                ) as InputDataDigital
+                    BindPipeArgs(
+                        this,
+                        rawState,
+                        statePreviousDigital[bind.action]
+                            ?: if (strict) throw Exception("No previous state!") else InputDataDigital()
+                    )
+                )
 
                 potentialMutations.add(bind.action)
                 player.stateDigital[bind.action] = newData
@@ -131,12 +135,13 @@ class Gamepadyn<TD, TA, TAA> private constructor(
 
             for (bind in binds.analog1) {
                 val newData = bind.pipe.eval(
-                    this,
-                    rawState,
-                    statePreviousDigital,
-                    statePreviousAnalog1,
-                    statePreviousAnalog2
-                ) as InputDataAnalog1
+                    BindPipeArgs(
+                        this,
+                        rawState,
+                        statePreviousAnalog1[bind.action]
+                            ?: if (strict) throw Exception("No previous state!") else InputDataAnalog1()
+                    )
+                )
 
                 potentialMutations.add(bind.action)
                 player.stateAnalog1[bind.action] = newData
@@ -144,12 +149,13 @@ class Gamepadyn<TD, TA, TAA> private constructor(
 
             for (bind in binds.analog2) {
                 val newData = bind.pipe.eval(
-                    this,
-                    rawState,
-                    statePreviousDigital,
-                    statePreviousAnalog1,
-                    statePreviousAnalog2
-                ) as InputDataAnalog2
+                    BindPipeArgs(
+                        this,
+                        rawState,
+                        statePreviousAnalog2[bind.action]
+                            ?: if (strict) throw Exception("No previous state!") else InputDataAnalog2()
+                    )
+                )
 
                 potentialMutations.add(bind.action)
                 player.stateAnalog2[bind.action] = newData
@@ -166,6 +172,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                             this.getEvent(cast).trigger(currentState, player)
                         }
                     }
+
                     is ActionEnumAnalog1 -> {
                         @Suppress("UNCHECKED_CAST")
                         val cast = (update as? TA) ?: continue
@@ -175,6 +182,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                             this.getEvent(cast).trigger(currentState, player)
                         }
                     }
+
                     is ActionEnumAnalog2 -> {
                         @Suppress("UNCHECKED_CAST")
                         val cast = (update as? TAA) ?: continue
@@ -193,61 +201,79 @@ class Gamepadyn<TD, TA, TAA> private constructor(
      * Gets a Digital Event
      */
     @JvmName("getEventDigital")
-    fun getEvent(action: TD): Event<InputDataDigital, TD, TA, TAA>   = globalEventsDigital[action]!!
+    fun getEvent(action: TD): Event<InputDataDigital, TD, TA, TAA> = globalEventsDigital[action]!!
 
     /**
      * Gets an Analog1 Event
      */
     @JvmName("getEventAnalog1")
-    fun getEvent(action: TA): Event<InputDataAnalog1, TD, TA, TAA>   = globalEventsAnalog1[action]!!
+    fun getEvent(action: TA): Event<InputDataAnalog1, TD, TA, TAA> = globalEventsAnalog1[action]!!
 
     /**
      * Gets an Analog2 Event
      */
     @JvmName("getEventAnalog2")
-    fun getEvent(action: TAA): Event<InputDataAnalog2, TD, TA, TAA>  = globalEventsAnalog2[action]!!
+    fun getEvent(action: TAA): Event<InputDataAnalog2, TD, TA, TAA> = globalEventsAnalog2[action]!!
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerDigital")
-    fun addListener(action: TD, listener: (Event.EventData<InputDataDigital, TD, TA, TAA>) -> Unit): Boolean = globalEventsDigital[action]!!.addListener(listener)
+    fun addListener(
+        action: TD,
+        listener: (Event.EventData<InputDataDigital, TD, TA, TAA>) -> Unit
+    ): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog1")
-    fun addListener(action: TA, listener: (Event.EventData<InputDataAnalog1, TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
+    fun addListener(
+        action: TA,
+        listener: (Event.EventData<InputDataAnalog1, TD, TA, TAA>) -> Unit
+    ): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog2")
-    fun addListener(action: TAA, listener: (Event.EventData<InputDataAnalog2, TD, TA, TAA>) -> Unit): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
+    fun addListener(
+        action: TAA,
+        listener: (Event.EventData<InputDataAnalog2, TD, TA, TAA>) -> Unit
+    ): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerDigital")
-    fun addListener(action: TD, listener: InputEventListener<InputDataDigital, TD, TA, TAA>): Boolean = globalEventsDigital[action]!!.addListener(listener)
+    fun addListener(
+        action: TD,
+        listener: InputEventListener<InputDataDigital, TD, TA, TAA>
+    ): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog1")
-    fun addListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
+    fun addListener(
+        action: TA,
+        listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>
+    ): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
 
     /**
      * Adds an event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog2")
-    fun addListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
+    fun addListener(
+        action: TAA,
+        listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>
+    ): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     // for calculating delta time
     // TODO: implement timing
@@ -256,7 +282,8 @@ class Gamepadyn<TD, TA, TAA> private constructor(
 
     companion object {
 
-        @JvmStatic val GAMEPADYN_VERSION = "0.3.0"
+        @JvmStatic
+        val GAMEPADYN_VERSION = "0.3.0-BETA"
 
         /**
          * Kotlin-specific (sorta) factory method to create a new Gamepadyn instance.
@@ -274,13 +301,12 @@ class Gamepadyn<TD, TA, TAA> private constructor(
             backend: InputBackend,
             strict: Boolean = true
         ): Gamepadyn<TD, TA, TAA>
-            where TD : ActionEnumDigital,
-                  TA : ActionEnumAnalog1,
-                  TAA : ActionEnumAnalog2,
-                  TD : Enum<TD>,
-                  TA : Enum<TA>,
-                  TAA : Enum<TAA>
-        {
+                where TD : ActionEnumDigital,
+                      TA : ActionEnumAnalog1,
+                      TAA : ActionEnumAnalog2,
+                      TD : Enum<TD>,
+                      TA : Enum<TA>,
+                      TAA : Enum<TAA> {
             val d: Array<TD>? = digitalEnum.java.enumConstants
             val a: Array<TA>? = analog1Enum.java.enumConstants
             val aa: Array<TAA>? = analog2Enum.java.enumConstants
@@ -311,13 +337,12 @@ class Gamepadyn<TD, TA, TAA> private constructor(
             backend: InputBackend,
             strict: Boolean = true
         ): Gamepadyn<TD, TA, TAA>
-            where TD : ActionEnumDigital,
-                  TA : ActionEnumAnalog1,
-                  TAA : ActionEnumAnalog2,
-                  TD : Enum<TD>,
-                  TA : Enum<TA>,
-                  TAA : Enum<TAA>
-        {
+                where TD : ActionEnumDigital,
+                      TA : ActionEnumAnalog1,
+                      TAA : ActionEnumAnalog2,
+                      TD : Enum<TD>,
+                      TA : Enum<TA>,
+                      TAA : Enum<TAA> {
             val d: Array<TD>? = digitalEnum.enumConstants
             val a: Array<TA>? = analog1Enum.enumConstants
             val aa: Array<TAA>? = analog2Enum.enumConstants
