@@ -93,6 +93,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     fun update() {
         if (backend.hasUpdated()) return
         backend.update()
+        // TODO: use delta
         val delta = backend.getDelta()
         updateGamepads()
 
@@ -215,8 +216,11 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     @JvmName("getEventAnalog2")
     fun getEvent(action: TAA): Event<InputDataAnalog2, TD, TA, TAA> = globalEventsAnalog2[action]!!
 
+    // TODO: should these be renamed to something akin to ".addGlobalListener()" ?
+    //      it's more accurate, and it signifies what these functions actually do.
+
     /**
-     * Adds an event listener.
+     * Adds a global event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerDigital")
@@ -226,7 +230,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     ): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
-     * Adds an event listener.
+     * Adds a global event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog1")
@@ -236,7 +240,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     ): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
 
     /**
-     * Adds an event listener.
+     * Adds a global event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog2")
@@ -246,7 +250,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     ): Boolean = globalEventsAnalog2[action]!!.addListener(listener)
 
     /**
-     * Adds an event listener.
+     * Adds a global event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerDigital")
@@ -256,7 +260,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     ): Boolean = globalEventsDigital[action]!!.addListener(listener)
 
     /**
-     * Adds an event listener.
+     * Adds a global event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog1")
@@ -266,7 +270,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
     ): Boolean = globalEventsAnalog1[action]!!.addListener(listener)
 
     /**
-     * Adds an event listener.
+     * Adds a global event listener.
      * @see [Event.addListener]
      */
     @JvmName("addListenerAnalog2")
@@ -284,6 +288,13 @@ class Gamepadyn<TD, TA, TAA> private constructor(
 
         @JvmStatic
         val GAMEPADYN_VERSION = "0.3.0-BETA"
+
+        // TODO: We don't really need a factory method anymore,
+        //      we only started using one because of incorrect assumptions involving visibility
+        //      and reified type parameters. One bright side is optional/nullable return values,
+        //      but we don't use that anyway? Now that we have these methods,
+        //      we could probably create a reified factory easily (ALL THE SHORTHAND).
+        //      ...But is it the right thing to do?
 
         /**
          * Kotlin-specific (sorta) factory method to create a new Gamepadyn instance.
@@ -315,7 +326,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                 if (d == null) s.add("digital")
                 if (a == null) s.add("analog1")
                 if (aa == null) s.add("analog2")
-                throw Exception("Unable to find enum constants of the following action types: ${s.joinToString()}")
+                throw Exception("Unable to find enum constants (from Kotlin class) of the following action types: ${s.joinToString()}")
             }
             return Gamepadyn(backend, strict, d, a, aa)
         }
@@ -351,7 +362,7 @@ class Gamepadyn<TD, TA, TAA> private constructor(
                 if (d == null) s.add("digital")
                 if (a == null) s.add("analog1")
                 if (aa == null) s.add("analog2")
-                throw Exception("Unable to find enum constants of the following action types: ${s.joinToString()}")
+                throw Exception("Unable to find enum constants (from Java class) of the following action types: ${s.joinToString()}")
             }
             return Gamepadyn(backend, strict, d, a, aa)
         }

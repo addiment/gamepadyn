@@ -6,9 +6,7 @@ import kotlin.math.sign
 import kotlin.math.sqrt
 
 /**
- * Experimental bind system to allow for better serialization.
- * After all, it's not like people keep track of state in their binds, right???? please????
- * All jokes aside, I'm aiming to have this done by Gamepadyn 0.4.0
+ * A serializable control configuration for a player. In reality, it's really just a collection of [Bind]s,
  * @param config The configuration of the binds. You provide a lambda function that takes an instance of a builder class as its only parameter. It returns nothing; you just call functions to mutate the provided value.
  */
 class Configuration<TD, TA, TAA>(config: BindPipeBuilder<TD, TA, TAA>.() -> Unit)

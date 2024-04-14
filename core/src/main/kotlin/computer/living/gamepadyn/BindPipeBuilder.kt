@@ -4,7 +4,8 @@ package computer.living.gamepadyn
  * A pair of a [BindPipe] and an action.
  */
 data class Bind<T, TP>(
-    val action: T, val pipe: TP
+    val action: T,
+    val pipe: TP
 ) where T : ActionEnum, T : Enum<T>, TP : BindPipe
 
 class BindPipeBuilder<TD, TA, TAA> internal constructor() where TD : ActionEnumDigital, TA : ActionEnumAnalog1, TAA : ActionEnumAnalog2, TD : Enum<TD>, TA : Enum<TA>, TAA : Enum<TAA> {
@@ -17,19 +18,19 @@ class BindPipeBuilder<TD, TA, TAA> internal constructor() where TD : ActionEnumD
     @JvmSynthetic
     internal val analog2Pipes = arrayListOf<Bind<TAA, BindPipeVector>>()
 
-    class BindPipeBuilderDigital<TD> constructor() :
+    class BindPipeBuilderDigital<TD>:
         BindPipeBuilderExpression() where TD : ActionEnumDigital, TD : Enum<TD> {
         @JvmField
         val previousState: BindPipeBool = PreviousStateMarkerBool<TD>()
     }
 
-    class BindPipeBuilderAnalog1<TA> constructor() :
+    class BindPipeBuilderAnalog1<TA>:
         BindPipeBuilderExpression() where TA : ActionEnumAnalog1, TA : Enum<TA> {
         @JvmField
         val previousState: BindPipeFloat = PreviousStateMarkerFloat<TA>()
     }
 
-    class BindPipeBuilderAnalog2<TAA> constructor() :
+    class BindPipeBuilderAnalog2<TAA>:
         BindPipeBuilderExpression() where TAA : ActionEnumAnalog2, TAA : Enum<TAA> {
         @JvmField
         val previousState: BindPipeVector = PreviousStateMarkerVector<TAA>()
@@ -84,7 +85,7 @@ class BindPipeBuilder<TD, TA, TAA> internal constructor() where TD : ActionEnumD
         fun divide(a: BindPipeVector, b: BindPipeFloat): BindPipeVector = DivideVectorFloat(a, b)
 
         // TODO: division is non-commutative, so it requires another overload. implement it
-        fun divide(a: BindPipeFloat, b: BindPipeVector): BindPipeVector = DivideVectorFloat(b, a)
+//        fun divide(a: BindPipeFloat, b: BindPipeVector): BindPipeVector = DivideFloatVector(a, b)
 
         /**
          * @return [a] to the power of [b].
@@ -102,7 +103,7 @@ class BindPipeBuilder<TD, TA, TAA> internal constructor() where TD : ActionEnumD
         fun power(a: BindPipeVector, b: BindPipeFloat): BindPipeVector = PowerVectorFloat(a, b)
 
         // TODO: exponentiation is non-commutative, so it requires another overload. implement it
-//        fun power(a: BindPipeFloat, b: BindPipeVector): BindPipeVector = PowerVectorFloat(b, a)
+//        fun power(a: BindPipeFloat, b: BindPipeVector): BindPipeVector = PowerFloatVector(a, b)
 
         fun sign(x: BindPipeFloat): BindPipeFloat = SignFloat(x)
         fun sign(x: BindPipeVector): BindPipeVector = SignVector(x)

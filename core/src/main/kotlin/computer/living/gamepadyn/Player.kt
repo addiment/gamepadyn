@@ -42,96 +42,83 @@ class Player<TD, TA, TAA> internal constructor(
     var configuration: Configuration<TD, TA, TAA>? = null
 
     /**
-     * Gets a Digital Event
+     * @return a Digital Event
      */
     @JvmName("getEventDigital")
     fun getEvent(action: TD): Event<InputDataDigital, TD, TA, TAA>   = eventsDigital[action]!!
 
     /**
-     * Gets an Analog1 Event
+     * @return an Analog1 Event
      */
     @JvmName("getEventAnalog1")
     fun getEvent(action: TA): Event<InputDataAnalog1, TD, TA, TAA>   = eventsAnalog1[action]!!
 
     /**
-     * Gets an Analog2 Event
+     * @return an Analog2 Event
      */
     @JvmName("getEventAnalog2")
     fun getEvent(action: TAA): Event<InputDataAnalog2, TD, TA, TAA>  = eventsAnalog2[action]!!
 
     /**
-     * Adds a listener to the event
+     * Adds a listener to an input event.
      */
     @JvmName("addListenerDigital")
     fun addListener(action: TD, listener: (Event.EventData<InputDataDigital, TD, TA, TAA>) -> Unit): Boolean = eventsDigital[action]!!.addListener(listener)
 
     /**
-     * Gets an Analog1 Event and also adds a listener
+     * Adds a listener to an input event.
      */
     @JvmName("addListenerAnalog1")
     fun addListener(action: TA, listener: (Event.EventData<InputDataAnalog1, TD, TA, TAA>) -> Unit): Boolean = eventsAnalog1[action]!!.addListener(listener)
+
     /**
-     * Gets an Analog2 Event and also adds a listener
+     * Adds a listener to an input event.
      */
     @JvmName("addListenerAnalog2")
     fun addListener(action: TAA, listener: (Event.EventData<InputDataAnalog2, TD, TA, TAA>) -> Unit): Boolean = eventsAnalog2[action]!!.addListener(listener)
 
     /**
-     * Gets a Digital Event and also adds a Java listener
+     * Adds a Java event listener to an input event.
      */
     @JvmName("addListenerDigital")
     fun addListener(action: TD, listener: InputEventListener<InputDataDigital, TD, TA, TAA>): Boolean = eventsDigital[action]!!.addListener(listener)
 
     /**
-     * Gets an Analog1 Event and also adds a Java event listener
+     * Adds a Java event listener to an input event.
      */
     @JvmName("addListenerAnalog1")
     fun addListener(action: TA, listener: InputEventListener<InputDataAnalog1, TD, TA, TAA>): Boolean = eventsAnalog1[action]!!.addListener(listener)
 
     /**
-     * Gets an Analog2 Event and also adds a Java event listener
+     * Adds a Java event listener to an input event.
      */
     @JvmName("addListenerAnalog2")
-    fun addListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean    = eventsAnalog2[action]!!.addListener(listener)
+    fun addListener(action: TAA, listener: InputEventListener<InputDataAnalog2, TD, TA, TAA>): Boolean = eventsAnalog2[action]!!.addListener(listener)
 
     /**
-     * Returns the state of the digital action provided, or `null` for an invalid action (you can safely use `!!`)
+     * Returns the state of the digital action provided.
      */
     @JvmName("getStateDigital")
     fun getState(action: TD): InputDataDigital     = stateDigital[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
     /**
-     * Returns the state of the 1D analog action provided, or `null` for an invalid action (you can safely use `!!`)
+     * Returns the state of the 1D analog action provided.
      */
     @JvmName("getStateAnalog1")
     fun getState(action: TA): InputDataAnalog1     = stateAnalog1[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
+
     /**
-     * Returns the state of the 2D analog action provided, or `null` for an invalid action (you can safely use `!!`)
+     * Returns the state of the 2D analog action provided.
      */
     @JvmName("getStateAnalog2")
     fun getState(action: TAA): InputDataAnalog2    = stateAnalog2[action].let { it ?: throw Exception("Invalid action! Don't modify your Enum.entries!") }
 
     /*
-     * NOTE: This API is... *unpleasant* in Java.
-     * This is because Java's type erasure causes the getState and
-     * getEvent functions to have the same signature.
-     * Kotlin does magic to ensure that the functions have different signatures at compile-time.
-     * In order to make it work for Java, we have to rename the functions (hence @JvmName).
-     * As an example, the following Java sample does not compile:
+     * NOTE: This API is unpleasant in Java.
+     * This is because Java's type erasure causes the various getState and
+     * getEvent functions to each have the same signature.
+     * Kotlin has compiler magic to ensure that the functions have different signatures.
+     * In order to make it work for Java, we have to use @JvmName to explicitly
+     * differentiate their type parameters.
      */
-
-/*
-
-public class GenericTest<
-        TD extends Enum<TD> & ActionEnumDigital,
-        TA extends Enum<TA> & ActionEnumAnalog1,
-        TAA extends Enum<TAA> & ActionEnumAnalog2>
-{
-    Event<InputDataDigital> getEvent(TD action) { return new Event<>(); }
-    Event<InputDataAnalog1> getEvent(TA action) { return new Event<>(); }
-    Event<InputDataAnalog2> getEvent(TAA action) { return new Event<>(); }
-}
-
-*/
-
 
 }

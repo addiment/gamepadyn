@@ -3,12 +3,14 @@
 
 ## v0.3.0-BETA
 ~~This will be the last version of Gamepadyn before my team's competition (assuming I finish it before then).~~
-There's no way all of this is going to be done in 2 days.
+There's no way all of this is going to be done in 2 days. _(note from the future: it wasn't)_
 Sorry, Gamepadyn fans. 💔 <!-- (the joke is that there aren't any) -->
 
+On the docket for next update: polishing the API to make sure that I haven't 
+
 - Completely reworked the binding API again!
-It's really, _**REALLY**_ complicated, so documentation is WIP.
-  - It's entirely type-safe 
+It's _**really**_ complicated, so documentation is WIP.
+  - It's entirely type-safe (although its compile-time errors are currently difficult to interpret)
   - It's data-driven and it's serializable
   - It's highly extensible (but less extensible than the previous API by design)
   - It's not really using the builder pattern, but that's the closest comparison 
@@ -46,10 +48,10 @@ gamepadyn.players[1].getEvent(CLAW_RIGHT_CLOSE,   closeRightClaw)
 This is how it is now:
 
 ```kotlin
-gamepadyn.addGlobalListener(CLAW_LEFT_OPEN)    { if (it.data()) leftOpen    = true  }
-gamepadyn.addGlobalListener(CLAW_LEFT_CLOSE)   { if (it.data()) leftOpen    = false }
-gamepadyn.addGlobalListener(CLAW_RIGHT_OPEN)   { if (it.data()) rightOpen   = true  }
-gamepadyn.addGlobalListener(CLAW_RIGHT_CLOSE)  { if (it.data()) rightOpen   = false }
+gamepadyn.addListener(CLAW_LEFT_OPEN)    { if (it.data()) leftOpen    = true  }
+gamepadyn.addListener(CLAW_LEFT_CLOSE)   { if (it.data()) leftOpen    = false }
+gamepadyn.addListener(CLAW_RIGHT_OPEN)   { if (it.data()) rightOpen   = true  }
+gamepadyn.addListener(CLAW_RIGHT_CLOSE)  { if (it.data()) rightOpen   = false }
 ```
 
 ## v0.2.0-BETA
