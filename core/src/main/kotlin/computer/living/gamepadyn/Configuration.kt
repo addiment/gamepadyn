@@ -4,9 +4,8 @@ import kotlin.reflect.KClass
 import kotlinx.serialization.Serializable
 
 /**
- * Experimental bind system to allow for better serialization.
- * After all, it's not like people keep track of state in their binds, right???? please????
- * All jokes aside, I'm aiming to have this done by Gamepadyn 0.4.0
+ * A serializable control configuration for a player.
+ * It's really just a collection of [Bind]s.
  */
 class Configuration<TD, TA, TAA> private constructor()
         where TD : ActionEnumDigital,

@@ -8,14 +8,10 @@ import computer.living.gamepadyn.InputType.*
  * @see InputDataAnalog1
  * @see InputDataAnalog2
  */
-sealed class InputData {
-    abstract val type: InputType
-//    abstract operator fun invoke(): Any
-}
+sealed class InputData { abstract val type: InputType }
 
 /**
- * Represents the value of a digital action.
- * This is effectively a Boolean that implements ActionData.
+ * Boolean input (i.e. a button or a D-pad)
  */
 data class InputDataDigital(
     /**
@@ -25,9 +21,13 @@ data class InputDataDigital(
 ): InputData() {
     override val type = DIGITAL
 
+    // TODO: remove this, this is misusing operator functions
     operator fun invoke(): Boolean = active
 }
 
+/**
+ * One-dimensional floating-point input (i.e. an analog trigger).
+ */
 data class InputDataAnalog1(
     /**
      * The X axis of the analog input data.
@@ -36,14 +36,19 @@ data class InputDataAnalog1(
 ) : InputData() {
     override val type: InputType = ANALOG1
 
+    // TODO: remove this, this is misusing operator functions
     operator fun invoke(): Float = x
 }
 
+/**
+ * Two-dimensional floating-point input (i.e. a gamepad thumbstick).
+ */
 data class InputDataAnalog2(
     /**
      * The X axis of the analog input data.
      */
     @JvmField var x: Float,
+
     /**
      * The Y axis of the analog input data.
      */

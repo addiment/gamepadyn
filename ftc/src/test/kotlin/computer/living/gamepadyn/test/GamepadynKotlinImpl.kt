@@ -42,10 +42,10 @@ class GamepadynKotlinImpl : OpMode() {
     override fun init() {
 
         gamepadyn.getPlayer(0)!!.configuration = Configuration {
-            action(LAUNCH_DRONE)    { input(FACE_LEFT) }
-            action(MOVEMENT)        { input(STICK_LEFT) }
-            action(CLAW)            { input(TRIGGER_RIGHT) }
-            action(ROTATION)        { split(input(STICK_RIGHT), Axis.X) }
+            actionDigital(LAUNCH_DRONE)    { input(FACE_LEFT) }
+            actionAnalog2(MOVEMENT)        { input(STICK_LEFT) }
+            actionAnalog1(CLAW)            { input(TRIGGER_RIGHT) }
+            actionAnalog1(ROTATION)        { split(input(STICK_RIGHT), Axis.X) }
         }
 
     }
@@ -59,6 +59,9 @@ class GamepadynKotlinImpl : OpMode() {
 //        p0.getState(MOVEMENT).x
 //        p0.getState(MOVEMENT).y
 //        p0.getState(ROTATION).x
+        p0.getEvent(LAUNCH_DRONE).addListener {
+
+        }
 
         // Get the event corresponding to LAUNCH_DRONE and add a lambda function as a listener to it.
         p0.addListener(LAUNCH_DRONE) {

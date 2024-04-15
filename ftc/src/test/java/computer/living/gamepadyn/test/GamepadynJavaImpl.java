@@ -16,7 +16,6 @@ import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog1
 import static computer.living.gamepadyn.test.GamepadynJavaImpl.TestActionAnalog2.*;
 
 import computer.living.gamepadyn.ftc.InputBackendFtc;
-import kotlin.Unit;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -49,10 +48,10 @@ public class GamepadynJavaImpl extends OpMode {
         assert p0 != null;
 
         p0.configuration = new Configuration<>(bindPipe -> {
-            bindPipe.action(LAUNCH_DRONE,     it -> it.input(FACE_LEFT));
-            bindPipe.action(MOVEMENT,         it -> it.input(STICK_LEFT));
-            bindPipe.action(CLAW,             it -> it.input(TRIGGER_RIGHT));
-            bindPipe.action(ROTATION,         it -> it.split(it.input(STICK_RIGHT), Axis.X));
+            bindPipe.actionDigital(LAUNCH_DRONE,     it -> it.input(FACE_LEFT));
+            bindPipe.actionAnalog2(MOVEMENT,         it -> it.input(STICK_LEFT));
+            bindPipe.actionAnalog1(CLAW,             it -> it.input(TRIGGER_RIGHT));
+            bindPipe.actionAnalog1(ROTATION,         it -> it.split(it.input(STICK_RIGHT), Axis.X));
 
             return null;
         });
@@ -69,7 +68,7 @@ public class GamepadynJavaImpl extends OpMode {
         p0.addListenerDigital(LAUNCH_DRONE, ev -> {
             telemetry.addLine("Button " + ((ev.data.active) ? "pressed" : "released") + "!");
             telemetry.update();
-            return Unit.INSTANCE;
+//            return Unit.INSTANCE;
         });
 
         // Usually, analog events should be replaced with state checks, but both work.
