@@ -18,7 +18,7 @@ class Configuration<TD, TA, TAA> private constructor()
     /**
      * @param config The configuration of the binds. You provide a lambda function that takes an instance of a builder class as its only parameter. It returns nothing; you just call functions to mutate the provided value.
      */
-    constructor(config: (BindPipeBuilder<TD, TA, TAA>) -> Unit) : this() {
+    constructor(config: BindPipeBuilder<TD, TA, TAA>.() -> Unit) : this() {
         val builder = BindPipeBuilder<TD, TA, TAA>()
         config(builder)
         digital = builder.digitalPipes
