@@ -1,5 +1,6 @@
 package computer.living.gamepadyn
 
+import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.sign

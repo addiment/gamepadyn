@@ -1,8 +1,11 @@
 package computer.living.gamepadyn
 
+import kotlinx.serialization.Serializable
+
 /**
  * A pair of a [BindPipe] and an action.
  */
+@Serializable
 data class Bind<T, TP>(
     val action: T, val pipe: TP
 ) where T : ActionEnum, T : Enum<T>, TP : BindPipe

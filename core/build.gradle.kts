@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.extra
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     `maven-publish`
     `java-library`
 }
@@ -9,6 +10,7 @@ plugins {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("reflect"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 //    testImplementation("junit:junit:4.13.2")
 }
 
