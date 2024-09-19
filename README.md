@@ -36,7 +36,7 @@ document.addEventListener("mousemove", ev => {
 
 ```kotlin
 gamepadyn.addListener(LOOK) {
-    println("${it.data.x}, ${it.data.x}")
+    println("${it.data.x}, ${it.data.y}")
 }
 ```
 
